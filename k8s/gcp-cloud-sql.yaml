@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloud-sql-proxy
+  namespace: flavours
+spec:
+  selector:
+    app: cloud-sql-proxy
+  ports:
+  - port: 5432
+    targetPort: 5432
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-sql-proxy
+  namespace: flavours
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloud-sql-proxy
+  template:
+    metadata:
+      labels:
+        app: cloud-sql-proxy
+    spec:
+      serviceAccountName: cloud-sql-proxy-service-account
+      containers:
+      - name: cloud-sql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.33.2
+        command:
+          - "/cloud_sql_proxy"
+          - "-instances=flavours-production:us-central1:flavours-production-db=tcp:0.0.0.0:5432"
+          - "-credential_file=/secrets/cloudsql/credentials.json"
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: cloudsql-instance-credentials
+          mountPath: /secrets/cloudsql
+          readOnly: true
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+      volumes:
+      - name: cloudsql-instance-credentials
+        secret:
+          secretName: cloudsql-instance-credentials
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cloud-sql-proxy-service-account
+  namespace: flavours
+  annotations:
+    iam.gke.io/gcp-service-account: flavours-cloud-sql-proxy@flavours-production.iam.gserviceaccount.com
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloudsql-instance-credentials
+  namespace: flavours
+type: Opaque
+data:
+  credentials.json: <base64-encoded-service-account-key>
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloud-sql-config
+  namespace: flavours
+data:
+  instance-connection-name: "flavours-production:us-central1:flavours-production-db"
+  database-name: "flavours"
+  database-user: "flavours_user"
+  database-password: "your_secure_password_here"

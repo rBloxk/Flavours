@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: flavours
+  labels:
+    name: flavours
+    app: flavours-platform

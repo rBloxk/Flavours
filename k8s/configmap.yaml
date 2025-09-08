@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: flavours
+data:
+  api-url: "https://api.flavours.app/api/v1"
+  ws-url: "wss://api.flavours.app"
+  supabase-url: "https://your-project.supabase.co"
+  supabase-anon-key: "your-supabase-anon-key"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secrets
+  namespace: flavours
+type: Opaque
+data:
+  database-url: cG9zdGdyZXNxbDovL3Bvc3RncmVzOnBhc3N3b3JkQHBvc3RncmVzLXNlcnZpY2U6NTQzMi9mbGF2b3Vycw==
+  redis-url: cmVkaXM6Ly9yZWRpcy1zZXJ2aWNlOjYzNzk=
+  jwt-secret: eW91ci1qd3Qtc2VjcmV0LWhlcmU=
+  supabase-service-role-key: eW91ci1zdXBhYmFzZS1zZXJ2aWNlLXJvbGUta2V5
+  stripe-secret-key: c2tfdGVzdF95b3VyX3N0cmlwZV9zZWNyZXRfa2V5

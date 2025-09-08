@@ -1,0 +1,465 @@
+[debug] [2025-09-08T17:14:23.851Z] ----------------------------------------------------------------------
+[debug] [2025-09-08T17:14:23.855Z] Command:       /usr/local/Cellar/node/24.4.1/bin/node /usr/local/bin/firebase init
+[debug] [2025-09-08T17:14:23.855Z] CLI Version:   14.15.2
+[debug] [2025-09-08T17:14:23.855Z] Platform:      darwin
+[debug] [2025-09-08T17:14:23.855Z] Node Version:  v24.4.1
+[debug] [2025-09-08T17:14:23.855Z] Time:          Mon Sep 08 2025 22:44:23 GMT+0530 (India Standard Time)
+[debug] [2025-09-08T17:14:23.855Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-09-08T17:14:24.084Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-09-08T17:14:24.084Z] > authorizing via signed-in user (rb.ceo@rbloxk.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /Users/rishalbabu/Github/Flavours
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2025-09-08T17:17:51.725Z] Using project from CLI flag: flavours-rbloxk
+[debug] [2025-09-08T17:17:51.726Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:17:51.726Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:17:51.728Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/flavours-rbloxk [none]
+[debug] [2025-09-08T17:17:52.406Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/flavours-rbloxk 200
+[debug] [2025-09-08T17:17:52.406Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/flavours-rbloxk {"projectId":"flavours-rbloxk","projectNumber":"625067871928","displayName":"Flavours","name":"projects/flavours-rbloxk","resources":{"hostingSite":"flavours-rbloxk"},"state":"ACTIVE","etag":"1_590c1fd1-2bad-41e8-9b6a-f2676b7e9654"}
+[info] i  Using project flavours-rbloxk (Flavours) 
+[info] 
+=== Dataconnect Setup
+[debug] [2025-09-08T17:17:52.518Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:17:52.518Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:17:52.518Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/flavours-rbloxk/billingInfo [none]
+[debug] [2025-09-08T17:17:53.935Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/flavours-rbloxk/billingInfo 200
+[debug] [2025-09-08T17:17:53.935Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/flavours-rbloxk/billingInfo {"name":"projects/flavours-rbloxk/billingInfo","projectId":"flavours-rbloxk","billingAccountName":"billingAccounts/016F50-75597D-2C378A","billingEnabled":true}
+[info] i  dataconnect: ensuring required API firebasedataconnect.googleapis.com is enabled... 
+[debug] [2025-09-08T17:17:53.936Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:17:53.936Z] Checked if tokens are valid: true, expires at: 1757355235264
+[info] i  dataconnect: ensuring required API sqladmin.googleapis.com is enabled... 
+[debug] [2025-09-08T17:17:53.936Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:17:53.936Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:17:53.936Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-09-08T17:17:53.936Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:17:53.937Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/sqladmin.googleapis.com [none]
+[debug] [2025-09-08T17:17:53.937Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/sqladmin.googleapis.com x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:17:55.475Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-09-08T17:17:55.475Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firebasedataconnect.googleapis.com [omitted]
+[warn] ⚠  dataconnect: missing required API firebasedataconnect.googleapis.com. Enabling now... 
+[debug] [2025-09-08T17:17:55.475Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:17:55.476Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:17:55.476Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firebasedataconnect.googleapis.com:enable [none]
+[debug] [2025-09-08T17:17:55.476Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firebasedataconnect.googleapis.com:enable x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:17:55.487Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/sqladmin.googleapis.com 200
+[debug] [2025-09-08T17:17:55.487Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/sqladmin.googleapis.com [omitted]
+[warn] ⚠  dataconnect: missing required API sqladmin.googleapis.com. Enabling now... 
+[debug] [2025-09-08T17:17:55.487Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:17:55.487Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:17:55.487Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/sqladmin.googleapis.com:enable [none]
+[debug] [2025-09-08T17:17:55.487Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/sqladmin.googleapis.com:enable x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:17:56.025Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firebasedataconnect.googleapis.com:enable 200
+[debug] [2025-09-08T17:17:56.025Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firebasedataconnect.googleapis.com:enable [omitted]
+[debug] [2025-09-08T17:17:56.170Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/sqladmin.googleapis.com:enable 200
+[debug] [2025-09-08T17:17:56.170Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/sqladmin.googleapis.com:enable [omitted]
+[debug] [2025-09-08T17:18:06.190Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:18:06.190Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:18:06.190Z] >>> [apiv2][query] GET https://firebasedataconnect.googleapis.com/v1/projects/flavours-rbloxk/locations/-/services [none]
+[debug] [2025-09-08T17:18:08.015Z] <<< [apiv2][status] GET https://firebasedataconnect.googleapis.com/v1/projects/flavours-rbloxk/locations/-/services 200
+[debug] [2025-09-08T17:18:08.015Z] <<< [apiv2][body] GET https://firebasedataconnect.googleapis.com/v1/projects/flavours-rbloxk/locations/-/services {}
+[debug] [2025-09-08T17:18:18.934Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:18:18.934Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:18:18.934Z] >>> [apiv2][query] GET https://sqladmin.googleapis.com/v1/projects/flavours-rbloxk/instances [none]
+[debug] [2025-09-08T17:18:20.057Z] <<< [apiv2][status] GET https://sqladmin.googleapis.com/v1/projects/flavours-rbloxk/instances 200
+[debug] [2025-09-08T17:18:20.057Z] <<< [apiv2][body] GET https://sqladmin.googleapis.com/v1/projects/flavours-rbloxk/instances {}
+[debug] [2025-09-08T17:18:20.057Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:18:20.057Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:18:20.057Z] >>> [apiv2][query] GET https://firebasedataconnect.googleapis.com/v1/projects/flavours-rbloxk/locations [none]
+[debug] [2025-09-08T17:18:21.572Z] <<< [apiv2][status] GET https://firebasedataconnect.googleapis.com/v1/projects/flavours-rbloxk/locations 200
+[debug] [2025-09-08T17:18:21.572Z] <<< [apiv2][body] GET https://firebasedataconnect.googleapis.com/v1/projects/flavours-rbloxk/locations {"locations":[{"name":"projects/flavours-rbloxk/locations/asia-east1","locationId":"asia-east1","displayName":"Taiwan"},{"name":"projects/flavours-rbloxk/locations/asia-east2","locationId":"asia-east2","displayName":"Hong Kong"},{"name":"projects/flavours-rbloxk/locations/asia-northeast1","locationId":"asia-northeast1","displayName":"Tokyo"},{"name":"projects/flavours-rbloxk/locations/asia-northeast2","locationId":"asia-northeast2","displayName":"Osaka"},{"name":"projects/flavours-rbloxk/locations/asia-northeast3","locationId":"asia-northeast3","displayName":"Seoul"},{"name":"projects/flavours-rbloxk/locations/asia-south1","locationId":"asia-south1","displayName":"Mumbai"},{"name":"projects/flavours-rbloxk/locations/asia-southeast1","locationId":"asia-southeast1","displayName":"Singapore"},{"name":"projects/flavours-rbloxk/locations/asia-southeast2","locationId":"asia-southeast2","displayName":"Jakarta"},{"name":"projects/flavours-rbloxk/locations/australia-southeast1","locationId":"australia-southeast1","displayName":"Sydney"},{"name":"projects/flavours-rbloxk/locations/australia-southeast2","locationId":"australia-southeast2","displayName":"Melbourne"},{"name":"projects/flavours-rbloxk/locations/europe-central2","locationId":"europe-central2","displayName":"Warsaw"},{"name":"projects/flavours-rbloxk/locations/europe-north1","locationId":"europe-north1","displayName":"Finland"},{"name":"projects/flavours-rbloxk/locations/europe-southwest1","locationId":"europe-southwest1","displayName":"Madrid"},{"name":"projects/flavours-rbloxk/locations/europe-west1","locationId":"europe-west1","displayName":"Belgium"},{"name":"projects/flavours-rbloxk/locations/europe-west2","locationId":"europe-west2","displayName":"London"},{"name":"projects/flavours-rbloxk/locations/europe-west3","locationId":"europe-west3","displayName":"Frankfurt"},{"name":"projects/flavours-rbloxk/locations/europe-west4","locationId":"europe-west4","displayName":"Netherlands"},{"name":"projects/flavours-rbloxk/locations/europe-west6","locationId":"europe-west6","displayName":"Zurich"},{"name":"projects/flavours-rbloxk/locations/europe-west8","locationId":"europe-west8","displayName":"Milan"},{"name":"projects/flavours-rbloxk/locations/europe-west9","locationId":"europe-west9","displayName":"Paris"},{"name":"projects/flavours-rbloxk/locations/me-west1","locationId":"me-west1","displayName":"Tel Aviv"},{"name":"projects/flavours-rbloxk/locations/northamerica-northeast1","locationId":"northamerica-northeast1","displayName":"Montréal"},{"name":"projects/flavours-rbloxk/locations/northamerica-northeast2","locationId":"northamerica-northeast2","displayName":"Toronto"},{"name":"projects/flavours-rbloxk/locations/southamerica-east1","locationId":"southamerica-east1","displayName":"São Paulo"},{"name":"projects/flavours-rbloxk/locations/southamerica-west1","locationId":"southamerica-west1","displayName":"Santiago"},{"name":"projects/flavours-rbloxk/locations/us-central1","locationId":"us-central1","displayName":"Iowa"},{"name":"projects/flavours-rbloxk/locations/us-east1","locationId":"us-east1","displayName":"South Carolina"},{"name":"projects/flavours-rbloxk/locations/us-east4","locationId":"us-east4","displayName":"Northern Virginia"},{"name":"projects/flavours-rbloxk/locations/us-south1","locationId":"us-south1","displayName":"Dallas"},{"name":"projects/flavours-rbloxk/locations/us-west1","locationId":"us-west1","displayName":"Oregon"},{"name":"projects/flavours-rbloxk/locations/us-west2","locationId":"us-west2","displayName":"Los Angeles"},{"name":"projects/flavours-rbloxk/locations/us-west3","locationId":"us-west3","displayName":"Salt Lake City"},{"name":"projects/flavours-rbloxk/locations/us-west4","locationId":"us-west4","displayName":"Las Vegas"}]}
+[info] ✔  dataconnect: Detected existing apps . (web), backend (web) 
+[debug] [2025-09-08T17:18:47.792Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:18:47.792Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:18:47.792Z] >>> [apiv2][query] GET https://sqladmin.googleapis.com/v1/projects/flavours-rbloxk/instances/flavours-fdc [none]
+[debug] [2025-09-08T17:18:48.386Z] <<< [apiv2][status] GET https://sqladmin.googleapis.com/v1/projects/flavours-rbloxk/instances/flavours-fdc 404
+[debug] [2025-09-08T17:18:48.386Z] <<< [apiv2][body] GET https://sqladmin.googleapis.com/v1/projects/flavours-rbloxk/instances/flavours-fdc {"error":{"code":404,"message":"The Cloud SQL instance does not exist.","errors":[{"message":"The Cloud SQL instance does not exist.","domain":"global","reason":"instanceDoesNotExist"}]}}
+[debug] [2025-09-08T17:18:48.387Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:18:48.387Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:18:48.387Z] >>> [apiv2][query] GET https://monitoring.googleapis.com/v3/projects/flavours-rbloxk/timeSeries/ filter=metric.type%3D%22serviceruntime.googleapis.com%2Fquota%2Fallocation%2Fusage%22+AND+metric.label.quota_metric+%3D+%22sqladmin.googleapis.com%2Ffdc_lifetime_free_trial_per_project%22&interval.endTime=2025-09-08T17%3A18%3A48.387Z&interval.startTime=2025-09-01T17%3A18%3A48.387Z
+[debug] [2025-09-08T17:18:49.762Z] <<< [apiv2][status] GET https://monitoring.googleapis.com/v3/projects/flavours-rbloxk/timeSeries/ 200
+[debug] [2025-09-08T17:18:49.762Z] <<< [apiv2][body] GET https://monitoring.googleapis.com/v3/projects/flavours-rbloxk/timeSeries/ {"unit":"1"}
+[info] ✔  dataconnect: CloudSQL no cost trial available! 
+[debug] [2025-09-08T17:18:49.762Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:18:49.762Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:18:49.763Z] >>> [apiv2][query] POST https://sqladmin.googleapis.com/v1/projects/flavours-rbloxk/instances [none]
+[debug] [2025-09-08T17:18:49.763Z] >>> [apiv2][body] POST https://sqladmin.googleapis.com/v1/projects/flavours-rbloxk/instances {"name":"flavours-fdc","region":"us-central1","databaseVersion":"POSTGRES_15","settings":{"tier":"db-f1-micro","edition":"ENTERPRISE","ipConfiguration":{"authorizedNetworks":[]},"enableGoogleMlIntegration":false,"databaseFlags":[{"name":"cloudsql.iam_authentication","value":"on"}],"storageAutoResize":false,"userLabels":{"firebase-data-connect":"ft"},"insightsConfig":{"queryInsightsEnabled":true,"queryPlansPerMinute":5,"queryStringLength":1024}}}
+[debug] [2025-09-08T17:18:53.958Z] <<< [apiv2][status] POST https://sqladmin.googleapis.com/v1/projects/flavours-rbloxk/instances 200
+[debug] [2025-09-08T17:18:53.958Z] <<< [apiv2][body] POST https://sqladmin.googleapis.com/v1/projects/flavours-rbloxk/instances {"kind":"sql#operation","targetLink":"https://sqladmin.googleapis.com/v1/projects/flavours-rbloxk/instances/flavours-fdc","status":"PENDING","user":"rb.ceo@rbloxk.com","insertTime":"2025-09-08T17:18:53.817Z","operationType":"CREATE","name":"a02f0069-370f-4eac-80ed-160100000032","targetId":"flavours-fdc","selfLink":"https://sqladmin.googleapis.com/v1/projects/flavours-rbloxk/operations/a02f0069-370f-4eac-80ed-160100000032","targetProject":"flavours-rbloxk"}
+[info] i  dataconnect: Cloud SQL Instance flavours-fdc is being created.
+This instance is provided under the terms of the Data Connect no-cost trial https://firebase.google.com/pricing
+   Meanwhile, your data are saved in a temporary database and will be migrated once complete. Monitor its progress at
+
+   https://console.cloud.google.com/sql/instances/flavours-fdc/overview?project=flavours-rbloxk
+ 
+[info] ✔  Wrote dataconnect/dataconnect.yaml 
+[info] ✔  Wrote dataconnect/schema/schema.gql 
+[info] ✔  Wrote dataconnect/example/connector.yaml 
+[info] ✔  Wrote dataconnect/example/queries.gql 
+[info] ✔  Wrote dataconnect/example/mutations.gql 
+[info] ✔  Wrote dataconnect/example/connector.yaml 
+[info] i  dataconnect: Installing the generated SDKs ... 
+[info] i  dataconnect: downloading dataconnect-emulator-2.12.0... {"metadata":{"emulator":{"name":"dataconnect"},"message":"downloading dataconnect-emulator-2.12.0..."}}
+[debug] [2025-09-08T17:18:53.984Z] >>> [apiv2][query] GET https://storage.googleapis.com/firemat-preview-drop/emulator/dataconnect-emulator-macos-v2.12.0 
+[debug] [2025-09-08T17:18:55.362Z] <<< [apiv2][status] GET https://storage.googleapis.com/firemat-preview-drop/emulator/dataconnect-emulator-macos-v2.12.0 200
+[debug] [2025-09-08T17:18:55.363Z] <<< [apiv2][body] GET https://storage.googleapis.com/firemat-preview-drop/emulator/dataconnect-emulator-macos-v2.12.0 [stream]
+[debug] [2025-09-08T17:18:59.176Z] defaultcredentials: writing to file /Users/rishalbabu/.config/firebase/rb_ceo_rbloxk.com_application_default_credentials.json
+[info] ✔  dataconnect: Installed generated SDKs for . (web), backend (web) 
+[info] i  Visit https://firebase.google.com/docs/data-connect/web-sdk#react for more information on how to set up React Generated SDKs for Firebase Data Connect 
+[info] 
+=== Firestore Setup
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[debug] [2025-09-08T17:20:25.512Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:20:25.512Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:20:25.513Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firestore.googleapis.com [none]
+[debug] [2025-09-08T17:20:25.513Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firestore.googleapis.com x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:20:27.112Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firestore.googleapis.com 200
+[debug] [2025-09-08T17:20:27.112Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firestore.googleapis.com [omitted]
+[warn] ⚠  firestore: missing required API firestore.googleapis.com. Enabling now... 
+[debug] [2025-09-08T17:20:27.113Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:20:27.113Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:20:27.113Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firestore.googleapis.com:enable [none]
+[debug] [2025-09-08T17:20:27.113Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firestore.googleapis.com:enable x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:20:27.669Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firestore.googleapis.com:enable 200
+[debug] [2025-09-08T17:20:27.669Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firestore.googleapis.com:enable [omitted]
+[debug] [2025-09-08T17:20:37.695Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:20:37.695Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:20:37.695Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/flavours-rbloxk/databases [none]
+[debug] [2025-09-08T17:20:38.503Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/flavours-rbloxk/databases 200
+[debug] [2025-09-08T17:20:38.503Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/flavours-rbloxk/databases {}
+[debug] [2025-09-08T17:20:38.503Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:20:38.503Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:20:38.503Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/flavours-rbloxk/locations [none]
+[debug] [2025-09-08T17:20:38.694Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/flavours-rbloxk/locations 200
+[debug] [2025-09-08T17:20:38.694Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/flavours-rbloxk/locations {"locations":[{"name":"projects/flavours-rbloxk/locations/eur3","labels":{"appengine.googleapis.com/geo":"europe-west","cloud.googleapis.com/location":"eur3","cloud.googleapis.com/geo":"eur3"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"eur3","displayName":"Europe"},{"name":"projects/flavours-rbloxk/locations/nam5","labels":{"appengine.googleapis.com/geo":"us-central","cloud.googleapis.com/location":"nam5","cloud.googleapis.com/geo":"nam5"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"nam5","displayName":"United States"},{"name":"projects/flavours-rbloxk/locations/nam7","labels":{"cloud.googleapis.com/location":"nam7","cloud.googleapis.com/geo":"nam7"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"nam7","displayName":"United States"},{"name":"projects/flavours-rbloxk/locations/africa-south1","labels":{"cloud.googleapis.com/location":"africa-south1","cloud.googleapis.com/region":"africa-south1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"africa-south1","displayName":"Johannesburg"},{"name":"projects/flavours-rbloxk/locations/asia-east1","labels":{"appengine.googleapis.com/region":"asia-east1","cloud.googleapis.com/location":"asia-east1","cloud.googleapis.com/region":"asia-east1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"asia-east1","displayName":"Taiwan"},{"name":"projects/flavours-rbloxk/locations/asia-east2","labels":{"appengine.googleapis.com/region":"asia-east2","cloud.googleapis.com/location":"asia-east2","cloud.googleapis.com/region":"asia-east2"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"asia-east2","displayName":"Hong Kong"},{"name":"projects/flavours-rbloxk/locations/asia-northeast1","labels":{"appengine.googleapis.com/region":"asia-northeast1","cloud.googleapis.com/location":"asia-northeast1","cloud.googleapis.com/region":"asia-northeast1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"asia-northeast1","displayName":"Tokyo"},{"name":"projects/flavours-rbloxk/locations/asia-northeast2","labels":{"appengine.googleapis.com/region":"asia-northeast2","cloud.googleapis.com/location":"asia-northeast2","cloud.googleapis.com/region":"asia-northeast2"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"asia-northeast2","displayName":"Osaka"},{"name":"projects/flavours-rbloxk/locations/asia-northeast3","labels":{"appengine.googleapis.com/region":"asia-northeast3","cloud.googleapis.com/location":"asia-northeast3","cloud.googleapis.com/region":"asia-northeast3"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"asia-northeast3","displayName":"Seoul"},{"name":"projects/flavours-rbloxk/locations/asia-south1","labels":{"appengine.googleapis.com/region":"asia-south1","cloud.googleapis.com/location":"asia-south1","cloud.googleapis.com/region":"asia-south1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"asia-south1","displayName":"Mumbai"},{"name":"projects/flavours-rbloxk/locations/asia-south2","labels":{"cloud.googleapis.com/location":"asia-south2","cloud.googleapis.com/region":"asia-south2"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"asia-south2","displayName":"Delhi"},{"name":"projects/flavours-rbloxk/locations/asia-southeast1","labels":{"appengine.googleapis.com/region":"asia-southeast1","cloud.googleapis.com/location":"asia-southeast1","cloud.googleapis.com/region":"asia-southeast1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"asia-southeast1","displayName":"Singapore"},{"name":"projects/flavours-rbloxk/locations/asia-southeast2","labels":{"appengine.googleapis.com/region":"asia-southeast2","cloud.googleapis.com/location":"asia-southeast2","cloud.googleapis.com/region":"asia-southeast2"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"asia-southeast2","displayName":"Jakarta"},{"name":"projects/flavours-rbloxk/locations/australia-southeast1","labels":{"appengine.googleapis.com/region":"australia-southeast1","cloud.googleapis.com/location":"australia-southeast1","cloud.googleapis.com/region":"australia-southeast1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"australia-southeast1","displayName":"Sydney"},{"name":"projects/flavours-rbloxk/locations/australia-southeast2","labels":{"cloud.googleapis.com/location":"australia-southeast2","cloud.googleapis.com/region":"australia-southeast2"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"australia-southeast2","displayName":"Melbourne"},{"name":"projects/flavours-rbloxk/locations/europe-central2","labels":{"appengine.googleapis.com/region":"europe-central2","cloud.googleapis.com/location":"europe-central2","cloud.googleapis.com/region":"europe-central2"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"europe-central2","displayName":"Warsaw"},{"name":"projects/flavours-rbloxk/locations/europe-north1","labels":{"cloud.googleapis.com/location":"europe-north1","cloud.googleapis.com/region":"europe-north1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"europe-north1","displayName":"Finland"},{"name":"projects/flavours-rbloxk/locations/europe-north2","labels":{"cloud.googleapis.com/location":"europe-north2","cloud.googleapis.com/region":"europe-north2"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"europe-north2","displayName":"Stockholm"},{"name":"projects/flavours-rbloxk/locations/europe-southwest1","labels":{"cloud.googleapis.com/location":"europe-southwest1","cloud.googleapis.com/region":"europe-southwest1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"europe-southwest1","displayName":"Madrid"},{"name":"projects/flavours-rbloxk/locations/europe-west1","labels":{"cloud.googleapis.com/location":"europe-west1","cloud.googleapis.com/region":"europe-west1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"europe-west1","displayName":"Belgium"},{"name":"projects/flavours-rbloxk/locations/europe-west10","labels":{"cloud.googleapis.com/location":"europe-west10","cloud.googleapis.com/region":"europe-west10"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"europe-west10","displayName":"Berlin"},{"name":"projects/flavours-rbloxk/locations/europe-west12","labels":{"cloud.googleapis.com/location":"europe-west12","cloud.googleapis.com/region":"europe-west12"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"europe-west12","displayName":"Turin"},{"name":"projects/flavours-rbloxk/locations/europe-west2","labels":{"appengine.googleapis.com/region":"europe-west2","cloud.googleapis.com/location":"europe-west2","cloud.googleapis.com/region":"europe-west2"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"europe-west2","displayName":"London"},{"name":"projects/flavours-rbloxk/locations/europe-west3","labels":{"appengine.googleapis.com/region":"europe-west3","cloud.googleapis.com/location":"europe-west3","cloud.googleapis.com/region":"europe-west3"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"europe-west3","displayName":"Frankfurt"},{"name":"projects/flavours-rbloxk/locations/europe-west4","labels":{"cloud.googleapis.com/location":"europe-west4","cloud.googleapis.com/region":"europe-west4"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"europe-west4","displayName":"Netherlands"},{"name":"projects/flavours-rbloxk/locations/europe-west6","labels":{"appengine.googleapis.com/region":"europe-west6","cloud.googleapis.com/location":"europe-west6","cloud.googleapis.com/region":"europe-west6"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"europe-west6","displayName":"Zurich"},{"name":"projects/flavours-rbloxk/locations/europe-west8","labels":{"cloud.googleapis.com/location":"europe-west8","cloud.googleapis.com/region":"europe-west8"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"europe-west8","displayName":"Milan"},{"name":"projects/flavours-rbloxk/locations/europe-west9","labels":{"cloud.googleapis.com/location":"europe-west9","cloud.googleapis.com/region":"europe-west9"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"europe-west9","displayName":"Paris"},{"name":"projects/flavours-rbloxk/locations/me-central1","labels":{"cloud.googleapis.com/location":"me-central1","cloud.googleapis.com/region":"me-central1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"me-central1","displayName":"Doha"},{"name":"projects/flavours-rbloxk/locations/me-central2","labels":{"cloud.googleapis.com/location":"me-central2","cloud.googleapis.com/region":"me-central2"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"me-central2","displayName":"Dammam"},{"name":"projects/flavours-rbloxk/locations/me-west1","labels":{"cloud.googleapis.com/location":"me-west1","cloud.googleapis.com/region":"me-west1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"me-west1","displayName":"Tel Aviv"},{"name":"projects/flavours-rbloxk/locations/northamerica-northeast1","labels":{"appengine.googleapis.com/region":"northamerica-northeast1","cloud.googleapis.com/location":"northamerica-northeast1","cloud.googleapis.com/region":"northamerica-northeast1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"northamerica-northeast1","displayName":"Montréal"},{"name":"projects/flavours-rbloxk/locations/northamerica-northeast2","labels":{"cloud.googleapis.com/location":"northamerica-northeast2","cloud.googleapis.com/region":"northamerica-northeast2"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"northamerica-northeast2","displayName":"Toronto"},{"name":"projects/flavours-rbloxk/locations/northamerica-south1","labels":{"cloud.googleapis.com/location":"northamerica-south1","cloud.googleapis.com/region":"northamerica-south1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"northamerica-south1","displayName":"Mexico"},{"name":"projects/flavours-rbloxk/locations/southamerica-east1","labels":{"appengine.googleapis.com/region":"southamerica-east1","cloud.googleapis.com/location":"southamerica-east1","cloud.googleapis.com/region":"southamerica-east1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"southamerica-east1","displayName":"São Paulo"},{"name":"projects/flavours-rbloxk/locations/southamerica-west1","labels":{"cloud.googleapis.com/location":"southamerica-west1","cloud.googleapis.com/region":"southamerica-west1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"southamerica-west1","displayName":"Santiago"},{"name":"projects/flavours-rbloxk/locations/us-central1","labels":{"cloud.googleapis.com/location":"us-central1","cloud.googleapis.com/region":"us-central1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"us-central1","displayName":"Iowa"},{"name":"projects/flavours-rbloxk/locations/us-east1","labels":{"appengine.googleapis.com/region":"us-east1","cloud.googleapis.com/location":"us-east1","cloud.googleapis.com/region":"us-east1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"us-east1","displayName":"South Carolina"},{"name":"projects/flavours-rbloxk/locations/us-east4","labels":{"appengine.googleapis.com/region":"us-east4","cloud.googleapis.com/location":"us-east4","cloud.googleapis.com/region":"us-east4"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"us-east4","displayName":"Northern Virginia"},{"name":"projects/flavours-rbloxk/locations/us-east5","labels":{"cloud.googleapis.com/location":"us-east5","cloud.googleapis.com/region":"us-east5"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"us-east5","displayName":"Columbus"},{"name":"projects/flavours-rbloxk/locations/us-south1","labels":{"cloud.googleapis.com/location":"us-south1","cloud.googleapis.com/region":"us-south1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"us-south1","displayName":"Dallas"},{"name":"projects/flavours-rbloxk/locations/us-west1","labels":{"appengine.googleapis.com/region":"us-west1","cloud.googleapis.com/location":"us-west1","cloud.googleapis.com/region":"us-west1"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"us-west1","displayName":"Oregon"},{"name":"projects/flavours-rbloxk/locations/us-west2","labels":{"appengine.googleapis.com/region":"us-west2","cloud.googleapis.com/location":"us-west2","cloud.googleapis.com/region":"us-west2"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"us-west2","displayName":"Los Angeles"},{"name":"projects/flavours-rbloxk/locations/us-west3","labels":{"appengine.googleapis.com/region":"us-west3","cloud.googleapis.com/location":"us-west3","cloud.googleapis.com/region":"us-west3"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"us-west3","displayName":"Salt Lake City"},{"name":"projects/flavours-rbloxk/locations/us-west4","labels":{"appengine.googleapis.com/region":"us-west4","cloud.googleapis.com/location":"us-west4","cloud.googleapis.com/region":"us-west4"},"metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.LocationMetadata"},"locationId":"us-west4","displayName":"Las Vegas"}]}
+[info] 
+[info] Firestore Security Rules allow you to define how and when to allow
+[info] requests. You can keep these rules in your project directory
+[info] and publish them with firebase deploy.
+[info] 
+[debug] [2025-09-08T17:21:31.969Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:21:31.969Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:21:31.970Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/flavours-rbloxk/releases pageSize=10&pageToken=
+[debug] [2025-09-08T17:21:33.353Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/flavours-rbloxk/releases 200
+[debug] [2025-09-08T17:21:33.353Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/flavours-rbloxk/releases {}
+[info] 
+[info] Firestore indexes allow you to perform complex queries while
+[info] maintaining performance that scales with the size of the result
+[info] set. You can keep index definitions in your project directory
+[info] and publish them with firebase deploy.
+[info] 
+[debug] [2025-09-08T17:21:38.716Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:21:38.716Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:21:38.716Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:21:38.716Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:21:38.716Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/flavours-rbloxk/databases/(default)/collectionGroups/-/indexes [none]
+[debug] [2025-09-08T17:21:38.717Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/flavours-rbloxk/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* [none]
+[debug] [2025-09-08T17:21:39.037Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/flavours-rbloxk/databases/(default)/collectionGroups/-/indexes 404
+[debug] [2025-09-08T17:21:39.037Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/flavours-rbloxk/databases/(default)/collectionGroups/-/indexes {"error":{"code":404,"message":"Project 'flavours-rbloxk' or database '(default)' does not exist.","status":"NOT_FOUND"}}
+[info] ✔  Wrote firestore.rules 
+[info] ✔  Wrote firestore.indexes.json 
+[debug] [2025-09-08T17:21:39.042Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/flavours-rbloxk/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* 404
+[debug] [2025-09-08T17:21:39.043Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/flavours-rbloxk/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* {"error":{"code":404,"message":"Project 'flavours-rbloxk' or database '(default)' does not exist.","status":"NOT_FOUND"}}
+[info] 
+=== Functions Setup
+[debug] [2025-09-08T17:21:39.140Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-09-08T17:21:39.140Z] > authorizing via signed-in user (rb.ceo@rbloxk.com)
+[debug] [2025-09-08T17:21:39.140Z] [iam] checking project flavours-rbloxk for permissions ["firebase.projects.get"]
+[debug] [2025-09-08T17:21:39.140Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:21:39.140Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:21:39.141Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/flavours-rbloxk:testIamPermissions [none]
+[debug] [2025-09-08T17:21:39.141Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/flavours-rbloxk:testIamPermissions x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:21:39.141Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/flavours-rbloxk:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-09-08T17:21:40.402Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/flavours-rbloxk:testIamPermissions 200
+[debug] [2025-09-08T17:21:40.402Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/flavours-rbloxk:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-09-08T17:21:40.403Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:21:40.403Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:21:40.403Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:21:40.403Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:21:40.403Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-09-08T17:21:40.403Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:21:40.404Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/runtimeconfig.googleapis.com [none]
+[debug] [2025-09-08T17:21:40.404Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:21:41.966Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/runtimeconfig.googleapis.com 200
+[debug] [2025-09-08T17:21:41.967Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2025-09-08T17:21:41.989Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/cloudfunctions.googleapis.com 200
+[debug] [2025-09-08T17:21:41.989Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-09-08T17:21:41.989Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:21:41.990Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:21:41.990Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/cloudfunctions.googleapis.com:enable [none]
+[debug] [2025-09-08T17:21:41.990Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/cloudfunctions.googleapis.com:enable x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:21:42.570Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/cloudfunctions.googleapis.com:enable 200
+[debug] [2025-09-08T17:21:42.571Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/cloudfunctions.googleapis.com:enable [omitted]
+[info] 
+Detected existing codebase(s): default
+
+[info] 
+Overwriting codebase default...
+
+[info] ✔  Wrote functions/package.json 
+[info] ✔  Wrote functions/.eslintrc.js 
+[info] ✔  Wrote functions/tsconfig.dev.json 
+[info] ✔  Wrote functions/tsconfig.json 
+[info] ✔  Wrote functions/src/index.ts 
+[info] ✔  Wrote functions/.gitignore 
+[info] 
+=== App Hosting Setup
+[debug] [2025-09-08T17:23:49.001Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:23:49.001Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:23:49.001Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-09-08T17:23:49.001Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:23:50.595Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-09-08T17:23:50.595Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-09-08T17:23:50.595Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:23:50.595Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:23:50.595Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firebaseapphosting.googleapis.com:enable [none]
+[debug] [2025-09-08T17:23:50.595Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firebaseapphosting.googleapis.com:enable x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:23:51.125Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firebaseapphosting.googleapis.com:enable 200
+[debug] [2025-09-08T17:23:51.125Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/firebaseapphosting.googleapis.com:enable [omitted]
+[debug] [2025-09-08T17:24:01.168Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:01.168Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:01.168Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:01.168Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:01.168Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:01.168Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:01.168Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:01.168Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:01.168Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:01.168Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:01.168Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:01.168Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:01.169Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/developerconnect.googleapis.com [none]
+[debug] [2025-09-08T17:24:01.169Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/developerconnect.googleapis.com x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:24:01.169Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/cloudbuild.googleapis.com [none]
+[debug] [2025-09-08T17:24:01.169Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/cloudbuild.googleapis.com x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:24:01.170Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/secretmanager.googleapis.com [none]
+[debug] [2025-09-08T17:24:01.170Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/secretmanager.googleapis.com x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:24:01.171Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/run.googleapis.com [none]
+[debug] [2025-09-08T17:24:01.172Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/run.googleapis.com x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:24:01.174Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/artifactregistry.googleapis.com [none]
+[debug] [2025-09-08T17:24:01.174Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/artifactregistry.googleapis.com x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:24:01.176Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/iam.googleapis.com [none]
+[debug] [2025-09-08T17:24:01.176Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/iam.googleapis.com x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:24:02.713Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/cloudbuild.googleapis.com 200
+[debug] [2025-09-08T17:24:02.714Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/cloudbuild.googleapis.com [omitted]
+[debug] [2025-09-08T17:24:02.912Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/secretmanager.googleapis.com 200
+[debug] [2025-09-08T17:24:02.912Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/secretmanager.googleapis.com [omitted]
+[debug] [2025-09-08T17:24:02.961Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/run.googleapis.com 200
+[debug] [2025-09-08T17:24:02.961Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/run.googleapis.com [omitted]
+[debug] [2025-09-08T17:24:02.977Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/developerconnect.googleapis.com 200
+[debug] [2025-09-08T17:24:02.977Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/developerconnect.googleapis.com [omitted]
+[debug] [2025-09-08T17:24:02.977Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:02.977Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:02.977Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/developerconnect.googleapis.com:enable [none]
+[debug] [2025-09-08T17:24:02.977Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/developerconnect.googleapis.com:enable x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:24:02.978Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/iam.googleapis.com 200
+[debug] [2025-09-08T17:24:02.978Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/iam.googleapis.com [omitted]
+[debug] [2025-09-08T17:24:02.993Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/artifactregistry.googleapis.com 200
+[debug] [2025-09-08T17:24:02.993Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/artifactregistry.googleapis.com [omitted]
+[debug] [2025-09-08T17:24:03.564Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/developerconnect.googleapis.com:enable 200
+[debug] [2025-09-08T17:24:03.564Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/flavours-rbloxk/services/developerconnect.googleapis.com:enable [omitted]
+[debug] [2025-09-08T17:24:13.579Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:13.579Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:13.580Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/flavours-rbloxk/serviceAccounts/firebase-app-hosting-compute@flavours-rbloxk.iam.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-09-08T17:24:13.580Z] >>> [apiv2][(partial)header] POST https://iam.googleapis.com/v1/projects/flavours-rbloxk/serviceAccounts/firebase-app-hosting-compute@flavours-rbloxk.iam.gserviceaccount.com:testIamPermissions x-goog-quota-user=projects/flavours-rbloxk
+[debug] [2025-09-08T17:24:13.580Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/flavours-rbloxk/serviceAccounts/firebase-app-hosting-compute@flavours-rbloxk.iam.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-09-08T17:24:15.114Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/flavours-rbloxk/serviceAccounts/firebase-app-hosting-compute@flavours-rbloxk.iam.gserviceaccount.com:testIamPermissions 404
+[debug] [2025-09-08T17:24:15.114Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/flavours-rbloxk/serviceAccounts/firebase-app-hosting-compute@flavours-rbloxk.iam.gserviceaccount.com:testIamPermissions {"error":{"code":404,"message":"Unknown service account","status":"NOT_FOUND"}}
+[debug] [2025-09-08T17:24:15.115Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:15.115Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:15.115Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/flavours-rbloxk/serviceAccounts [none]
+[debug] [2025-09-08T17:24:15.115Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/flavours-rbloxk/serviceAccounts {"accountId":"firebase-app-hosting-compute","serviceAccount":{"displayName":"Firebase App Hosting compute service account","description":"Default service account used to run builds and deploys for Firebase App Hosting"}}
+[debug] [2025-09-08T17:24:16.825Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/flavours-rbloxk/serviceAccounts 200
+[debug] [2025-09-08T17:24:16.826Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/flavours-rbloxk/serviceAccounts [omitted]
+[debug] [2025-09-08T17:24:16.826Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:16.826Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:16.826Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/flavours-rbloxk:getIamPolicy [none]
+[debug] [2025-09-08T17:24:18.205Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/flavours-rbloxk:getIamPolicy 200
+[debug] [2025-09-08T17:24:18.206Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/flavours-rbloxk:getIamPolicy {"version":1,"etag":"BwY+TXO31Ss=","bindings":[{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:625067871928@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-625067871928@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-625067871928@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-625067871928@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-625067871928@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@flavours-rbloxk.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@flavours-rbloxk.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:rb.ceo@rbloxk.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-625067871928@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/securitycenter.admin","members":["user:rb.ceo@rbloxk.com"]},{"role":"roles/securitycenter.adminViewer","members":["user:rb.ceo@rbloxk.com"]},{"role":"roles/securitycenter.settingsAdmin","members":["user:rb.ceo@rbloxk.com"]}]}
+[debug] [2025-09-08T17:24:18.206Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:18.206Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:18.206Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/flavours-rbloxk:setIamPolicy [none]
+[debug] [2025-09-08T17:24:18.206Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/flavours-rbloxk:setIamPolicy {"policy":{"version":1,"etag":"BwY+TXO31Ss=","bindings":[{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:625067871928@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-625067871928@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-625067871928@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-625067871928@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-625067871928@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@flavours-rbloxk.iam.gserviceaccount.com","serviceAccount:firebase-app-hosting-compute@flavours-rbloxk.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@flavours-rbloxk.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:rb.ceo@rbloxk.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-625067871928@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/securitycenter.admin","members":["user:rb.ceo@rbloxk.com"]},{"role":"roles/securitycenter.adminViewer","members":["user:rb.ceo@rbloxk.com"]},{"role":"roles/securitycenter.settingsAdmin","members":["user:rb.ceo@rbloxk.com"]},{"role":"roles/firebaseapphosting.computeRunner","members":["serviceAccount:firebase-app-hosting-compute@flavours-rbloxk.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.readTokenAccessor","members":["serviceAccount:firebase-app-hosting-compute@flavours-rbloxk.iam.gserviceaccount.com"]},{"role":"roles/storage.objectViewer","members":["serviceAccount:firebase-app-hosting-compute@flavours-rbloxk.iam.gserviceaccount.com"]}]},"updateMask":"bindings"}
+[debug] [2025-09-08T17:24:19.152Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/flavours-rbloxk:setIamPolicy 200
+[debug] [2025-09-08T17:24:19.152Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/flavours-rbloxk:setIamPolicy {"version":1,"etag":"BwY+TXUlUSM=","bindings":[{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:625067871928@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-625067871928@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-625067871928@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-625067871928@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.readTokenAccessor","members":["serviceAccount:firebase-app-hosting-compute@flavours-rbloxk.iam.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-625067871928@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@flavours-rbloxk.iam.gserviceaccount.com","serviceAccount:firebase-app-hosting-compute@flavours-rbloxk.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.computeRunner","members":["serviceAccount:firebase-app-hosting-compute@flavours-rbloxk.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@flavours-rbloxk.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:rb.ceo@rbloxk.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-625067871928@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/securitycenter.admin","members":["user:rb.ceo@rbloxk.com"]},{"role":"roles/securitycenter.adminViewer","members":["user:rb.ceo@rbloxk.com"]},{"role":"roles/securitycenter.settingsAdmin","members":["user:rb.ceo@rbloxk.com"]},{"role":"roles/storage.objectViewer","members":["serviceAccount:firebase-app-hosting-compute@flavours-rbloxk.iam.gserviceaccount.com"]}]}
+[info] i  This command links your local project to Firebase App Hosting. You will be able to deploy your web app with `firebase deploy` after setup. 
+[info] i  === Set up your backend 
+[debug] [2025-09-08T17:24:30.614Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:30.614Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:30.614Z] >>> [apiv2][query] GET https://firebaseapphosting.googleapis.com/v1beta/projects/flavours-rbloxk/locations 
+[debug] [2025-09-08T17:24:32.136Z] <<< [apiv2][status] GET https://firebaseapphosting.googleapis.com/v1beta/projects/flavours-rbloxk/locations 200
+[debug] [2025-09-08T17:24:32.136Z] <<< [apiv2][body] GET https://firebaseapphosting.googleapis.com/v1beta/projects/flavours-rbloxk/locations {"locations":[{"name":"projects/flavours-rbloxk/locations/asia-east1","locationId":"asia-east1","displayName":"Taiwan"},{"name":"projects/flavours-rbloxk/locations/europe-west4","locationId":"europe-west4","displayName":"Netherlands"},{"name":"projects/flavours-rbloxk/locations/us-central1","locationId":"us-central1","displayName":"Iowa"}]}
+[info] ✔  Location set to asia-east1.
+ 
+[debug] [2025-09-08T17:24:55.319Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:55.319Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:55.319Z] >>> [apiv2][query] GET https://firebaseapphosting.googleapis.com/v1beta/projects/flavours-rbloxk/locations/asia-east1/backends/flavours-rbloxk [none]
+[debug] [2025-09-08T17:24:55.954Z] <<< [apiv2][status] GET https://firebaseapphosting.googleapis.com/v1beta/projects/flavours-rbloxk/locations/asia-east1/backends/flavours-rbloxk 404
+[debug] [2025-09-08T17:24:55.954Z] <<< [apiv2][body] GET https://firebaseapphosting.googleapis.com/v1beta/projects/flavours-rbloxk/locations/asia-east1/backends/flavours-rbloxk {"error":{"code":404,"message":"Resource 'projects/flavours-rbloxk/locations/asia-east1/backends/flavours-rbloxk' was not found","status":"NOT_FOUND","details":[{"@type":"type.googleapis.com/google.rpc.ResourceInfo","resourceName":"projects/flavours-rbloxk/locations/asia-east1/backends/flavours-rbloxk"}]}}
+[info] ✔  Name set to flavours-rbloxk
+ 
+[debug] [2025-09-08T17:24:55.955Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:55.955Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:55.955Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/flavours-rbloxk/webApps pageSize=100
+[debug] [2025-09-08T17:24:56.395Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/flavours-rbloxk/webApps 200
+[debug] [2025-09-08T17:24:56.396Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/flavours-rbloxk/webApps {}
+[debug] [2025-09-08T17:24:56.396Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:56.396Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:56.396Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/flavours-rbloxk/webApps pageSize=100
+[debug] [2025-09-08T17:24:56.844Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/flavours-rbloxk/webApps 200
+[debug] [2025-09-08T17:24:56.844Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/flavours-rbloxk/webApps {}
+[debug] [2025-09-08T17:24:56.844Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:56.844Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:56.844Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1beta1/projects/flavours-rbloxk/webApps [none]
+[debug] [2025-09-08T17:24:56.844Z] >>> [apiv2][body] POST https://firebase.googleapis.com/v1beta1/projects/flavours-rbloxk/webApps {"displayName":"flavours-rbloxk"}
+[debug] [2025-09-08T17:24:58.569Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1beta1/projects/flavours-rbloxk/webApps 200
+[debug] [2025-09-08T17:24:58.569Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1beta1/projects/flavours-rbloxk/webApps {"name":"operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz"}
+[debug] [2025-09-08T17:24:58.570Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:58.570Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:58.570Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz [none]
+[debug] [2025-09-08T17:24:59.105Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz 200
+[debug] [2025-09-08T17:24:59.105Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz {"name":"operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz"}
+[debug] [2025-09-08T17:24:59.605Z] [Create Web app Poller] Retrying task index 0
+[debug] [2025-09-08T17:24:59.606Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:59.606Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:24:59.606Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz [none]
+[debug] [2025-09-08T17:25:00.176Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz 200
+[debug] [2025-09-08T17:25:00.176Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz {"name":"operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz"}
+[debug] [2025-09-08T17:25:01.177Z] [Create Web app Poller] Retrying task index 0
+[debug] [2025-09-08T17:25:01.177Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:25:01.177Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:25:01.177Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz [none]
+[debug] [2025-09-08T17:25:01.655Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz 200
+[debug] [2025-09-08T17:25:01.655Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz {"name":"operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz"}
+[debug] [2025-09-08T17:25:03.656Z] [Create Web app Poller] Retrying task index 0
+[debug] [2025-09-08T17:25:03.656Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:25:03.656Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:25:03.656Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz [none]
+[debug] [2025-09-08T17:25:04.163Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz 200
+[debug] [2025-09-08T17:25:04.164Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz {"name":"operations/workflows/N2E1MThiZTgtNWIyYi00N2VmLWI2YTMtZmIyZjcwM2ZiNjYz","done":true,"response":{"@type":"type.googleapis.com/google.firebase.service.v1beta1.WebApp","name":"projects/flavours-rbloxk/webApps/1:625067871928:web:7f9bc7869bff830eb92e4d","appId":"1:625067871928:web:7f9bc7869bff830eb92e4d","displayName":"flavours-rbloxk","projectId":"flavours-rbloxk","webId":"MjQwYTlhODAtZDJiMC00YzJiLTg3YzAtMmM3ODhlNmIzNTQy","apiKeyId":"12c9347d-917a-4aa6-aaef-6c71149d34a7","state":"ACTIVE","expireTime":"1970-01-01T00:00:00Z","etag":"1_d06f86cf-1867-43e2-98ae-05a55ab29e73"}}
+[info] ✔  Created a new Firebase web app named "flavours-rbloxk" 
+[debug] [2025-09-08T17:25:04.168Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:25:04.168Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:25:04.168Z] >>> [apiv2][query] POST https://firebaseapphosting.googleapis.com/v1beta/projects/flavours-rbloxk/locations/asia-east1/backends backendId=flavours-rbloxk
+[debug] [2025-09-08T17:25:04.168Z] >>> [apiv2][body] POST https://firebaseapphosting.googleapis.com/v1beta/projects/flavours-rbloxk/locations/asia-east1/backends {"servingLocality":"GLOBAL_ACCESS","labels":{"deployment-tool":"cli-firebase"},"serviceAccount":"firebase-app-hosting-compute@flavours-rbloxk.iam.gserviceaccount.com","appId":"1:625067871928:web:7f9bc7869bff830eb92e4d"}
+[debug] [2025-09-08T17:25:06.556Z] <<< [apiv2][status] POST https://firebaseapphosting.googleapis.com/v1beta/projects/flavours-rbloxk/locations/asia-east1/backends 200
+[debug] [2025-09-08T17:25:06.557Z] <<< [apiv2][body] POST https://firebaseapphosting.googleapis.com/v1beta/projects/flavours-rbloxk/locations/asia-east1/backends {"name":"projects/flavours-rbloxk/locations/asia-east1/operations/operation-1757352304776-63e4d77df1364-c9fa83f9-d15091ab","metadata":{"@type":"type.googleapis.com/google.firebase.apphosting.v1beta.OperationMetadata","createTime":"2025-09-08T17:25:06.526012885Z","target":"projects/flavours-rbloxk/locations/asia-east1/backends/flavours-rbloxk","verb":"create","requestedCancellation":false,"apiVersion":"v1beta"},"done":false}
+[debug] [2025-09-08T17:25:06.557Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:25:06.557Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:25:06.557Z] >>> [apiv2][query] GET https://firebaseapphosting.googleapis.com/v1beta/projects/flavours-rbloxk/locations/asia-east1/operations/operation-1757352304776-63e4d77df1364-c9fa83f9-d15091ab [none]
+[debug] [2025-09-08T17:25:06.706Z] <<< [apiv2][status] GET https://firebaseapphosting.googleapis.com/v1beta/projects/flavours-rbloxk/locations/asia-east1/operations/operation-1757352304776-63e4d77df1364-c9fa83f9-d15091ab 200
+[debug] [2025-09-08T17:25:06.706Z] <<< [apiv2][body] GET https://firebaseapphosting.googleapis.com/v1beta/projects/flavours-rbloxk/locations/asia-east1/operations/operation-1757352304776-63e4d77df1364-c9fa83f9-d15091ab {"name":"projects/flavours-rbloxk/locations/asia-east1/operations/operation-1757352304776-63e4d77df1364-c9fa83f9-d15091ab","metadata":{"@type":"type.googleapis.com/google.firebase.apphosting.v1beta.OperationMetadata","createTime":"2025-09-08T17:25:06.526012885Z","target":"projects/flavours-rbloxk/locations/asia-east1/backends/flavours-rbloxk","verb":"create","requestedCancellation":false,"apiVersion":"v1beta"},"done":false}
+[debug] [2025-09-08T17:25:07.206Z] [create-flavours-rbloxk-asia-east1-flavours-rbloxk] Retrying task index 0
+[debug] [2025-09-08T17:25:07.206Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:25:07.206Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:25:07.207Z] >>> [apiv2][query] GET https://firebaseapphosting.googleapis.com/v1beta/projects/flavours-rbloxk/locations/asia-east1/operations/operation-1757352304776-63e4d77df1364-c9fa83f9-d15091ab [none]
+[debug] [2025-09-08T17:25:07.351Z] <<< [apiv2][status] GET https://firebaseapphosting.googleapis.com/v1beta/projects/flavours-rbloxk/locations/asia-east1/operations/operation-1757352304776-63e4d77df1364-c9fa83f9-d15091ab 200
+[debug] [2025-09-08T17:25:07.351Z] <<< [apiv2][body] GET https://firebaseapphosting.googleapis.com/v1beta/projects/flavours-rbloxk/locations/asia-east1/operations/operation-1757352304776-63e4d77df1364-c9fa83f9-d15091ab {"name":"projects/flavours-rbloxk/locations/asia-east1/operations/operation-1757352304776-63e4d77df1364-c9fa83f9-d15091ab","metadata":{"@type":"type.googleapis.com/google.firebase.apphosting.v1beta.OperationMetadata","createTime":"2025-09-08T17:25:06.526012885Z","endTime":"2025-09-08T17:25:07.197807183Z","target":"projects/flavours-rbloxk/locations/asia-east1/backends/flavours-rbloxk","verb":"create","requestedCancellation":false,"apiVersion":"v1beta"},"done":true,"response":{"@type":"type.googleapis.com/google.firebase.apphosting.v1beta.Backend","name":"projects/flavours-rbloxk/locations/asia-east1/backends/flavours-rbloxk","createTime":"2025-09-08T17:25:06.521415327Z","updateTime":"2025-09-08T17:25:07.071242Z","labels":{"deployment-tool":"cli-firebase"},"uri":"flavours-rbloxk--flavours-rbloxk.asia-east1.hosted.app","uid":"8ec67cc8-3ed5-4585-8bfc-47a71b991cef","etag":"_-A1EOZIKg8VcNCnIns1EdmEaaF4A_gZPR3P66xz6Mw","reconciling":false,"servingLocality":"GLOBAL_ACCESS","serviceAccount":"firebase-app-hosting-compute@flavours-rbloxk.iam.gserviceaccount.com","appId":"1:625067871928:web:7f9bc7869bff830eb92e4d"}}
+[info] i  === Deploy local source setup 
+[info] ✔  Wrote configuration info to firebase.json 
+[info] i  Writing default settings to apphosting.yaml... 
+[info] ✔  Wrote /Users/rishalbabu/Github/Flavours/apphosting.yaml 
+[info] ✔  Firebase initialization complete! 
+[info] 
+=== Hosting Setup
+[debug] [2025-09-08T17:25:25.898Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:25:25.898Z] Checked if tokens are valid: true, expires at: 1757355235264
+[debug] [2025-09-08T17:25:25.898Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/flavours-rbloxk [none]
+[debug] [2025-09-08T17:25:26.273Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/flavours-rbloxk 200
+[debug] [2025-09-08T17:25:26.273Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/flavours-rbloxk {"projectId":"flavours-rbloxk","projectNumber":"625067871928","displayName":"Flavours","name":"projects/flavours-rbloxk","resources":{"hostingSite":"flavours-rbloxk"},"state":"ACTIVE","etag":"1_7cc5ca15-d1a6-48a0-98ae-ab63cae3874f"}
+[info] 
+[info] Your public directory is the folder (relative to your project directory) that
+[info] will contain Hosting assets to be uploaded with firebase deploy. If you
+[info] have a build process for your assets, use your build's output directory.
+[info] 
+[debug] [2025-09-08T17:25:45.990Z] >>> [apiv2][query] GET https://www.gstatic.com/firebasejs/releases.json [none]
+[debug] [2025-09-08T17:25:46.041Z] <<< [apiv2][status] GET https://www.gstatic.com/firebasejs/releases.json 200
+[debug] [2025-09-08T17:25:46.041Z] <<< [apiv2][body] GET https://www.gstatic.com/firebasejs/releases.json {"current":{"version":"12.2.1","browserURL":"https://www.gstatic.com/firebasejs/12.2.1/firebase.js","packageURL":"https://www.gstatic.com/firebasejs/12.2.1/firebase.tgz"},"live":{"version":"12.2","browserURL":"https://www.gstatic.com/firebasejs/live/12.2/firebase.js","packageURL":"https://www.gstatic.com/firebasejs/live/12.2/firebase.tgz"},"components":{"ai":"https://www.gstatic.com/firebasejs/12.2.1/firebase-ai.js","analytics":"https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js","app":"https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js","app-check":"https://www.gstatic.com/firebasejs/12.2.1/firebase-app-check.js","auth":"https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js","auth/cordova":"https://www.gstatic.com/firebasejs/12.2.1/firebase-auth/cordova.js","auth/web-extension":"https://www.gstatic.com/firebasejs/12.2.1/firebase-auth/web-extension.js","functions":"https://www.gstatic.com/firebasejs/12.2.1/firebase-functions.js","firestore":"https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js","firestore/lite":"https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore/lite.js","installations":"https://www.gstatic.com/firebasejs/12.2.1/firebase-installations.js","storage":"https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js","performance":"https://www.gstatic.com/firebasejs/12.2.1/firebase-performance.js","remote-config":"https://www.gstatic.com/firebasejs/12.2.1/firebase-remote-config.js","messaging":"https://www.gstatic.com/firebasejs/12.2.1/firebase-messaging.js","messaging/sw":"https://www.gstatic.com/firebasejs/12.2.1/firebase-messaging/sw.js","database":"https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js","data-connect":"https://www.gstatic.com/firebasejs/12.2.1/firebase-data-connect.js","firestore.memory":"https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.memory.js"}}
+[info] ✔  Wrote public/index.html 
+[info] 
+[info] i  Detected a .git folder at /Users/rishalbabu/Github/Flavours 
+[info] i  Authorizing with GitHub to upload your service account to a GitHub repository's secrets store. 
+[info] 
+[info] Visit this URL on this device to log in:
+[info] https://github.com/login/oauth/authorize?client_id=89cf50f02ac6aaed3484&state=39662997&redirect_uri=http%3A%2F%2Flocalhost%3A9005&scope=read%3Auser%20repo%20public_repo
+[info] 
+[info] Waiting for authentication...
+[debug] [2025-09-08T17:25:52.395Z] >>> [apiv2][query] POST https://github.com/login/oauth/access_token [none]
+[debug] [2025-09-08T17:25:52.395Z] >>> [apiv2][body] POST https://github.com/login/oauth/access_token [stream]
+[debug] [2025-09-08T17:25:52.890Z] <<< [apiv2][status] POST https://github.com/login/oauth/access_token 200
+[debug] [2025-09-08T17:25:52.890Z] <<< [apiv2][body] POST https://github.com/login/oauth/access_token {"access_token":"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","token_type":"bearer","scope":"read:user,repo"}
+[debug] [2025-09-08T17:25:52.894Z] >>> [apiv2][query] GET https://api.github.com/user [none]
+[debug] [2025-09-08T17:25:53.371Z] <<< [apiv2][status] GET https://api.github.com/user 200
+[debug] [2025-09-08T17:25:53.371Z] <<< [apiv2][body] GET https://api.github.com/user {"login":"rb-rbloxk","id":210036228,"node_id":"U_kgDODITmBA","avatar_url":"https://avatars.githubusercontent.com/u/210036228?v=4","gravatar_id":"","url":"https://api.github.com/users/rb-rbloxk","html_url":"https://github.com/rb-rbloxk","followers_url":"https://api.github.com/users/rb-rbloxk/followers","following_url":"https://api.github.com/users/rb-rbloxk/following{/other_user}","gists_url":"https://api.github.com/users/rb-rbloxk/gists{/gist_id}","starred_url":"https://api.github.com/users/rb-rbloxk/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/rb-rbloxk/subscriptions","organizations_url":"https://api.github.com/users/rb-rbloxk/orgs","repos_url":"https://api.github.com/users/rb-rbloxk/repos","events_url":"https://api.github.com/users/rb-rbloxk/events{/privacy}","received_events_url":"https://api.github.com/users/rb-rbloxk/received_events","type":"User","user_view_type":"private","site_admin":false,"name":"Rishal Babu","company":"rBloxk Inc.","blog":"www.rbloxk.com","location":"Earth","email":null,"hireable":true,"bio":"rBloxk\r\nBuilding the future Block, Redefined, Reimagined.\r\n\r\nrBloxk Inc. is a US-based technology company creating next-gen platforms.\r\n","twitter_username":null,"notification_email":null,"public_repos":1,"public_gists":0,"followers":0,"following":1,"created_at":"2025-05-02T12:29:09Z","updated_at":"2025-09-08T16:44:44Z","private_gists":0,"total_private_repos":0,"owned_private_repos":0,"disk_usage":121,"collaborators":0,"two_factor_authentication":true,"plan":{"name":"free","space":976562499,"collaborators":0,"private_repos":10000}}
+[info] 
+[info] ✔  Success! Logged into GitHub as rb-rbloxk 
+[info] 
+[debug] [2025-09-08T17:26:55.358Z] >>> [apiv2][query] GET https://api.github.com/repos/rbloxk/flavours/actions/secrets/public-key type=owner
+[debug] [2025-09-08T17:26:55.839Z] <<< [apiv2][status] GET https://api.github.com/repos/rbloxk/flavours/actions/secrets/public-key 404
+[debug] [2025-09-08T17:26:55.840Z] <<< [apiv2][body] GET https://api.github.com/repos/rbloxk/flavours/actions/secrets/public-key {"message":"Not Found","documentation_url":"https://docs.github.com/rest/actions/secrets#get-a-repository-public-key","status":"404"}
+[info] 
+[info] 
+[error] ⚠  The provided authorization cannot be used with this repository. If this repository is in an organization, did you remember to grant access? 
+[info] 
+[info] i  Action required: Visit this URL to ensure access has been granted to the appropriate organization(s) for the Firebase CLI GitHub OAuth App: 
+[info] https://github.com/settings/connections/applications/89cf50f02ac6aaed3484
+[info] 
+[debug] [2025-09-08T17:27:16.601Z] >>> [apiv2][query] GET https://api.github.com/repos/rbloxk/Flavours/actions/secrets/public-key type=owner
+[debug] [2025-09-08T17:27:17.045Z] <<< [apiv2][status] GET https://api.github.com/repos/rbloxk/Flavours/actions/secrets/public-key 404
+[debug] [2025-09-08T17:27:17.045Z] <<< [apiv2][body] GET https://api.github.com/repos/rbloxk/Flavours/actions/secrets/public-key {"message":"Not Found","documentation_url":"https://docs.github.com/rest/actions/secrets#get-a-repository-public-key","status":"404"}
+[info] 
+[info] 
+[error] ⚠  The provided authorization cannot be used with this repository. If this repository is in an organization, did you remember to grant access? 
+[info] 
+[info] i  Action required: Visit this URL to ensure access has been granted to the appropriate organization(s) for the Firebase CLI GitHub OAuth App: 
+[info] https://github.com/settings/connections/applications/89cf50f02ac6aaed3484
+[info] 
+[debug] [2025-09-08T17:27:21.973Z] >>> [apiv2][query] GET https://api.github.com/repos/rbloxk/Flavours/actions/secrets/public-key type=owner
+[debug] [2025-09-08T17:27:22.373Z] <<< [apiv2][status] GET https://api.github.com/repos/rbloxk/Flavours/actions/secrets/public-key 404
+[debug] [2025-09-08T17:27:22.373Z] <<< [apiv2][body] GET https://api.github.com/repos/rbloxk/Flavours/actions/secrets/public-key {"message":"Not Found","documentation_url":"https://docs.github.com/rest/actions/secrets#get-a-repository-public-key","status":"404"}
+[info] 
+[info] 
+[error] ⚠  The provided authorization cannot be used with this repository. If this repository is in an organization, did you remember to grant access? 
+[info] 
+[info] i  Action required: Visit this URL to ensure access has been granted to the appropriate organization(s) for the Firebase CLI GitHub OAuth App: 
+[info] https://github.com/settings/connections/applications/89cf50f02ac6aaed3484
+[info] 
+[debug] [2025-09-08T17:27:22.561Z] >>> [apiv2][query] GET https://api.github.com/repos/rbloxk/Flavours/actions/secrets/public-key type=owner
+[debug] [2025-09-08T17:27:23.394Z] <<< [apiv2][status] GET https://api.github.com/repos/rbloxk/Flavours/actions/secrets/public-key 404
+[debug] [2025-09-08T17:27:23.394Z] <<< [apiv2][body] GET https://api.github.com/repos/rbloxk/Flavours/actions/secrets/public-key {"message":"Not Found","documentation_url":"https://docs.github.com/rest/actions/secrets#get-a-repository-public-key","status":"404"}
+[info] 
+[info] 
+[error] ⚠  The provided authorization cannot be used with this repository. If this repository is in an organization, did you remember to grant access? 
+[info] 
+[info] i  Action required: Visit this URL to ensure access has been granted to the appropriate organization(s) for the Firebase CLI GitHub OAuth App: 
+[info] https://github.com/settings/connections/applications/89cf50f02ac6aaed3484
+[info] 
+[debug] [2025-09-08T17:27:24.299Z] >>> [apiv2][query] GET https://api.github.com/repos/rbloxk/Flavours/actions/secrets/public-key type=owner
+[debug] [2025-09-08T17:27:24.670Z] <<< [apiv2][status] GET https://api.github.com/repos/rbloxk/Flavours/actions/secrets/public-key 404
+[debug] [2025-09-08T17:27:24.670Z] <<< [apiv2][body] GET https://api.github.com/repos/rbloxk/Flavours/actions/secrets/public-key {"message":"Not Found","documentation_url":"https://docs.github.com/rest/actions/secrets#get-a-repository-public-key","status":"404"}
+[info] 
+[info] 
+[error] ⚠  The provided authorization cannot be used with this repository. If this repository is in an organization, did you remember to grant access? 
+[info] 
+[info] i  Action required: Visit this URL to ensure access has been granted to the appropriate organization(s) for the Firebase CLI GitHub OAuth App: 
+[info] https://github.com/settings/connections/applications/89cf50f02ac6aaed3484
+[info] 

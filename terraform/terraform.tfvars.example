@@ -1,0 +1,52 @@
+# GCP Configuration
+project_id = "flavours-production"
+region     = "us-central1"
+zone       = "us-central1-a"
+environment = "production"
+domain     = "flavours.app"
+
+# Database Configuration
+db_password = "your_secure_database_password_here"
+
+# JWT Configuration
+jwt_secret = "your_super_secure_jwt_secret_here"
+
+# Payment Processing
+stripe_secret_key = "sk_live_your_stripe_secret_key_here"
+
+# Supabase Configuration
+supabase_url = "https://your-project.supabase.co"
+supabase_service_role_key = "your_supabase_service_role_key_here"
+
+# Firebase Configuration
+firebase_project_id = "flavours-production"
+firebase_private_key = "-----BEGIN PRIVATE KEY-----\nyour_private_key_here\n-----END PRIVATE KEY-----\n"
+firebase_client_email = "firebase-adminsdk-xxxxx@flavours-production.iam.gserviceaccount.com"
+firebase_storage_bucket = "flavours-production.appspot.com"
+
+# Redis Configuration
+redis_url = "redis://your-redis-cluster.cache.amazonaws.com:6379"
+
+# Monitoring Services
+sentry_dsn = "https://your_sentry_dsn_here@sentry.io/project_id"
+new_relic_license_key = "your_newrelic_license_key_here"
+datadog_api_key = "your_datadog_api_key_here"
+
+# Email Service
+sendgrid_api_key = "your_sendgrid_api_key_here"
+
+# Content Moderation
+content_moderation_api_key = "your_moderation_api_key_here"
+age_verification_api_key = "your_age_verification_api_key_here"
+
+# Legal Compliance
+dmca_email = "dmca@flavours.app"
+alert_email = "alerts@flavours.app"
+alert_slack_webhook = "https://hooks.slack.com/services/your/slack/webhook"
+alert_discord_webhook = "https://discord.com/api/webhooks/your/discord/webhook"
+
+# Backup and Recovery
+backup_encryption_key = "your_backup_encryption_key_here"
+
+# Business Intelligence
+bi_database_url = "postgresql://bi:bi@your-bi-db.amazonaws.com:5432/flavours_bi"

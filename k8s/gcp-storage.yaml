@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gcs-fuse-pv
+  namespace: flavours
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: gcs-fuse
+  csi:
+    driver: gcs.csi.ofek.dev
+    volumeHandle: flavours-production-media
+    volumeAttributes:
+      bucketName: flavours-production-media
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gcs-fuse-pvc
+  namespace: flavours
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: gcs-fuse
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gcs-fuse
+provisioner: gcs.csi.ofek.dev
+parameters:
+  bucketName: flavours-production-media
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gcs-fuse-service-account
+  namespace: flavours
+  annotations:
+    iam.gke.io/gcp-service-account: flavours-gcs-fuse@flavours-production.iam.gserviceaccount.com
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gcs-fuse-credentials
+  namespace: flavours
+type: Opaque
+data:
+  key.json: <base64-encoded-service-account-key>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: media-processor
+  namespace: flavours
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: media-processor
+  template:
+    metadata:
+      labels:
+        app: media-processor
+    spec:
+      serviceAccountName: gcs-fuse-service-account
+      containers:
+      - name: media-processor
+        image: gcr.io/flavours-production/media-processor:latest
+        env:
+        - name: GOOGLE_CLOUD_PROJECT_ID
+          value: "flavours-production"
+        - name: GOOGLE_CLOUD_STORAGE_BUCKET
+          value: "flavours-production-media"
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: "/secrets/gcs/key.json"
+        volumeMounts:
+        - name: gcs-fuse-volume
+          mountPath: /media
+        - name: gcs-credentials
+          mountPath: /secrets/gcs
+          readOnly: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: gcs-fuse-volume
+        persistentVolumeClaim:
+          claimName: gcs-fuse-pvc
+      - name: gcs-credentials
+        secret:
+          secretName: gcs-fuse-credentials
