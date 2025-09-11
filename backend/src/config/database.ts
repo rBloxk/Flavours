@@ -20,8 +20,8 @@ class DatabaseManager {
 
   constructor() {
     this.config = {
-      url: process.env.SUPABASE_URL!,
-      serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      url: process.env.SUPABASE_URL || 'https://wcldguxfvzpmmgtnvarr.supabase.co',
+      serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndjbGRndXhmdnpwbW1ndG52YXJyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzM0OTM2OSwiZXhwIjoyMDcyOTI1MzY5fQ.A1m1LsYo5TCwtT7wihhBoiU6TSCbYDcpbyFT45zOANg',
       maxConnections: parseInt(process.env.DB_MAX_CONNECTIONS || '20'),
       connectionTimeout: parseInt(process.env.DB_CONNECTION_TIMEOUT || '30000'),
       queryTimeout: parseInt(process.env.DB_QUERY_TIMEOUT || '30000'),

@@ -33,7 +33,7 @@ const signInSchema = z.object({
 
 export function AuthForms() {
   const router = useRouter()
-  const { refreshAuth } = useAuth()
+  const { login, register } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
 
   const signUpForm = useForm<z.infer<typeof signUpSchema>>({
@@ -62,32 +62,24 @@ export function AuthForms() {
     setIsLoading(true)
     
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Store demo user in localStorage
-      const demoUser = {
-        id: 'demo-user-' + Date.now(),
+      const result = await register({
         email: values.email,
+        password: values.password,
         username: values.username,
         display_name: values.displayName,
-        is_creator: values.isCreator,
-        avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(values.displayName)}&background=random`,
-        created_at: new Date().toISOString()
+        is_creator: values.isCreator
+      })
+      
+      if (result.success) {
+        toast.success('Account created successfully! Welcome to Flavours!')
+        
+        // Redirect to feed
+        setTimeout(() => {
+          window.location.href = '/feed'
+        }, 1000)
+      } else {
+        toast.error(result.error || 'Failed to create account')
       }
-      
-      localStorage.setItem('demoUser', JSON.stringify(demoUser))
-      localStorage.setItem('isAuthenticated', 'true')
-      
-      // Refresh auth state immediately
-      refreshAuth()
-      
-      toast.success('Demo account created successfully! Welcome to Flavours!')
-      
-      // Redirect to feed
-      setTimeout(() => {
-        window.location.href = '/feed'
-      }, 1000)
       
     } catch (error: any) {
       console.error('Sign up error:', error)
@@ -101,38 +93,21 @@ export function AuthForms() {
     setIsLoading(true)
     
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const result = await login(values.email, values.password)
       
-      // Check if demo user exists, if not create one
-      let demoUser = localStorage.getItem('demoUser')
-      if (!demoUser) {
-        // Create a default demo user
-        demoUser = JSON.stringify({
-          id: 'demo-user-default',
-          email: values.email,
-          username: 'demo_user',
-          display_name: 'Demo User',
-          is_creator: false,
-          avatar_url: 'https://ui-avatars.com/api/?name=Demo+User&background=random',
-          created_at: new Date().toISOString()
-        })
-        localStorage.setItem('demoUser', demoUser)
+      if (result.success) {
+        toast.success('Sign in successful! Welcome back!')
+        
+        // Redirect to feed
+        setTimeout(() => {
+          window.location.href = '/feed'
+        }, 1000)
+      } else {
+        toast.error(result.error || 'Failed to sign in')
       }
       
-      localStorage.setItem('isAuthenticated', 'true')
-      
-      // Refresh auth state immediately
-      refreshAuth()
-      
-      toast.success('Demo sign in successful! Welcome back!')
-      
-      // Redirect to feed
-      setTimeout(() => {
-        window.location.href = '/feed'
-      }, 1000)
-      
     } catch (error: any) {
+      console.error('Sign in error:', error)
       toast.error('Failed to sign in')
     } finally {
       setIsLoading(false)

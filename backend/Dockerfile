@@ -6,6 +6,11 @@ RUN apk add --no-cache \
     ffmpeg \
     curl \
     dumb-init \
+    python3 \
+    make \
+    g++ \
+    vips-dev \
+    libc6-compat \
     && rm -rf /var/cache/apk/*
 
 # Create non-root user
@@ -20,7 +25,7 @@ COPY package*.json ./
 
 # Development stage
 FROM base AS development
-RUN npm ci
+RUN npm install
 COPY . .
 EXPOSE 3001
 USER nodejs
@@ -28,7 +33,8 @@ CMD ["dumb-init", "npm", "run", "dev"]
 
 # Build stage
 FROM base AS build
-RUN npm ci --only=production
+COPY package*.json ./
+RUN npm install --omit=dev
 COPY . .
 RUN npm run build
 RUN npm prune --production

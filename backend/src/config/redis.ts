@@ -36,6 +36,13 @@ class RedisManager {
 
   private async initializeConnection() {
     try {
+      // Skip Redis initialization if not available
+      if (this.config.url === 'redis://localhost:6379') {
+        logger.warn('Redis not available, running in cache-disabled mode')
+        this.isConnected = false
+        return
+      }
+
       this.client = createClient({
         url: this.config.url,
         password: this.config.password,

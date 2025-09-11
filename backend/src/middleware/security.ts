@@ -52,7 +52,7 @@ export const apiRateLimit = createRateLimit(
 export const speedLimiter = slowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
   delayAfter: 50, // Allow 50 requests per 15 minutes, then...
-  delayMs: 500 // Add 500ms delay per request above 50
+  delayMs: () => 500 // Add 500ms delay per request above 50
 })
 
 // Security headers middleware
@@ -98,11 +98,11 @@ export const ipFilter = (req: Request, res: Response, next: NextFunction) => {
   const clientIP = req.ip || req.connection.remoteAddress
   
   // Block known malicious IPs (in production, use a service like CloudFlare)
-  const blockedIPs = [
+  const blockedIPs: string[] = [
     // Add known malicious IPs here
   ]
   
-  if (blockedIPs.includes(clientIP)) {
+  if (clientIP && blockedIPs.includes(clientIP)) {
     logger.warn('Blocked IP attempt', { ip: clientIP, url: req.url })
     return res.status(403).json({ error: 'Access denied' })
   }
