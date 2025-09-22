@@ -113,7 +113,7 @@ export const ipFilter = (req: Request, res: Response, next: NextFunction) => {
 // Request size limiter
 export const requestSizeLimiter = (req: Request, res: Response, next: NextFunction) => {
   const contentLength = parseInt(req.get('content-length') || '0')
-  const maxSize = 10 * 1024 * 1024 // 10MB
+  const maxSize = 3650722201 // 3.4GB
   
   if (contentLength > maxSize) {
     logger.warn('Request too large', { 

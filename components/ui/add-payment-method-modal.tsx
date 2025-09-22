@@ -18,13 +18,17 @@ import {
   AlertTriangle,
   Loader2,
   Eye,
-  EyeOff
+  EyeOff,
+  Building2
 } from 'lucide-react'
 
 interface AddPaymentMethodModalProps {
   isOpen: boolean
   onClose: () => void
   onSuccess: () => void
+  title?: string
+  description?: string
+  type?: 'card' | 'bank'
 }
 
 interface PaymentMethodForm {
@@ -40,6 +44,34 @@ interface PaymentMethodForm {
     state: string
     postalCode: string
     country: string
+  }
+  // Bank Account Fields
+  bankAccount: {
+    accountNumber: string
+    ifsc: string
+    routingNumber: string
+    bankName: string
+    bankAddress: {
+      line1: string
+      line2: string
+      city: string
+      state: string
+      postalCode: string
+      country: string
+    }
+  }
+  // Recipient Information
+  recipientInfo: {
+    fullName: string
+    email: string
+    address: {
+      line1: string
+      line2: string
+      city: string
+      state: string
+      postalCode: string
+      country: string
+    }
   }
 }
 
@@ -121,7 +153,7 @@ const COUNTRIES = [
   { value: 'VN', label: 'Vietnam' }
 ]
 
-export function AddPaymentMethodModal({ isOpen, onClose, onSuccess }: AddPaymentMethodModalProps) {
+export function AddPaymentMethodModal({ isOpen, onClose, onSuccess, title, description, type = 'card' }: AddPaymentMethodModalProps) {
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [showCvv, setShowCvv] = useState(false)
@@ -138,6 +170,32 @@ export function AddPaymentMethodModal({ isOpen, onClose, onSuccess }: AddPayment
       state: '',
       postalCode: '',
       country: 'US'
+    },
+    bankAccount: {
+      accountNumber: '',
+      ifsc: '',
+      routingNumber: '',
+      bankName: '',
+      bankAddress: {
+        line1: '',
+        line2: '',
+        city: '',
+        state: '',
+        postalCode: '',
+        country: 'IN'
+      }
+    },
+    recipientInfo: {
+      fullName: '',
+      email: '',
+      address: {
+        line1: '',
+        line2: '',
+        city: '',
+        state: '',
+        postalCode: '',
+        country: 'IN'
+      }
     }
   })
 
@@ -251,6 +309,52 @@ export function AddPaymentMethodModal({ isOpen, onClose, onSuccess }: AddPayment
           [addressField]: value
         }
       }))
+    } else if (field.startsWith('bankAccount.')) {
+      const bankField = field.split('.')[1]
+      if (bankField.startsWith('bankAddress.')) {
+        const addressField = bankField.split('.')[1]
+        setFormData(prev => ({
+          ...prev,
+          bankAccount: {
+            ...prev.bankAccount,
+            bankAddress: {
+              ...prev.bankAccount.bankAddress,
+              [addressField]: value
+            }
+          }
+        }))
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          bankAccount: {
+            ...prev.bankAccount,
+            [bankField]: value
+          }
+        }))
+      }
+    } else if (field.startsWith('recipientInfo.')) {
+      const recipientField = field.split('.')[1]
+      if (recipientField.startsWith('address.')) {
+        const addressField = recipientField.split('.')[1]
+        setFormData(prev => ({
+          ...prev,
+          recipientInfo: {
+            ...prev.recipientInfo,
+            address: {
+              ...prev.recipientInfo.address,
+              [addressField]: value
+            }
+          }
+        }))
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          recipientInfo: {
+            ...prev.recipientInfo,
+            [recipientField]: value
+          }
+        }))
+      }
     } else {
       setFormData(prev => ({
         ...prev,
@@ -266,11 +370,23 @@ export function AddPaymentMethodModal({ isOpen, onClose, onSuccess }: AddPayment
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-full">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <CreditCard className="h-5 w-5" />
-            Add Payment Method
+            {type === 'bank' ? (
+              <>
+                <Building2 className="h-5 w-5" />
+                {title || 'Add Bank Account'}
+              </>
+            ) : (
+              <>
+                <CreditCard className="h-5 w-5" />
+                {title || 'Add Payment Method'}
+              </>
+            )}
           </DialogTitle>
           <DialogDescription>
-            Securely add a credit card to your account. All payment information is encrypted and secure.
+            {description || (type === 'bank' 
+              ? 'Securely add a bank account to receive payments and earnings. All information is encrypted and secure.'
+              : 'Securely add a credit card to your account. All payment information is encrypted and secure.'
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -291,9 +407,223 @@ export function AddPaymentMethodModal({ isOpen, onClose, onSuccess }: AddPayment
             </CardContent>
           </Card>
 
+          {/* Bank Account Form */}
+          {type === 'bank' && (
+            <>
+              {/* Recipient Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Recipient Information</h3>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="recipientFullName">Full Name</Label>
+                  <Input
+                    id="recipientFullName"
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={formData.recipientInfo.fullName}
+                    onChange={(e) => handleInputChange('recipientInfo.fullName', e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="recipientEmail">Email Address</Label>
+                  <Input
+                    id="recipientEmail"
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={formData.recipientInfo.email}
+                    onChange={(e) => handleInputChange('recipientInfo.email', e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="recipientStreet">Recipient's Street</Label>
+                  <Input
+                    id="recipientStreet"
+                    type="text"
+                    placeholder="Enter street address"
+                    value={formData.recipientInfo.address.line1}
+                    onChange={(e) => handleInputChange('recipientInfo.address.line1', e.target.value)}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="recipientCity">Recipient's City</Label>
+                    <Input
+                      id="recipientCity"
+                      type="text"
+                      placeholder="Enter city"
+                      value={formData.recipientInfo.address.city}
+                      onChange={(e) => handleInputChange('recipientInfo.address.city', e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="recipientState">Recipient's State</Label>
+                    <Input
+                      id="recipientState"
+                      type="text"
+                      placeholder="Enter state"
+                      value={formData.recipientInfo.address.state}
+                      onChange={(e) => handleInputChange('recipientInfo.address.state', e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="recipientPostalCode">Recipient's Postal Code</Label>
+                    <Input
+                      id="recipientPostalCode"
+                      type="text"
+                      placeholder="Enter postal code"
+                      value={formData.recipientInfo.address.postalCode}
+                      onChange={(e) => handleInputChange('recipientInfo.address.postalCode', e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="recipientCountry">Recipient's Country</Label>
+                    <Select value={formData.recipientInfo.address.country} onValueChange={(value) => handleInputChange('recipientInfo.address.country', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {COUNTRIES.map(country => (
+                          <SelectItem key={country.value} value={country.value}>
+                            {country.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Bank Account Details */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Bank Account Details</h3>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="accountNumber">Account Number</Label>
+                  <Input
+                    id="accountNumber"
+                    type="text"
+                    placeholder="Enter account number"
+                    value={formData.bankAccount.accountNumber}
+                    onChange={(e) => handleInputChange('bankAccount.accountNumber', e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="ifsc">IFSC Code</Label>
+                  <Input
+                    id="ifsc"
+                    type="text"
+                    placeholder="Enter IFSC code"
+                    value={formData.bankAccount.ifsc}
+                    onChange={(e) => handleInputChange('bankAccount.ifsc', e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="routingNumber">Routing Number</Label>
+                  <Input
+                    id="routingNumber"
+                    type="text"
+                    placeholder="Enter routing number"
+                    value={formData.bankAccount.routingNumber}
+                    onChange={(e) => handleInputChange('bankAccount.routingNumber', e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="bankName">Bank Name</Label>
+                  <Input
+                    id="bankName"
+                    type="text"
+                    placeholder="Enter bank name"
+                    value={formData.bankAccount.bankName}
+                    onChange={(e) => handleInputChange('bankAccount.bankName', e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="bankStreet">Bank Street</Label>
+                  <Input
+                    id="bankStreet"
+                    type="text"
+                    placeholder="Enter bank street address"
+                    value={formData.bankAccount.bankAddress.line1}
+                    onChange={(e) => handleInputChange('bankAccount.bankAddress.line1', e.target.value)}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="bankCity">Bank City</Label>
+                    <Input
+                      id="bankCity"
+                      type="text"
+                      placeholder="Enter bank city"
+                      value={formData.bankAccount.bankAddress.city}
+                      onChange={(e) => handleInputChange('bankAccount.bankAddress.city', e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="bankState">Bank State</Label>
+                    <Input
+                      id="bankState"
+                      type="text"
+                      placeholder="Enter bank state"
+                      value={formData.bankAccount.bankAddress.state}
+                      onChange={(e) => handleInputChange('bankAccount.bankAddress.state', e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="bankPostalCode">Bank Postal Code</Label>
+                    <Input
+                      id="bankPostalCode"
+                      type="text"
+                      placeholder="Enter bank postal code"
+                      value={formData.bankAccount.bankAddress.postalCode}
+                      onChange={(e) => handleInputChange('bankAccount.bankAddress.postalCode', e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="bankCountry">Bank Country</Label>
+                    <Select value={formData.bankAccount.bankAddress.country} onValueChange={(value) => handleInputChange('bankAccount.bankAddress.country', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {COUNTRIES.map(country => (
+                          <SelectItem key={country.value} value={country.value}>
+                            {country.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+            </>
+          )}
+
           {/* Card Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Card Information</h3>
+          {type === 'card' && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Card Information</h3>
             
             <div className="space-y-2">
               <Label htmlFor="cardNumber">Card Number</Label>
@@ -383,13 +713,15 @@ export function AddPaymentMethodModal({ isOpen, onClose, onSuccess }: AddPayment
                 onChange={(e) => handleInputChange('cardholderName', e.target.value)}
               />
             </div>
-          </div>
+            </div>
+          )}
 
           <Separator />
 
           {/* Billing Address */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Billing Address</h3>
+          {type === 'card' && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Billing Address</h3>
             
             <div className="space-y-2">
               <Label htmlFor="line1">Address Line 1</Label>
@@ -465,7 +797,8 @@ export function AddPaymentMethodModal({ isOpen, onClose, onSuccess }: AddPayment
                 </Select>
               </div>
             </div>
-          </div>
+            </div>
+          )}
 
           <Separator />
 
@@ -478,12 +811,12 @@ export function AddPaymentMethodModal({ isOpen, onClose, onSuccess }: AddPayment
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Adding Payment Method...
+                  {type === 'bank' ? 'Adding Bank Account...' : 'Adding Payment Method...'}
                 </>
               ) : (
                 <>
                   <Lock className="h-4 w-4 mr-2" />
-                  Add Payment Method
+                  {type === 'bank' ? 'Add Bank Account' : 'Add Payment Method'}
                 </>
               )}
             </Button>

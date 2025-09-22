@@ -212,6 +212,49 @@ class RedisManager {
     }
   }
 
+  public async setex<T>(key: string, ttl: number, value: T): Promise<boolean> {
+    return this.set(key, value, ttl)
+  }
+
+  public async lpush(key: string, ...values: string[]): Promise<number> {
+    if (!this.isConnected || !this.client) {
+      return 0
+    }
+
+    try {
+      return await this.client.lPush(key, values)
+    } catch (error) {
+      logger.error('Redis lpush error:', error)
+      return 0
+    }
+  }
+
+  public async rpop(key: string): Promise<string | null> {
+    if (!this.isConnected || !this.client) {
+      return null
+    }
+
+    try {
+      return await this.client.rPop(key)
+    } catch (error) {
+      logger.error('Redis rpop error:', error)
+      return null
+    }
+  }
+
+  public async llen(key: string): Promise<number> {
+    if (!this.isConnected || !this.client) {
+      return 0
+    }
+
+    try {
+      return await this.client.lLen(key)
+    } catch (error) {
+      logger.error('Redis llen error:', error)
+      return 0
+    }
+  }
+
   public async healthCheck(): Promise<boolean> {
     if (!this.isConnected || !this.client) {
       return false

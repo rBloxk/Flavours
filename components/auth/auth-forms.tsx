@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Crown, Loader2 } from 'lucide-react'
 import { useAuth } from '@/components/providers/auth-provider'
+import Link from 'next/link'
 
 const signUpSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -29,12 +30,24 @@ const signUpSchema = z.object({
 const signInSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(1, 'Password is required'),
+  rememberMe: z.boolean().default(false),
 })
 
 export function AuthForms() {
   const router = useRouter()
-  const { login, register } = useAuth()
+  const { login, register, refreshAuth } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
+
+  // Check for remembered email on component mount
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem('rememberedEmail')
+    const rememberMe = localStorage.getItem('rememberMe')
+    
+    if (rememberedEmail && rememberMe === 'true') {
+      signInForm.setValue('email', rememberedEmail)
+      signInForm.setValue('rememberMe', true)
+    }
+  }, [])
 
   const signUpForm = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
@@ -54,6 +67,7 @@ export function AuthForms() {
     defaultValues: {
       email: '',
       password: '',
+      rememberMe: false,
     },
   })
 
@@ -71,11 +85,14 @@ export function AuthForms() {
       })
       
       if (result.success) {
-        toast.success('Account created successfully! Welcome to Flavours!')
+        // Store email for verification page
+        localStorage.setItem('pendingVerificationEmail', values.email)
         
-        // Redirect to feed
+        toast.success('Account created successfully! Please check your email to verify your account.')
+        
+        // Redirect to verification page
         setTimeout(() => {
-          window.location.href = '/feed'
+          router.push('/auth/verify-email')
         }, 1000)
       } else {
         toast.error(result.error || 'Failed to create account')
@@ -96,11 +113,20 @@ export function AuthForms() {
       const result = await login(values.email, values.password)
       
       if (result.success) {
+        // Handle "Remember Me" functionality
+        if (values.rememberMe) {
+          localStorage.setItem('rememberMe', 'true')
+          localStorage.setItem('rememberedEmail', values.email)
+        } else {
+          localStorage.removeItem('rememberMe')
+          localStorage.removeItem('rememberedEmail')
+        }
+        
         toast.success('Sign in successful! Welcome back!')
         
         // Redirect to feed
         setTimeout(() => {
-          window.location.href = '/feed'
+          router.push('/feed')
         }, 1000)
       } else {
         toast.error(result.error || 'Failed to sign in')
@@ -133,9 +159,9 @@ export function AuthForms() {
         </CardHeader>
         <CardContent>
           {/* Demo Mode Notice */}
-          <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
-            <p className="text-sm text-blue-800 dark:text-blue-200">
-              <strong>Demo Mode:</strong> Use any email/password to sign in or create an account. No real authentication required!
+          <div className="mb-4 p-3 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
+            <p className="text-sm text-green-800 dark:text-green-200">
+              <strong>✅ Demo Mode Active:</strong> Use any email/password to sign in or create an account. Authentication is working and will redirect to the feed page!
             </p>
             <Button 
               variant="outline" 
@@ -194,6 +220,27 @@ export function AuthForms() {
                   {signInForm.formState.errors.password && (
                     <p className="text-sm text-destructive">{signInForm.formState.errors.password.message}</p>
                   )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="rememberMe"
+                      checked={signInForm.watch('rememberMe')}
+                      onCheckedChange={(checked) => signInForm.setValue('rememberMe', checked === true)}
+                    />
+                    <Label
+                      htmlFor="rememberMe"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Remember me
+                    </Label>
+                  </div>
+                  <Link 
+                    href="/auth/forgot-password" 
+                    className="text-sm text-muted-foreground hover:text-primary"
+                  >
+                    Forgot password?
+                  </Link>
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

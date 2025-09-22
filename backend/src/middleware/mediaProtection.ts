@@ -237,7 +237,7 @@ const defaultConfig: MediaProtectionConfig = {
   enableAccessLogging: true,
   maxConcurrentStreams: 3,
   tokenExpirationMinutes: 60,
-  allowedDomains: ['localhost', 'flavours.app'],
+  allowedDomains: ['localhost', 'flavours.club'],
   blockedUserAgents: [
     'wget', 'curl', 'python-requests', 'postman', 'insomnia',
     'httpie', 'aria2', 'axel', 'youtube-dl', 'ffmpeg'

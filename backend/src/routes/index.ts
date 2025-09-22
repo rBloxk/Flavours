@@ -4,6 +4,10 @@ import paymentRoutes from './payments'
 import contentRoutes from './content'
 import userRoutes from './users'
 import adminRoutes from './admin'
+import camsRoutes from './cams'
+import flavourstalkRoutes from './flavourstalk'
+import notificationsRoutes from './notifications'
+import analyticsRoutes from './analytics'
 
 export function setupRoutes(app: Express) {
   // API prefix
@@ -15,6 +19,10 @@ export function setupRoutes(app: Express) {
   app.use(`${API_PREFIX}/content`, contentRoutes)
   app.use(`${API_PREFIX}/users`, userRoutes)
   app.use(`${API_PREFIX}/admin`, adminRoutes)
+  app.use(`${API_PREFIX}/cams`, camsRoutes)
+  app.use(`${API_PREFIX}/flavourstalk`, flavourstalkRoutes)
+  app.use(`${API_PREFIX}/notifications`, notificationsRoutes)
+  app.use(`${API_PREFIX}/analytics`, analyticsRoutes)
 
   // 404 handler
   app.use('*', (req, res) => {

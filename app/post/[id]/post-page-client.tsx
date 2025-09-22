@@ -19,6 +19,8 @@ import {
   Users,
   Globe
 } from 'lucide-react'
+import { PostOptionsOverlay } from '@/components/ui/post-options-overlay'
+import { useAuth } from '@/components/providers/auth-provider'
 
 // Mock data - in a real app, this would come from an API
 const mockPosts = [
@@ -90,6 +92,7 @@ const mockPosts = [
 export function PostPageClient() {
   const params = useParams()
   const router = useRouter()
+  const { user } = useAuth()
   const postId = params.id as string
   
   // Find the post by ID
@@ -97,7 +100,7 @@ export function PostPageClient() {
   
   if (!post) {
     return (
-      <div className="max-w-2xl mx-auto p-6">
+      <div className="max-w-6xl mx-auto p-6">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Post Not Found</h1>
           <p className="text-muted-foreground mb-6">The post you're looking for doesn't exist or has been removed.</p>
@@ -127,8 +130,111 @@ export function PostPageClient() {
     }
   }
 
+  // Handler functions for post options overlay
+  const handleDeletePost = async (postId: string) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      if (response.ok) {
+        router.push('/')
+      } else {
+        throw new Error('Failed to delete post')
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error)
+      throw error
+    }
+  }
+
+  const handleEditPost = (postId: string) => {
+    router.push(`/post/${postId}/edit`)
+  }
+
+  const handleSavePost = async (postId: string) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}/interact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: 'save' })
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to save post')
+      }
+    } catch (error) {
+      console.error('Error saving post:', error)
+      throw error
+    }
+  }
+
+  const handleAddToFavorites = async (postId: string) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}/interact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: 'favorite' })
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to add to favorites')
+      }
+    } catch (error) {
+      console.error('Error adding to favorites:', error)
+      throw error
+    }
+  }
+
+  const handleReportPost = async (postId: string) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}/report`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ reason: 'inappropriate' })
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to report post')
+      }
+    } catch (error) {
+      console.error('Error reporting post:', error)
+      throw error
+    }
+  }
+
+  const handleViewInsights = (postId: string) => {
+    router.push(`/post/${postId}/insights`)
+  }
+
+  const handleShare = async (postId: string) => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Check out this post on Flavours',
+          url: window.location.href
+        })
+      } else {
+        await navigator.clipboard.writeText(window.location.href)
+      }
+    } catch (error) {
+      console.error('Error sharing post:', error)
+      throw error
+    }
+  }
+
   return (
-    <div className="max-w-4xl mx-auto p-8">
+    <div className="max-w-6xl mx-auto px-4 py-4 lg:py-6 space-y-4 lg:space-y-6">
+
       {/* Back Button */}
       <Button 
         variant="ghost" 
@@ -176,9 +282,19 @@ export function PostPageClient() {
                 </div>
               </div>
             </div>
-            <Button variant="ghost" size="sm">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
+            <PostOptionsOverlay
+              postId={post.id}
+              isOwnPost={user?.id === post.author.id}
+              isBookmarked={post.isBookmarked}
+              isFavorited={post.isLiked}
+              onDelete={handleDeletePost}
+              onEdit={handleEditPost}
+              onSave={handleSavePost}
+              onAddToFavorites={handleAddToFavorites}
+              onReport={handleReportPost}
+              onViewInsights={handleViewInsights}
+              onShare={handleShare}
+            />
           </div>
 
           {/* Post Content */}
@@ -192,19 +308,19 @@ export function PostPageClient() {
           {post.media && post.media.length > 0 && (
             <div className="mb-4">
               {post.media.length === 1 ? (
-                <div className="rounded-lg overflow-hidden">
+                <div className="rounded-lg overflow-hidden h-[700px]">
                   {post.media[0].type === 'image' ? (
                     <img
                       src={post.media[0].url}
                       alt={'alt' in post.media[0] ? post.media[0].alt : ''}
-                      className="w-full max-h-96 object-cover"
+                      className="w-full h-full object-contain"
                     />
                   ) : (
                     <video
                       src={post.media[0].url}
                       poster={'thumbnail' in post.media[0] ? post.media[0].thumbnail : ''}
                       controls
-                      className="w-full max-h-96"
+                      className="w-full h-full object-contain"
                     />
                   )}
                 </div>
@@ -216,14 +332,14 @@ export function PostPageClient() {
                         <img
                           src={media.url}
                           alt={'alt' in media ? media.alt : ''}
-                          className="w-full h-48 object-cover"
+                          className="w-full h-64 object-contain"
                         />
                       ) : (
                         <video
                           src={media.url}
                           poster={'thumbnail' in media ? media.thumbnail : ''}
                           controls
-                          className="w-full h-48"
+                          className="w-full h-64 object-contain"
                         />
                       )}
                     </div>

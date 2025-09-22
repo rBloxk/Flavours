@@ -4,8 +4,8 @@ metadata:
   name: app-config
   namespace: flavours
 data:
-  api-url: "https://api.flavours.app/api/v1"
-  ws-url: "wss://api.flavours.app"
+  api-url: "https://api.flavours.club/api/v1"
+  ws-url: "wss://api.flavours.club"
   supabase-url: "https://your-project.supabase.co"
   supabase-anon-key: "your-supabase-anon-key"
 ---

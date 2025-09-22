@@ -47,70 +47,49 @@ export function ContentFeed() {
     }
   }
   
-  // Mock data - in real app, this would come from API
-  const posts = [
-    {
-      id: '1',
-      creator: {
-        id: 'user_1',
-        username: 'jane_fitness',
-        displayName: 'Jane Smith',
-        avatarUrl: 'https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=150',
-        isVerified: true,
-      },
-      content: 'New workout video is live! 💪 Who\'s ready to sweat with me? #FitnessMotivation',
-      mediaUrl: 'https://images.pexels.com/photos/416809/pexels-photo-416809.jpeg?auto=compress&cs=tinysrgb&w=800',
-      isPaid: false,
-      price: null,
-      privacy: 'public',
-      likesCount: 234,
-      commentsCount: 18,
-      createdAt: '2h',
-      isLiked: false,
-    },
-    {
-      id: '2',
-      creator: {
-        id: 'user_2',
-        username: 'artist_maya',
-        displayName: 'Maya Chen',
-        avatarUrl: 'https://images.pexels.com/photos/1310522/pexels-photo-1310522.jpeg?auto=compress&cs=tinysrgb&w=150',
-        isVerified: false,
-      },
-      content: 'Behind the scenes of my latest art piece 🎨✨',
-      mediaUrl: 'https://images.pexels.com/photos/1047540/pexels-photo-1047540.jpeg?auto=compress&cs=tinysrgb&w=800',
-      isPaid: true,
-      price: 15,
-      privacy: 'paid',
-      likesCount: 89,
-      commentsCount: 12,
-      createdAt: '4h',
-      isLiked: false,
-    },
-    {
-      id: '3',
-      creator: {
-        id: 'user_3',
-        username: 'chef_marco',
-        displayName: 'Marco Rodriguez',
-        avatarUrl: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=150',
-        isVerified: true,
-      },
-      content: 'Exclusive recipe reveal! My signature pasta dish that took me 5 years to perfect 🍝',
-      mediaUrl: 'https://images.pexels.com/photos/1435735/pexels-photo-1435735.jpeg?auto=compress&cs=tinysrgb&w=800',
-      isPaid: true,
-      price: 25,
-      privacy: 'followers',
-      likesCount: 156,
-      commentsCount: 23,
-      createdAt: '6h',
-      isLiked: true,
-    }
-  ]
+  const [posts, setPosts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleLike = (postId: string) => {
-    // Handle like functionality
-    console.log('Liked post:', postId)
+  useEffect(() => {
+    fetchPosts()
+  }, [])
+
+  const fetchPosts = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/posts')
+      if (!response.ok) {
+        throw new Error('Failed to fetch posts')
+      }
+      const data = await response.json()
+      setPosts(data.posts || [])
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleLike = async (postId: string) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}/interact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'like' })
+      })
+      
+      if (response.ok) {
+        // Update local state
+        setPosts(posts.map(post => 
+          post.id === postId 
+            ? { ...post, isLiked: !post.isLiked, likesCount: post.isLiked ? post.likesCount - 1 : post.likesCount + 1 }
+            : post
+        ))
+      }
+    } catch (err) {
+      console.error('Failed to like post:', err)
+    }
   }
 
   const handleComment = (postId: string) => {

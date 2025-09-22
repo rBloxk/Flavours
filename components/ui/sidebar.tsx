@@ -22,7 +22,14 @@ import {
   Plus,
   Crown,
   Shield,
-  Sparkles
+  Sparkles,
+  HardDrive,
+  Users,
+  Video,
+  MessageSquare,
+  Zap,
+  Play,
+  Heart
 } from 'lucide-react'
 
 export function Sidebar() {
@@ -34,11 +41,33 @@ export function Sidebar() {
   if (!user || !profile) return null
 
   const menuItems = [
+   
     {
-      id: 'feed',
-      label: 'Home',
-      icon: Home,
+      id: 'feeds',
+      label: 'Feeds',
+      icon: Zap,
       href: '/feed',
+      badge: null
+    },
+    {
+      id: 'tube',
+      label: 'Tube',
+      icon: Play,
+      href: '/tube',
+      badge: null
+    },
+    {
+      id: 'licks',
+      label: 'Licks',
+      icon: Star,
+      href: '/licks',
+      badge: null
+    },
+    {
+      id: 'dating',
+      label: 'Dating',
+      icon: Heart,
+      href: '/dating',
       badge: null
     },
     {
@@ -48,6 +77,7 @@ export function Sidebar() {
       href: '/explore',
       badge: null
     },
+   
     {
       id: 'notifications',
       label: 'Notifications',
@@ -63,6 +93,13 @@ export function Sidebar() {
       badge: 2 // Mock unread count
     },
     {
+      id: 'cams',
+      label: 'Cams',
+      icon: Video,
+      href: '/cams',
+      badge: null
+    },
+    {
       id: 'collections',
       label: 'Collections',
       icon: Star,
@@ -74,6 +111,13 @@ export function Sidebar() {
       label: 'Vault',
       icon: Image,
       href: '/vault',
+      badge: null
+    },
+    {
+      id: 'flavourstalk',
+      label: 'FlavoursTalk',
+      icon: MessageSquare,
+      href: '/flavourstalk',
       badge: null
     },
     {
@@ -95,6 +139,13 @@ export function Sidebar() {
       label: 'Statistics',
       icon: TrendingUp,
       href: '/statistics',
+      badge: null
+    },
+    {
+      id: 'storage',
+      label: 'Storage',
+      icon: HardDrive,
+      href: '/storage',
       badge: null
     },
     {
@@ -168,9 +219,9 @@ export function Sidebar() {
                   <Icon className="h-6 w-6" />
                   <span className="text-lg font-medium">{item.label}</span>
                   {item.badge && (
-                    <Badge variant="destructive" className="ml-auto h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
+                    <span className="ml-auto h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-xs font-semibold">
                       {item.badge}
-                    </Badge>
+                    </span>
                   )}
                 </div>
               </Link>

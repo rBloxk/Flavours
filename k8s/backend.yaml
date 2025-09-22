@@ -184,10 +184,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - api.flavours.app
+    - api.flavours.club
     secretName: backend-tls
   rules:
-  - host: api.flavours.app
+  - host: api.flavours.club
     http:
       paths:
       - path: /

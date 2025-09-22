@@ -215,6 +215,6 @@ This project is licensed under the MIT License.
 ## 🆘 Support
 
 For support and questions:
-- Documentation: [docs.flavours.app](https://docs.flavours.app)
+- Documentation: [docs.flavours.club](https://docs.flavours.club)
 - Issues: GitHub Issues
-- Email: support@flavours.app
+- Email: support@flavours.club

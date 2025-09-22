@@ -1,9 +1,1 @@
-{
-  "/content/page": "app/content/page.js",
-  "/login/page": "app/login/page.js",
-  "/page": "app/page.js",
-  "/system/page": "app/system/page.js",
-  "/test-auth/page": "app/test-auth/page.js",
-  "/payments/page": "app/payments/page.js",
-  "/settings/page": "app/settings/page.js"
-}
+{}

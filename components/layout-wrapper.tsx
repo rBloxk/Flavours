@@ -48,7 +48,7 @@ export function LayoutWrapper({ children }: LayoutWrapperProps) {
   // Mobile layout
   if (isMobile) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="h-screen flex flex-col">
         {/* Mobile Header */}
         <div className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b">
           <div className="flex items-center justify-between px-3 py-2">
@@ -86,11 +86,12 @@ export function LayoutWrapper({ children }: LayoutWrapperProps) {
   return (
     <>
       <Sidebar />
-      <div className="ml-64 flex flex-col min-h-screen">
+      <div className="ml-64 flex flex-col h-screen">
         <Navigation />
         <main className="flex-1">{children}</main>
       </div>
     </>
   )
 }
+
 

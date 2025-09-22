@@ -25,7 +25,7 @@ variable "environment" {
 variable "domain" {
   description = "Domain name"
   type        = string
-  default     = "flavours.app"
+  default     = "flavours.club"
 }
 
 variable "db_password" {

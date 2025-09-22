@@ -13,7 +13,7 @@ const userService = new UserService()
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit for profile pictures
+    fileSize: 50 * 1024 * 1024, // 50MB limit for profile pictures
   },
   fileFilter: (req, file, cb) => {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']

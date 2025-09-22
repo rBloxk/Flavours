@@ -14,6 +14,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useAuth } from '@/components/providers/auth-provider'
 import { useTheme } from 'next-themes'
+import { EnhancedNotifications } from '@/components/ui/enhanced-notifications'
+import { PresenceIndicator, OnlineUsersCounter } from '@/components/ui/presence-indicator'
 import { 
   Bell, 
   Heart, 
@@ -34,15 +36,60 @@ export function Navigation() {
   const getPageTitle = () => {
     switch (pathname) {
       case '/feed':
-        return 'Home'
+        return 'Feeds'
+      case '/licks':
+        return 'Licks'
+      case '/tube':
+        return 'Tube'
       case '/explore':
         return 'Explore'
+      case '/favorites':
+        return 'Favorites'
       case '/messages':
         return 'Messages'
+      case '/cams':
+        return 'Cams'
+      case '/flavourstalk':
+        return 'FlavoursTalk'
       case '/notifications':
         return 'Notifications'
       case '/profile':
         return 'Profile'
+      case '/creator/dashboard':
+        return 'Creator Dashboard'
+      case '/creator-tools':
+        return 'Creator Tools'
+      case '/admin':
+        return 'Admin'
+      case '/guidelines':
+        return 'Guidelines'
+      case '/terms':
+        return 'Terms'
+      case '/privacy':
+        return 'Privacy'
+      case '/help':
+        return 'Help'
+      case '/documentation':
+        return 'Documentation'
+      case '/support':
+        return 'Support'
+      
+      case '/users':
+        return 'Users'
+      case '/creators':
+        return 'Creators'
+      case '/moderation':
+        return 'Moderation'
+      case '/reports':
+        return 'Reports'
+      case '/analytics':
+        return 'Analytics'
+      case '/content':
+        return 'Content'
+      case '/payments':
+        return 'Payments'
+      case '/system':
+        return 'System'
       case '/settings':
         return 'Settings'
       case '/collections':
@@ -55,10 +102,12 @@ export function Navigation() {
         return 'Statements'
       case '/statistics':
         return 'Statistics'
+      case '/storage':
+        return 'Storage'
       case '/more':
         return 'More'
-      case '/creator/dashboard':
-        return 'Creator Dashboard'
+      case '/dating':
+        return 'Dating'
       default:
         return 'Flavours'
     }
@@ -74,11 +123,14 @@ export function Navigation() {
 
         {/* Right Section - User Actions */}
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/notifications" prefetch={true}>
-              <Bell className="h-5 w-5" />
-            </Link>
-          </Button>
+
+          {/* Online Users Counter */}
+          {/* <OnlineUsersCounter /> */}
+          
+          {/* Enhanced Notifications */}
+          <EnhancedNotifications />
+          
+          
           <Button variant="ghost" size="sm" asChild>
             <Link href="/favorites" prefetch={true}>
               <Heart className="h-5 w-5" />
@@ -99,7 +151,10 @@ export function Navigation() {
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <div className="flex items-center justify-start gap-2 p-2">
                 <div className="flex flex-col space-y-1 leading-none">
-                  <p className="font-medium">{profile?.display_name}</p>
+                  <div className="flex items-center space-x-2">
+                    <p className="font-medium">{profile?.display_name}</p>
+                    <PresenceIndicator userId={user.id} />
+                  </div>
                   <p className="w-[200px] truncate text-sm text-muted-foreground">
                     @{profile?.username}
                   </p>

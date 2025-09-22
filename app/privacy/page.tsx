@@ -331,13 +331,13 @@ export default function PrivacyPolicyPage() {
         
         <h4>Contact Information</h4>
         <ul>
-          <li><strong>Email:</strong> privacy@flavours.com</li>
+          <li><strong>Email:</strong> privacy@flavours.club</li>
           <li><strong>Address:</strong> Flavours Privacy Team, 123 Creator Street, San Francisco, CA 94105</li>
           <li><strong>Phone:</strong> +1 (555) 123-4567</li>
         </ul>
         
         <h4>Data Protection Officer</h4>
-        <p>For EU users, you can contact our Data Protection Officer at dpo@flavours.com</p>
+        <p>For EU users, you can contact our Data Protection Officer at dpo@flavours.club</p>
         
         <h4>Response Time</h4>
         <p>We aim to respond to all privacy inquiries within 30 days.</p>

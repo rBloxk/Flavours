@@ -37,8 +37,8 @@ services:
       DATABASE_URL: postgresql://postgres:password@postgres:5432/flavours
       REDIS_URL: redis://redis:6379
       JWT_SECRET: your-jwt-secret-here-change-in-production
-      SUPABASE_URL: https://wcldguxfvzpmmgtnvarr.supabase.co
-      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndjbGRndXhmdnpwbW1ndG52YXJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczNDkzNjksImV4cCI6MjA3MjkyNTM2OX0.8QZqJqJqJqJqJqJqJqJqJqJqJqJqJqJqJqJqJqJqJq
+      SUPABASE_URL: https://yrdwgiyfybnshhkznbaj.supabase.co
+      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyZHdnaXlmeWJuc2hoa3puYmFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5MDIyNjUsImV4cCI6MjA3MzQ3ODI2NX0.Ohc3X9Ti_dUDhqLG1sdYMiyhLWOiDnpQDucelPO5eVs
       SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndjbGRndXhmdnpwbW1ndG52YXJyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzM0OTM2OSwiZXhwIjoyMDcyOTI1MzY5fQ.A1m1LsYo5TCwtT7wihhBoiU6TSCbYDcpbyFT45zOANg
       FRONTEND_URL: http://localhost:3000
     ports:
@@ -61,8 +61,8 @@ services:
       NODE_ENV: development
       NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
       NEXT_PUBLIC_WS_URL: http://localhost:3001
-      NEXT_PUBLIC_SUPABASE_URL: https://wcldguxfvzpmmgtnvarr.supabase.co
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndjbGRndXhmdnpwbW1ndG52YXJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczNDkzNjksImV4cCI6MjA3MjkyNTM2OX0.8QZqJqJqJqJqJqJqJqJqJqJqJqJqJqJqJqJqJqJqJq
+      NEXT_PUBLIC_SUPABASE_URL: https://yrdwgiyfybnshhkznbaj.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyZHdnaXlmeWJuc2hoa3puYmFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5MDIyNjUsImV4cCI6MjA3MzQ3ODI2NX0.Ohc3X9Ti_dUDhqLG1sdYMiyhLWOiDnpQDucelPO5eVs
     ports:
       - "3000:3000"
     depends_on:

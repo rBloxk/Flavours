@@ -131,9 +131,9 @@ A comprehensive administrator dashboard for the Flavours Creator Monetization Pl
 ## 🔑 Authentication
 
 ### Demo Credentials
-- **Admin**: `admin@flavours.com` / `admin123`
-- **Moderator**: `mod@flavours.com` / `mod123`
-- **Viewer**: `viewer@flavours.com` / `viewer123`
+- **Admin**: `admin@flavours.club` / `admin123`
+- **Moderator**: `mod@flavours.club` / `mod123`
+- **Viewer**: `viewer@flavours.club` / `viewer123`
 
 ### Role Permissions
 - **Admin**: Full access to all features
@@ -313,7 +313,7 @@ CMD ["npm", "start"]
 ### Environment Variables
 
 ```env
-NEXT_PUBLIC_API_URL=https://api.flavours.app/api/v1
+NEXT_PUBLIC_API_URL=https://api.flavours.club/api/v1
 NODE_ENV=production
 ```
 

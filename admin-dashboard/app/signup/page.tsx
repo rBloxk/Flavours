@@ -118,7 +118,7 @@ export default function SignupPage() {
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="admin@flavours.com"
+                  placeholder="admin@flavours.club"
                   value={formData.email}
                   onChange={handleChange}
                   required

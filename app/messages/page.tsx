@@ -39,7 +39,7 @@ import {
   Forward,
   Archive,
   Trash2,
-  Block,
+  UserX,
   Report,
   Settings,
   Filter,
@@ -98,6 +98,36 @@ export default function MessagesPage() {
   const router = useRouter()
   const { toast } = useToast()
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // Add CSS to prevent full page scroll only for messages page
+  useEffect(() => {
+    const style = document.createElement('style')
+    style.textContent = `
+      .messages-page-wrapper {
+        height: calc(100vh - 4rem) !important;
+        max-height: calc(100vh - 4rem) !important;
+        overflow: hidden !important;
+      }
+      .messages-container {
+        height: 100% !important;
+        max-height: 100% !important;
+        overflow: hidden !important;
+      }
+      .conversations-scroll {
+        max-height: calc(100vh - 300px) !important;
+        overflow-y: auto !important;
+      }
+      .chat-scroll {
+        max-height: calc(100vh - 300px) !important;
+        overflow-y: auto !important;
+      }
+    `
+    document.head.appendChild(style)
+    
+    return () => {
+      document.head.removeChild(style)
+    }
+  }, [])
   
   // State management
   const [selectedChat, setSelectedChat] = useState<number | null>(1)
@@ -630,11 +660,13 @@ export default function MessagesPage() {
 
   return (
     <AuthGuard>
-      <div className="container mx-auto px-4 py-4 lg:py-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 h-[calc(100vh-8rem)]">
-        {/* Conversations List */}
-        <Card className="lg:col-span-1 flex flex-col">
-          <CardHeader className="pb-3">
+      <div className="messages-page-wrapper">
+        <div className="messages-container h-full flex flex-col">
+          <div className="flex-1 overflow-hidden">
+            <div className="h-full grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 p-4 lg:p-6">
+            {/* Conversations List */}
+            <Card className="lg:col-span-1 flex flex-col h-full">
+              <CardHeader className="pb-3 flex-shrink-0">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <MessageCircle className="h-5 w-5" />
@@ -776,8 +808,8 @@ export default function MessagesPage() {
             </div>
           </CardHeader>
           
-          <CardContent className="flex-1 overflow-y-auto p-0">
-            <div className="space-y-1">
+              <CardContent className="conversations-scroll flex-1 overflow-y-auto p-0 min-h-0">
+                <div className="space-y-1">
               {filteredConversations().map((conversation) => (
                 <div
                   key={conversation.id}
@@ -851,7 +883,7 @@ export default function MessagesPage() {
                                 {conversation.isArchived ? 'Unarchive' : 'Archive'}
                               </DropdownMenuItem>
                               <DropdownMenuItem onClick={() => blockUser(conversation.id)}>
-                                <Block className="h-4 w-4 mr-2" />
+                                <UserX className="h-4 w-4 mr-2" />
                                 {conversation.isBlocked ? 'Unblock' : 'Block'}
                               </DropdownMenuItem>
                               <DropdownMenuItem className="text-red-600">
@@ -864,18 +896,18 @@ export default function MessagesPage() {
                       </div>
                     </div>
                   </div>
+                  </div>
+                ))}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
 
-        {/* Chat Area */}
-        <Card className="lg:col-span-2 flex flex-col">
-          {selectedConversation ? (
-            <>
-              {/* Chat Header */}
-              <CardHeader className="border-b pb-3">
+            {/* Chat Area */}
+            <Card className="lg:col-span-2 flex flex-col h-full">
+              {selectedConversation ? (
+                <>
+                  {/* Chat Header */}
+                  <CardHeader className="border-b pb-3 flex-shrink-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="relative">
@@ -947,7 +979,7 @@ export default function MessagesPage() {
                           {selectedConversation.isArchived ? 'Unarchive' : 'Archive'}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => blockUser(selectedConversation.id)}>
-                          <Block className="h-4 w-4 mr-2" />
+                          <UserX className="h-4 w-4 mr-2" />
                           {selectedConversation.isBlocked ? 'Unblock' : 'Block'} User
                         </DropdownMenuItem>
                         <DropdownMenuItem className="text-red-600">
@@ -960,8 +992,8 @@ export default function MessagesPage() {
                 </div>
               </CardHeader>
 
-              {/* Messages */}
-              <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
+                  {/* Messages */}
+                  <CardContent className="chat-scroll flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
                 {messages.map((message, index) => (
                   <div key={message.id}>
                     {/* Reply indicator */}
@@ -1102,12 +1134,12 @@ export default function MessagesPage() {
                   </div>
                 )}
                 
-                <div ref={messagesEndRef} />
-              </CardContent>
+                    <div ref={messagesEndRef} />
+                  </CardContent>
 
-              {/* Reply indicator */}
-              {replyTo && (
-                <div className="border-t p-3 bg-muted/50">
+                  {/* Reply indicator */}
+                  {replyTo && (
+                    <div className="border-t p-3 bg-muted/50 flex-shrink-0">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <Reply className="h-4 w-4 text-muted-foreground" />
@@ -1122,12 +1154,12 @@ export default function MessagesPage() {
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1 truncate">{replyTo.content}</p>
-                </div>
-              )}
+                      <p className="text-sm text-muted-foreground mt-1 truncate">{replyTo.content}</p>
+                    </div>
+                  )}
 
-              {/* Message Input */}
-              <div className="border-t p-4">
+                  {/* Message Input */}
+                  <div className="border-t p-4 flex-shrink-0">
                 <div className="flex items-end space-x-2">
                   <Button 
                     size="sm" 
@@ -1175,9 +1207,9 @@ export default function MessagesPage() {
                   </Button>
                 </div>
                 
-                {/* Emoji picker */}
-                {showEmojiPicker && (
-                  <div className="mt-2 p-2 bg-muted rounded-lg">
+                    {/* Emoji picker */}
+                    {showEmojiPicker && (
+                      <div className="mt-2 p-2 bg-muted rounded-lg">
                     <div className="flex flex-wrap gap-1">
                       {['😀', '😂', '❤️', '👍', '👎', '🔥', '💯', '🎉', '😍', '🤔', '😢', '😡'].map(emoji => (
                         <Button
@@ -1191,30 +1223,32 @@ export default function MessagesPage() {
                           }}
                         >
                           {emoji}
-                        </Button>
-                      ))}
+                          </Button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            </>
-          ) : (
-            <div className="flex-1 flex items-center justify-center">
+                  )}
+                </div>
+                </>
+              ) : (
+                <div className="flex-1 flex items-center justify-center">
               <div className="text-center space-y-4">
                 <MessageCircle className="h-16 w-16 text-muted-foreground mx-auto" />
                 <div>
                   <h3 className="text-lg font-medium">Select a conversation</h3>
                   <p className="text-muted-foreground">Choose a conversation from the sidebar to start messaging</p>
                 </div>
-                <Button onClick={() => setShowNewChat(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Start New Conversation
-                </Button>
+                  <Button onClick={() => setShowNewChat(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Start New Conversation
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
-        </Card>
-      </div>
+            )}
+            </Card>
+          </div>
+        </div>
+        </div>
       </div>
     </AuthGuard>
   )

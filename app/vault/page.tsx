@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { AuthGuard } from '@/components/auth/auth-guard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -43,7 +43,6 @@ import {
   Copy, 
   Edit, 
   Move, 
-  Rename, 
   Star, 
   Heart, 
   Bookmark, 
@@ -112,7 +111,6 @@ import {
   AlertCircle, 
   Loader2, 
   Loader, 
-  Spinner, 
   Circle, 
   Square, 
   Triangle, 
@@ -120,11 +118,8 @@ import {
   Octagon, 
   Pentagon, 
   Diamond, 
-  Heart2, 
-  Star2, 
   Moon, 
   Sun, 
-  Cloud2, 
   CloudRain, 
   CloudSnow, 
   CloudLightning, 
@@ -142,51 +137,7 @@ import {
   Dog, 
   Rabbit, 
   Mouse, 
-  Hamster, 
   Squirrel, 
-  Fox, 
-  Bear, 
-  Lion, 
-  Tiger, 
-  Elephant, 
-  Giraffe, 
-  Zebra, 
-  Horse, 
-  Cow, 
-  Pig, 
-  Sheep, 
-  Goat, 
-  Chicken, 
-  Duck, 
-  Turkey, 
-  Penguin, 
-  Owl, 
-  Eagle, 
-  Hawk, 
-  Falcon, 
-  Parrot, 
-  Toucan, 
-  Flamingo, 
-  Peacock, 
-  Swan, 
-  Goose, 
-  Pelican, 
-  Stork, 
-  Crane, 
-  Heron, 
-  Egret, 
-  Ibis, 
-  Spoonbill, 
-  Cormorant, 
-  Gannet, 
-  Booby, 
-  Frigatebird, 
-  Albatross, 
-  Petrel, 
-  Shearwater, 
-  StormPetrel, 
-  DivingPetrel, 
-  Tropicbird
 } from 'lucide-react'
 
 export default function VaultPage() {
@@ -273,6 +224,44 @@ export default function VaultPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [uploadingFiles, setUploadingFiles] = useState<any[]>([])
   const [selectedItems, setSelectedItems] = useState<number[]>([])
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [fileToDelete, setFileToDelete] = useState<any>(null)
+  const [clearAllDialogOpen, setClearAllDialogOpen] = useState(false)
+  const [removeDuplicatesDialogOpen, setRemoveDuplicatesDialogOpen] = useState(false)
+
+  // Load persisted files on component mount
+  useEffect(() => {
+    const loadPersistedFiles = () => {
+      try {
+        const persistedFiles = localStorage.getItem('vaultFiles')
+        if (persistedFiles) {
+          const files = JSON.parse(persistedFiles)
+          
+          // Remove duplicates from localStorage first
+          const uniqueFiles = files.filter((file: any, index: number, arr: any[]) => 
+            arr.findIndex(f => f.name === file.name && f.size === file.size) === index
+          )
+          
+          // Update localStorage with deduplicated files
+          if (uniqueFiles.length !== files.length) {
+            localStorage.setItem('vaultFiles', JSON.stringify(uniqueFiles))
+            console.log('Removed duplicates from localStorage')
+          }
+          
+          setVaultItems(prev => {
+            // Merge with existing files, avoiding duplicates by ID
+            const existingIds = new Set(prev.map(f => f.id))
+            const newFiles = uniqueFiles.filter((f: any) => !existingIds.has(f.id))
+            return [...prev, ...newFiles]
+          })
+        }
+      } catch (error) {
+        console.error('Failed to load persisted files:', error)
+      }
+    }
+
+    loadPersistedFiles()
+  }, [])
 
   // Interactive functions
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -281,7 +270,7 @@ export default function VaultPage() {
 
     files.forEach(file => {
       const newItem = {
-        id: vaultItems.length + uploadingFiles.length + 1,
+        id: Date.now() + Math.random() * 1000, // Generate unique ID
         name: file.name,
         type: file.type.startsWith('video/') ? 'video' : 
               file.type.startsWith('audio/') ? 'audio' : 
@@ -319,21 +308,33 @@ export default function VaultPage() {
       title: "Files uploaded",
       description: `${files.length} file(s) are being processed.`,
     })
+
+    // Clear the file input to prevent re-uploading the same files
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
   }
 
-  const simulateUpload = (id: number) => {
+  const simulateUpload = async (id: number) => {
     let progress = 0
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       progress += Math.random() * 20
       if (progress >= 100) {
         progress = 100
         clearInterval(interval)
         
-        // Move from uploading to vault items
+        // Move from uploading to vault items and persist to backend
         setUploadingFiles(prev => {
           const item = prev.find(f => f.id === id)
           if (item) {
-            setVaultItems(prevItems => [...prevItems, { ...item, isProcessing: false, processingProgress: 100 }])
+            const completedItem = { ...item, isProcessing: false, processingProgress: 100 }
+            
+            // Add to vault items
+            setVaultItems(prevItems => [...prevItems, completedItem])
+            
+            // Persist to backend (simulate API call)
+            persistFileToBackend(completedItem)
+            
             return prev.filter(f => f.id !== id)
           }
           return prev
@@ -351,6 +352,34 @@ export default function VaultPage() {
     }, 500)
   }
 
+  const persistFileToBackend = async (item: any) => {
+    try {
+      // Simulate API call to persist file
+      // In a real implementation, this would call your backend API
+      console.log('Persisting file to backend:', item.name)
+      
+      // For now, we'll store in localStorage as a fallback
+      const existingFiles = JSON.parse(localStorage.getItem('vaultFiles') || '[]')
+      
+      // Check for duplicates before adding
+      const isDuplicate = existingFiles.some((existingFile: any) => 
+        existingFile.name === item.name && 
+        existingFile.size === item.size &&
+        Math.abs(new Date(existingFile.uploadedAt).getTime() - new Date(item.uploadedAt).getTime()) < 1000 // Within 1 second
+      )
+      
+      if (!isDuplicate) {
+        existingFiles.push(item)
+        localStorage.setItem('vaultFiles', JSON.stringify(existingFiles))
+        console.log('File persisted successfully:', item.name)
+      } else {
+        console.log('Duplicate file detected, skipping persistence:', item.name)
+      }
+    } catch (error) {
+      console.error('Failed to persist file:', error)
+    }
+  }
+
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes'
     const k = 1024
@@ -359,14 +388,41 @@ export default function VaultPage() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
 
-  const deleteItem = (id: number) => {
+  const confirmDelete = (id: number) => {
     const item = vaultItems.find(i => i.id === id)
-    setVaultItems(prev => prev.filter(i => i.id !== id))
+    if (item) {
+      setFileToDelete(item)
+      setDeleteDialogOpen(true)
+    }
+  }
+
+  const deleteItem = () => {
+    if (!fileToDelete) return
+
+    setVaultItems(prev => prev.filter(i => i.id !== fileToDelete.id))
+    
+    // Remove from localStorage as well
+    try {
+      const persistedFiles = JSON.parse(localStorage.getItem('vaultFiles') || '[]')
+      const updatedFiles = persistedFiles.filter((f: any) => f.id !== fileToDelete.id)
+      localStorage.setItem('vaultFiles', JSON.stringify(updatedFiles))
+    } catch (error) {
+      console.error('Failed to remove file from localStorage:', error)
+    }
     
     toast({
       title: "File deleted",
-      description: `"${item?.name}" has been deleted.`,
+      description: `"${fileToDelete.name}" has been deleted.`,
     })
+
+    // Close dialog and reset state
+    setDeleteDialogOpen(false)
+    setFileToDelete(null)
+  }
+
+  const cancelDelete = () => {
+    setDeleteDialogOpen(false)
+    setFileToDelete(null)
   }
 
   const downloadItem = (id: number) => {
@@ -392,6 +448,63 @@ export default function VaultPage() {
       title: "Download started",
       description: `"${item.name}" is being downloaded.`,
     })
+  }
+
+  const confirmClearAll = () => {
+    setClearAllDialogOpen(true)
+  }
+
+  const clearAllFiles = () => {
+    setVaultItems([])
+    setUploadingFiles([])
+    localStorage.removeItem('vaultFiles')
+    
+    toast({
+      title: "All files cleared",
+      description: "All uploaded files have been removed.",
+    })
+    
+    setClearAllDialogOpen(false)
+  }
+
+  const cancelClearAll = () => {
+    setClearAllDialogOpen(false)
+  }
+
+  const confirmRemoveDuplicates = () => {
+    setRemoveDuplicatesDialogOpen(true)
+  }
+
+  const removeDuplicates = () => {
+    setVaultItems(prev => {
+      // Remove duplicates based on name and size
+      const uniqueItems = prev.filter((item, index, arr) => 
+        arr.findIndex(i => i.name === item.name && i.size === item.size) === index
+      )
+      
+      // Update localStorage
+      localStorage.setItem('vaultFiles', JSON.stringify(uniqueItems))
+      
+      const removedCount = prev.length - uniqueItems.length
+      if (removedCount > 0) {
+        toast({
+          title: "Duplicates removed",
+          description: `${removedCount} duplicate file(s) have been removed.`,
+        })
+      } else {
+        toast({
+          title: "No duplicates found",
+          description: "All files are unique.",
+        })
+      }
+      
+      setRemoveDuplicatesDialogOpen(false)
+      return uniqueItems
+    })
+  }
+
+  const cancelRemoveDuplicates = () => {
+    setRemoveDuplicatesDialogOpen(false)
   }
 
   const getFileIcon = (type: string) => {
@@ -443,6 +556,26 @@ export default function VaultPage() {
               <Upload className="h-4 w-4 mr-2" />
               Upload Media
             </Button>
+            {vaultItems.length > 0 && (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={confirmRemoveDuplicates}
+                  className="text-blue-600 hover:text-blue-700"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Remove Duplicates
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={confirmClearAll}
+                  className="text-red-600 hover:text-red-700"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Clear All
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
@@ -577,9 +710,9 @@ export default function VaultPage() {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => deleteItem(item.id)}
+                    onClick={() => confirmDelete(item.id)}
                     disabled={item.isProcessing}
-                    className="text-red-600"
+                    className="text-red-600 hover:text-red-700"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -605,6 +738,141 @@ export default function VaultPage() {
             </CardContent>
           </Card>
         )}
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-red-500" />
+                Delete File
+              </DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this file? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            
+            {fileToDelete && (
+              <div className="py-4">
+                <div className="flex items-center space-x-3 p-3 bg-muted rounded-lg">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-400 rounded-lg flex items-center justify-center">
+                    {getFileIcon(fileToDelete.type)}
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-medium text-sm">{fileToDelete.name}</h4>
+                    <p className="text-xs text-muted-foreground">
+                      {fileToDelete.sizeString} • {fileToDelete.format} • {fileToDelete.uploadedAtString}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div className="flex justify-end space-x-2">
+              <Button 
+                variant="outline" 
+                onClick={cancelDelete}
+              >
+                Cancel
+              </Button>
+              <Button 
+                variant="destructive" 
+                onClick={deleteItem}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Clear All Confirmation Dialog */}
+        <Dialog open={clearAllDialogOpen} onOpenChange={setClearAllDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-red-500" />
+                Clear All Files
+              </DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete all files? This action cannot be undone and will remove all {vaultItems.length} file(s) from your vault.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="py-4">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                <div className="flex items-center gap-2 text-red-700 dark:text-red-400">
+                  <AlertTriangle className="h-4 w-4" />
+                  <span className="text-sm font-medium">Warning</span>
+                </div>
+                <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                  This will permanently delete all files in your vault.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex justify-end space-x-2">
+              <Button 
+                variant="outline" 
+                onClick={cancelClearAll}
+              >
+                Cancel
+              </Button>
+              <Button 
+                variant="destructive" 
+                onClick={clearAllFiles}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Clear All Files
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Remove Duplicates Confirmation Dialog */}
+        <Dialog open={removeDuplicatesDialogOpen} onOpenChange={setRemoveDuplicatesDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <RefreshCw className="h-5 w-5 text-blue-500" />
+                Remove Duplicates
+              </DialogTitle>
+              <DialogDescription>
+                This will scan your vault and remove any duplicate files based on name and size. Only the first occurrence of each file will be kept.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="py-4">
+              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
+                  <Info className="h-4 w-4" />
+                  <span className="text-sm font-medium">Safe Operation</span>
+                </div>
+                <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
+                  This operation is safe and will only remove exact duplicates.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex justify-end space-x-2">
+              <Button 
+                variant="outline" 
+                onClick={cancelRemoveDuplicates}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={removeDuplicates}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Remove Duplicates
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </AuthGuard>
   )

@@ -25,7 +25,9 @@ import {
   Sparkles,
   X,
   Settings,
-  LogOut
+  LogOut,
+  Video,
+  MessageSquare
 } from 'lucide-react'
 
 interface MobileSidebarProps {
@@ -54,6 +56,20 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
       label: 'Explore',
       icon: Sparkles,
       href: '/explore',
+      badge: null
+    },
+    {
+      id: 'cams',
+      label: 'Cams',
+      icon: Video,
+      href: '/cams',
+      badge: null
+    },
+    {
+      id: 'flavourstalk',
+      label: 'FlavoursTalk',
+      icon: MessageSquare,
+      href: '/flavourstalk',
       badge: null
     },
     {

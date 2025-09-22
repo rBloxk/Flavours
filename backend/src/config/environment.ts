@@ -177,7 +177,7 @@ class EnvironmentManager {
       STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
 
       // File Upload
-      MAX_FILE_SIZE: parseInt(process.env.MAX_FILE_SIZE || '10485760'), // 10MB
+      MAX_FILE_SIZE: parseInt(process.env.MAX_FILE_SIZE || '3650722201'), // 3.4GB
       UPLOAD_PATH: process.env.UPLOAD_PATH || './uploads',
       ALLOWED_FILE_TYPES: (process.env.ALLOWED_FILE_TYPES || 'image/jpeg,image/png,image/gif,video/mp4,video/webm,audio/mpeg,audio/wav').split(','),
 

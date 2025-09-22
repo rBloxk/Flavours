@@ -80,6 +80,8 @@ export function CreatePostModal({ children }: CreatePostModalProps) {
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([])
   const [privacy, setPrivacy] = useState<'public' | 'followers' | 'paid'>('public')
   const [isLoading, setIsLoading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [isUploading, setIsUploading] = useState(false)
   const [isRecording, setIsRecording] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(false)
@@ -107,9 +109,9 @@ export function CreatePostModal({ children }: CreatePostModalProps) {
     if (!files) return
 
     Array.from(files).forEach(file => {
-      // File size validation (10MB limit)
-      if (file.size > 10 * 1024 * 1024) {
-        toast.error(`File ${file.name} is too large. Maximum size is 10MB.`)
+      // File size validation (3.4GB limit)
+      if (file.size > 3650722201) {
+        toast.error(`File ${file.name} is too large. Maximum size is 3.4GB.`)
         return
       }
 
@@ -267,29 +269,76 @@ export function CreatePostModal({ children }: CreatePostModalProps) {
       return
     }
 
+    // Check if user is logged in
+    if (!profile) {
+      toast.error('Please log in to create a post')
+      return
+    }
+
     setIsLoading(true)
+    setIsUploading(true)
+    setUploadProgress(0)
     
     try {
-      // Simulate API call with enhanced data
-      const postData = {
-        content,
-        mediaFiles: mediaFiles.map(mf => ({
-          type: mf.type,
-          size: mf.size,
-          duration: mf.duration
-        })),
-        audioBlob: audioBlob ? 'audio_attached' : null,
-        privacy,
-        tags,
-        mentions,
-        location,
-        scheduledTime,
-        isPaidContent: privacy === 'paid',
-        price: privacy === 'paid' ? postPrice : null
+      // Create FormData for file upload
+      const formData = new FormData()
+      
+      // Add post data
+      formData.append('content', content)
+      formData.append('privacy', privacy)
+      formData.append('tags', JSON.stringify(tags))
+      formData.append('mentions', JSON.stringify(mentions))
+      formData.append('location', location)
+      formData.append('isPaidContent', (privacy === 'paid').toString())
+      formData.append('price', postPrice.toString())
+      
+      // Add user data
+      if (profile) {
+        const userData = {
+          id: profile.id,
+          username: profile.username,
+          displayName: profile.display_name,
+          avatarUrl: profile.avatar_url,
+          isVerified: profile.is_verified || false,
+          followerCount: profile.follower_count || 0,
+          engagementRate: profile.engagement_rate || 0,
+          category: profile.category || ['general'],
+          trustScore: profile.trust_score || 8.0
+        }
+        formData.append('userData', JSON.stringify(userData))
       }
       
-      console.log('Posting:', postData)
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      // Add media files
+      mediaFiles.forEach((mediaFile, index) => {
+        formData.append('media', mediaFile.file)
+      })
+      
+      // Simulate upload progress
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval)
+            return 90
+          }
+          return prev + Math.random() * 10
+        })
+      }, 200)
+      
+      // Make API call
+      const response = await fetch('/api/posts', {
+        method: 'POST',
+        body: formData
+      })
+      
+      const result = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to create post')
+      }
+      
+      // Complete progress
+      setUploadProgress(100)
+      await new Promise(resolve => setTimeout(resolve, 500))
       
       toast.success('Post created successfully!')
       setIsOpen(false)
@@ -306,10 +355,16 @@ export function CreatePostModal({ children }: CreatePostModalProps) {
       setIsDraft(false)
       clearDraft()
       
+      // Trigger feed refresh (this would be handled by a context or event system)
+      window.dispatchEvent(new CustomEvent('postCreated', { detail: result.post }))
+      
     } catch (error) {
-      toast.error('Failed to create post')
+      console.error('Error creating post:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to create post')
     } finally {
       setIsLoading(false)
+      setIsUploading(false)
+      setUploadProgress(0)
     }
   }
 
@@ -351,8 +406,8 @@ export function CreatePostModal({ children }: CreatePostModalProps) {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h2 className="text-sm font-bold">{profile?.display_name}</h2>
-                  <p className="text-xs text-muted-foreground">@{profile?.username}</p>
+                  <h2 className="text-sm font-bold">{profile?.display_name || 'Not logged in'}</h2>
+                  <p className="text-xs text-muted-foreground">@{profile?.username || 'Please log in'}</p>
                 </div>
               </div>
               
@@ -587,6 +642,27 @@ export function CreatePostModal({ children }: CreatePostModalProps) {
               </div>
             </div>
 
+            {/* Upload Progress Bar */}
+            {isUploading && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Uploading...</span>
+                  <span className="text-muted-foreground">{Math.round(uploadProgress)}%</span>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div 
+                    className="bg-primary h-2 rounded-full transition-all duration-300 ease-out"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+                {uploadProgress > 0 && (
+                  <div className="text-xs text-muted-foreground">
+                    {mediaFiles.length > 0 && `Uploading ${mediaFiles.length} file${mediaFiles.length > 1 ? 's' : ''}...`}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Action Buttons */}
             <div className="flex items-center justify-between pt-6 border-t">
               <div className="flex items-center space-x-2">
@@ -648,13 +724,13 @@ export function CreatePostModal({ children }: CreatePostModalProps) {
                 </Button>
                 <Button 
                   onClick={handleSubmit} 
-                  disabled={isLoading || (!content.trim() && mediaFiles.length === 0 && !audioBlob)}
+                  disabled={isLoading || isUploading || !profile || (!content.trim() && mediaFiles.length === 0 && !audioBlob)}
                   className="min-w-[100px] text-sm"
                 >
-                  {isLoading ? (
+                  {isLoading || isUploading ? (
                     <>
                       <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-                      Posting...
+                      {isUploading ? 'Uploading...' : 'Posting...'}
                     </>
                   ) : (
                     <>

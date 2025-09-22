@@ -95,7 +95,7 @@ export function AdminSidebar() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground">Admin User</p>
-                <p className="text-xs text-muted-foreground">admin@flavours.com</p>
+                <p className="text-xs text-muted-foreground">admin@flavours.club</p>
               </div>
             </div>
             <Button

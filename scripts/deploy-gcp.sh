@@ -18,7 +18,7 @@ PROJECT_ID="flavours-production"
 ENVIRONMENT=${1:-production}
 REGION=${2:-us-central1}
 ZONE=${3:-us-central1-a}
-DOMAIN=${4:-flavours.app}
+DOMAIN=${4:-flavours.club}
 
 echo -e "${BLUE}🚀 Starting Flavours GCP Production Deployment${NC}"
 echo -e "${BLUE}Project ID: ${PROJECT_ID}${NC}"

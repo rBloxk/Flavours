@@ -1,8 +1,7 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAuth } from '@/components/providers/auth-provider'
-import { AuthGuard } from '@/components/auth/auth-guard'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -15,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { QRCodeModal } from '@/components/ui/qr-code-modal'
+import { useProfile } from '@/hooks/use-profile'
 import { 
   User, 
   Mail, 
@@ -36,7 +36,10 @@ import {
   Users,
   Lock,
   Upload,
-  X
+  X,
+  RefreshCw,
+  Bookmark,
+  Eye
 } from 'lucide-react'
 
 // Mock data for posts - in a real app, this would come from an API
@@ -146,6 +149,22 @@ export default function ProfilePage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   
+  // Use the profile hook - always use demo-user for now
+  const {
+    profile: apiProfile,
+    posts,
+    postsStats,
+    loading: profileLoading,
+    error: profileError,
+    postsLoading,
+    postsError,
+    fetchProfile,
+    fetchPosts,
+    updateProfile,
+    performAction,
+    performPostAction
+  } = useProfile('demo-user')
+  
   // Form state for edit profile
   const [editForm, setEditForm] = useState({
     displayName: '',
@@ -154,6 +173,13 @@ export default function ProfilePage() {
     website: '',
     interests: [] as string[]
   })
+
+  // Load posts when tab changes
+  useEffect(() => {
+    if (apiProfile) {
+      fetchPosts(activeContentTab)
+    }
+  }, [activeContentTab, apiProfile, fetchPosts])
 
   // Content classification functions
   const classifyContent = (post: any) => {
@@ -169,16 +195,17 @@ export default function ProfilePage() {
   }
 
   const getContentByType = (type: string) => {
-    if (type === 'all') return mockPosts
-    return mockPosts.filter(post => classifyContent(post) === type)
+    if (type === 'all') return posts
+    return posts.filter(post => classifyContent(post) === type)
   }
 
   const getContentStats = () => {
+    if (!postsStats) return { all: 0, image: 0, video: 0, shortVideo: 0 }
     return {
-      all: mockPosts.length,
-      image: mockPosts.filter(post => classifyContent(post) === 'image').length,
-      video: mockPosts.filter(post => classifyContent(post) === 'video').length,
-      shortVideo: mockPosts.filter(post => classifyContent(post) === 'shortVideo').length
+      all: postsStats.total,
+      image: postsStats.images,
+      video: postsStats.videos,
+      shortVideo: postsStats.shortVideos
     }
   }
 
@@ -188,8 +215,41 @@ export default function ProfilePage() {
     return mins > 0 ? `${mins}:${secs.toString().padStart(2, '0')}` : `${secs}s`
   }
 
-  const handlePostClick = (postId: string) => {
+  const handlePostClick = async (postId: string) => {
+    // Record view
+    try {
+      await performPostAction(postId, 'view')
+    } catch (error) {
+      console.error('Failed to record view:', error)
+    }
     router.push(`/post/${postId}`)
+  }
+
+  const handleLikePost = async (postId: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    try {
+      await performPostAction(postId, 'like')
+    } catch (error) {
+      console.error('Failed to like post:', error)
+    }
+  }
+
+  const handleBookmarkPost = async (postId: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    try {
+      await performPostAction(postId, 'bookmark')
+    } catch (error) {
+      console.error('Failed to bookmark post:', error)
+    }
+  }
+
+  const handleSharePost = async (postId: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    try {
+      await performPostAction(postId, 'share')
+    } catch (error) {
+      console.error('Failed to share post:', error)
+    }
   }
 
   const getPrivacyIcon = (privacy: string) => {
@@ -207,13 +267,13 @@ export default function ProfilePage() {
 
   // Initialize edit form when modal opens
   const handleEditProfileOpen = () => {
-    const currentProfile = profile || demoProfile
+    const currentProfile = apiProfile || demoProfile
     setEditForm({
       displayName: currentProfile.display_name,
       bio: currentProfile.bio || '',
-      location: 'San Francisco, CA', // Default from sidebar
-      website: 'example.com', // Default from sidebar
-      interests: ['Fitness', 'Art', 'Photography', 'Travel', 'Music', 'Cooking'] // Default interests
+      location: currentProfile.location || '',
+      website: currentProfile.website || '',
+      interests: currentProfile.interests || []
     })
     setIsEditModalOpen(true)
   }
@@ -222,14 +282,16 @@ export default function ProfilePage() {
   const handleEditProfileSubmit = async () => {
     setIsLoading(true)
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const updates = {
+        display_name: editForm.displayName,
+        bio: editForm.bio,
+        location: editForm.location,
+        website: editForm.website,
+        interests: editForm.interests
+      }
       
-      // In a real app, this would update the profile via API
-      console.log('Profile updated:', editForm)
-      
+      await updateProfile(updates)
       setIsEditModalOpen(false)
-      // Show success message (you could use toast here)
       alert('Profile updated successfully!')
     } catch (error) {
       console.error('Error updating profile:', error)
@@ -281,13 +343,37 @@ export default function ProfilePage() {
     }
   }
 
-  // Use demo data if no real user/profile
+  // Use API data if available, fallback to demo data
   const currentUser = user || demoUser
-  const currentProfile = profile || demoProfile
+  const currentProfile = apiProfile || demoProfile
+
+  // Show loading state
+  if (profileLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    )
+  }
+
+  // Show error state
+  if (profileError) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold mb-2">Error Loading Profile</h3>
+          <p className="text-muted-foreground mb-4">{profileError}</p>
+          <Button onClick={fetchProfile}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Retry
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <AuthGuard>
-      <div className="container mx-auto px-4 py-4 lg:py-6 space-y-4 lg:space-y-6">
+    <div className="container mx-auto px-4 py-4 lg:py-6 space-y-4 lg:space-y-6">
       {/* Profile Header */}
       <Card>
         <CardContent className="pt-6">
@@ -367,7 +453,12 @@ export default function ProfilePage() {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <div className="text-2xl font-bold">1.2K</div>
+              <div className="text-2xl font-bold">
+                {currentProfile.followers_count >= 1000 
+                  ? `${(currentProfile.followers_count / 1000).toFixed(1)}K`
+                  : currentProfile.followers_count.toLocaleString()
+                }
+              </div>
               <div className="text-sm text-muted-foreground">Followers</div>
             </div>
           </CardContent>
@@ -375,7 +466,12 @@ export default function ProfilePage() {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <div className="text-2xl font-bold">856</div>
+              <div className="text-2xl font-bold">
+                {currentProfile.following_count >= 1000 
+                  ? `${(currentProfile.following_count / 1000).toFixed(1)}K`
+                  : currentProfile.following_count.toLocaleString()
+                }
+              </div>
               <div className="text-sm text-muted-foreground">Following</div>
             </div>
           </CardContent>
@@ -383,7 +479,7 @@ export default function ProfilePage() {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <div className="text-2xl font-bold">42</div>
+              <div className="text-2xl font-bold">{currentProfile.posts_count}</div>
               <div className="text-sm text-muted-foreground">Posts</div>
             </div>
           </CardContent>
@@ -391,7 +487,12 @@ export default function ProfilePage() {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <div className="text-2xl font-bold">3.4K</div>
+              <div className="text-2xl font-bold">
+                {currentProfile.likes_received >= 1000 
+                  ? `${(currentProfile.likes_received / 1000).toFixed(1)}K`
+                  : currentProfile.likes_received.toLocaleString()
+                }
+              </div>
               <div className="text-sm text-muted-foreground">Likes</div>
             </div>
           </CardContent>
@@ -420,80 +521,123 @@ export default function ProfilePage() {
             </TabsList>
 
         <TabsContent value="all" className="space-y-4">
-          {mockPosts.map((post) => (
-            <Card key={post.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handlePostClick(post.id)}>
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={currentProfile.avatar_url} alt={currentProfile.display_name} />
-                      <AvatarFallback>
-                        {currentProfile.display_name?.charAt(0) || currentUser.email?.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <h3 className="font-semibold">{currentProfile.display_name}</h3>
-                        {currentProfile.is_verified && (
-                          <Crown className="h-4 w-4 text-yellow-500" />
-                        )}
-                        <Badge variant="secondary" className="text-xs">
-                          @{currentProfile.username}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                        <span>{post.createdAt}</span>
-                        <span>•</span>
-                        <div className="flex items-center space-x-1">
-                          {getPrivacyIcon(post.privacy)}
-                          <span className="capitalize">{post.privacy}</span>
+          {postsLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          ) : postsError ? (
+            <div className="text-center py-8">
+              <p className="text-red-500 mb-4">{postsError}</p>
+              <Button onClick={() => fetchPosts(activeContentTab)}>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Retry
+              </Button>
+            </div>
+          ) : posts.length === 0 ? (
+            <div className="text-center py-12">
+              <Image className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No posts yet</h3>
+              <p className="text-muted-foreground">Posts by {currentProfile.display_name} will appear here.</p>
+            </div>
+          ) : (
+            posts.map((post) => (
+              <Card key={post.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handlePostClick(post.id)}>
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={post.avatar_url} alt={post.display_name} />
+                        <AvatarFallback>
+                          {post.display_name?.charAt(0) || post.username?.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <h3 className="font-semibold">{post.display_name}</h3>
+                          {currentProfile.is_verified && (
+                            <Crown className="h-4 w-4 text-yellow-500" />
+                          )}
+                          <Badge variant="secondary" className="text-xs">
+                            @{post.username}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                          <span>{new Date(post.created_at).toLocaleDateString()}</span>
+                          <span>•</span>
+                          <div className="flex items-center space-x-1">
+                            {getPrivacyIcon(post.privacy)}
+                            <span className="capitalize">{post.privacy}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <p className="mb-4 text-base leading-relaxed">{post.content}</p>
+                  <p className="mb-4 text-base leading-relaxed">{post.content}</p>
 
-                {post.media && post.media.length > 0 && (
-                  <div className="mb-4">
-                    {post.media[0].type === 'image' ? (
-                      <img
-                        src={post.media[0].url}
-                        alt={post.media[0].alt}
-                        className="w-full max-h-96 object-cover rounded-lg"
-                      />
-                    ) : (
-                      <video
-                        src={post.media[0].url}
-                        poster={post.media[0].thumbnail}
-                        controls
-                        className="w-full max-h-96 rounded-lg"
-                      />
-                    )}
+                  {post.media && post.media.length > 0 && (
+                    <div className="mb-4">
+                      {post.media[0].type === 'image' ? (
+                        <img
+                          src={post.media[0].url}
+                          alt={post.media[0].alt}
+                          className="w-full max-h-96 object-cover rounded-lg"
+                        />
+                      ) : (
+                        <video
+                          src={post.media[0].url}
+                          poster={post.media[0].thumbnail}
+                          controls
+                          className="w-full max-h-96 rounded-lg"
+                        />
+                      )}
+                    </div>
+                  )}
+
+                  <Separator className="my-4" />
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-6">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className={`flex items-center space-x-2 ${post.is_liked ? 'text-red-500' : ''}`}
+                        onClick={(e) => handleLikePost(post.id, e)}
+                      >
+                        <Heart className={`h-4 w-4 ${post.is_liked ? 'fill-current' : ''}`} />
+                        <span>{post.stats.likes}</span>
+                      </Button>
+                      <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                        <MessageCircle className="h-4 w-4" />
+                        <span>{post.stats.comments}</span>
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className={`flex items-center space-x-2 ${post.is_bookmarked ? 'text-blue-500' : ''}`}
+                        onClick={(e) => handleBookmarkPost(post.id, e)}
+                      >
+                        <Bookmark className={`h-4 w-4 ${post.is_bookmarked ? 'fill-current' : ''}`} />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="flex items-center space-x-2"
+                        onClick={(e) => handleSharePost(post.id, e)}
+                      >
+                        <Share className="h-4 w-4" />
+                        <span>{post.stats.shares}</span>
+                      </Button>
+                    </div>
+                    <div className="flex items-center space-x-1 text-sm text-muted-foreground">
+                      <Eye className="h-4 w-4" />
+                      <span>{post.stats.views}</span>
+                    </div>
                   </div>
-                )}
-
-                <Separator className="my-4" />
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-6">
-                    <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                      <Heart className="h-4 w-4" />
-                      <span>{post.stats.likes}</span>
-                    </Button>
-                    <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                      <MessageCircle className="h-4 w-4" />
-                      <span>{post.stats.comments}</span>
-                    </Button>
-                    <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                      <Share className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            ))
+          )}
         </TabsContent>
 
         <TabsContent value="images">
@@ -607,20 +751,56 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <div className="flex items-center space-x-2 text-sm">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span>San Francisco, CA</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm">
-                  <LinkIcon className="h-4 w-4 text-muted-foreground" />
-                  <a href="#" className="text-blue-600 hover:underline">example.com</a>
-                </div>
+                {currentProfile.location && (
+                  <div className="flex items-center space-x-2 text-sm">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <span>{currentProfile.location}</span>
+                  </div>
+                )}
+                {currentProfile.website && (
+                  <div className="flex items-center space-x-2 text-sm">
+                    <LinkIcon className="h-4 w-4 text-muted-foreground" />
+                    <a 
+                      href={currentProfile.website.startsWith('http') ? currentProfile.website : `https://${currentProfile.website}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      {currentProfile.website}
+                    </a>
+                  </div>
+                )}
+                {currentProfile.social_links && (
+                  <div className="space-y-1">
+                    {currentProfile.social_links.twitter && (
+                      <div className="flex items-center space-x-2 text-sm">
+                        <span className="text-muted-foreground">Twitter:</span>
+                        <span>{currentProfile.social_links.twitter}</span>
+                      </div>
+                    )}
+                    {currentProfile.social_links.instagram && (
+                      <div className="flex items-center space-x-2 text-sm">
+                        <span className="text-muted-foreground">Instagram:</span>
+                        <span>{currentProfile.social_links.instagram}</span>
+                      </div>
+                    )}
+                    {currentProfile.social_links.youtube && (
+                      <div className="flex items-center space-x-2 text-sm">
+                        <span className="text-muted-foreground">YouTube:</span>
+                        <span>{currentProfile.social_links.youtube}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
-              <Separator />
-              <p className="text-sm text-muted-foreground">
-                Passionate about fitness, creativity, and connecting with amazing people. 
-                Always learning and growing! 🌟
-              </p>
+              {currentProfile.bio && (
+                <>
+                  <Separator />
+                  <p className="text-sm text-muted-foreground">
+                    {currentProfile.bio}
+                  </p>
+                </>
+              )}
             </CardContent>
           </Card>
 
@@ -631,15 +811,49 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary">Fitness</Badge>
-                <Badge variant="secondary">Art</Badge>
-                <Badge variant="secondary">Photography</Badge>
-                <Badge variant="secondary">Travel</Badge>
-                <Badge variant="secondary">Music</Badge>
-                <Badge variant="secondary">Cooking</Badge>
+                {currentProfile.interests && currentProfile.interests.length > 0 ? (
+                  currentProfile.interests.map((interest, index) => (
+                    <Badge key={index} variant="secondary">{interest}</Badge>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground">No interests added yet</p>
+                )}
               </div>
             </CardContent>
           </Card>
+
+          {/* Creator Stats */}
+          {currentProfile.is_creator && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Creator Stats</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold">
+                      {currentProfile.subscription_count || 0}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Subscribers</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold">
+                      ${currentProfile.total_earnings?.toLocaleString() || '0'}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Total Earnings</div>
+                  </div>
+                </div>
+                {/* {currentProfile.subscription_price && (
+                  <div className="text-center">
+                    <div className="text-lg font-semibold">
+                      ${currentProfile.subscription_price}/month
+                    </div>
+                    <div className="text-sm text-muted-foreground">Subscription Price</div>
+                  </div>
+                )} */}
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
 
@@ -781,6 +995,5 @@ export default function ProfilePage() {
       </Dialog>
 
       </div>
-    </AuthGuard>
   )
 }

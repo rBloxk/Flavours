@@ -14,7 +14,7 @@ const contentService = new ContentService()
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 100 * 1024 * 1024, // 100MB limit
+    fileSize: 3650722201, // 3.4GB limit
   },
   fileFilter: (req, file, cb) => {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm', 'audio/mpeg', 'audio/wav']
@@ -321,6 +321,242 @@ router.get('/trending/feed', async (req: Request, res: Response) => {
     logger.error('Get trending posts error:', error)
     res.status(500).json({
       error: 'Failed to fetch trending posts'
+    })
+  }
+})
+
+// Save/Unsave post
+router.post('/:id/save', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as AuthenticatedRequest).user.id
+    const { id } = req.params
+
+    const result = await contentService.toggleSave(id, userId)
+
+    res.json({
+      message: result.saved ? 'Post saved' : 'Post unsaved',
+      saved: result.saved
+    })
+  } catch (error) {
+    logger.error('Toggle save error:', error)
+    res.status(500).json({
+      error: 'Failed to toggle save'
+    })
+  }
+})
+
+// Add to favorites
+router.post('/:id/favorite', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as AuthenticatedRequest).user.id
+    const { id } = req.params
+
+    const result = await contentService.toggleFavorite(id, userId)
+
+    res.json({
+      message: result.favorited ? 'Post added to favorites' : 'Post removed from favorites',
+      favorited: result.favorited
+    })
+  } catch (error) {
+    logger.error('Toggle favorite error:', error)
+    res.status(500).json({
+      error: 'Failed to toggle favorite'
+    })
+  }
+})
+
+// Get saved posts
+router.get('/saved/posts', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as AuthenticatedRequest).user.id
+    const { page = 1, limit = 20 } = req.query
+
+    const posts = await contentService.getSavedPosts(userId, {
+      page: Number(page),
+      limit: Number(limit)
+    })
+
+    res.json({
+      posts,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total: posts.length
+      }
+    })
+  } catch (error) {
+    logger.error('Get saved posts error:', error)
+    res.status(500).json({
+      error: 'Failed to fetch saved posts'
+    })
+  }
+})
+
+// Get favorite posts
+router.get('/favorites/posts', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as AuthenticatedRequest).user.id
+    const { page = 1, limit = 20 } = req.query
+
+    const posts = await contentService.getFavoritePosts(userId, {
+      page: Number(page),
+      limit: Number(limit)
+    })
+
+    res.json({
+      posts,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total: posts.length
+      }
+    })
+  } catch (error) {
+    logger.error('Get favorite posts error:', error)
+    res.status(500).json({
+      error: 'Failed to fetch favorite posts'
+    })
+  }
+})
+
+// Get post insights (for creators)
+router.get('/:id/insights', authMiddleware, requireCreator, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as AuthenticatedRequest).user.id
+    const { id } = req.params
+
+    // Verify ownership
+    const post = await contentService.getPost(id)
+    if (!post || post.creator_id !== userId) {
+      return res.status(403).json({
+        error: 'Not authorized to view insights for this post'
+      })
+    }
+
+    const insights = await contentService.getPostInsights(id)
+
+    res.json({ insights })
+  } catch (error) {
+    logger.error('Get post insights error:', error)
+    res.status(500).json({
+      error: 'Failed to fetch post insights'
+    })
+  }
+})
+
+// Get user's feed (personalized)
+router.get('/feed/personalized', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as AuthenticatedRequest).user.id
+    const { page = 1, limit = 20 } = req.query
+
+    const posts = await contentService.getPersonalizedFeed(userId, {
+      page: Number(page),
+      limit: Number(limit)
+    })
+
+    res.json({
+      posts,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total: posts.length
+      }
+    })
+  } catch (error) {
+    logger.error('Get personalized feed error:', error)
+    res.status(500).json({
+      error: 'Failed to fetch personalized feed'
+    })
+  }
+})
+
+// Search posts
+router.get('/search', async (req: Request, res: Response) => {
+  try {
+    const { q, page = 1, limit = 20, type, category } = req.query
+
+    if (!q || (q as string).trim().length === 0) {
+      return res.status(400).json({
+        error: 'Search query is required'
+      })
+    }
+
+    const posts = await contentService.searchPosts({
+      query: q as string,
+      page: Number(page),
+      limit: Number(limit),
+      type: type as string,
+      category: category as string
+    })
+
+    res.json({
+      posts,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total: posts.length
+      }
+    })
+  } catch (error) {
+    logger.error('Search posts error:', error)
+    res.status(500).json({
+      error: 'Failed to search posts'
+    })
+  }
+})
+
+// Get post interactions
+router.get('/:id/interactions', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as AuthenticatedRequest).user.id
+    const { id } = req.params
+
+    const interactions = await contentService.getPostInteractions(id, userId)
+
+    res.json({ interactions })
+  } catch (error) {
+    logger.error('Get post interactions error:', error)
+    res.status(500).json({
+      error: 'Failed to fetch post interactions'
+    })
+  }
+})
+
+// Share post
+router.post('/:id/share', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as AuthenticatedRequest).user.id
+    const { id } = req.params
+    const { platform, message } = req.body
+
+    const share = await contentService.sharePost(id, userId, platform, message)
+
+    res.json({
+      message: 'Post shared successfully',
+      share
+    })
+  } catch (error) {
+    logger.error('Share post error:', error)
+    res.status(500).json({
+      error: 'Failed to share post'
+    })
+  }
+})
+
+// Get post analytics (for creators)
+router.get('/analytics/overview', authMiddleware, requireCreator, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as AuthenticatedRequest).user.id
+    const { period = '7d' } = req.query
+
+    const analytics = await contentService.getContentAnalytics(userId, period as string)
+
+    res.json({ analytics })
+  } catch (error) {
+    logger.error('Get content analytics error:', error)
+    res.status(500).json({
+      error: 'Failed to fetch content analytics'
     })
   }
 })

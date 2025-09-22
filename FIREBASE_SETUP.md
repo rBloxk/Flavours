@@ -101,7 +101,7 @@ Once Firebase is configured, deploy your application:
 firebase deploy
 
 # Deploy to GCP
-./scripts/deploy-gcp.sh production us-central1 us-central1-a flavours.app
+./scripts/deploy-gcp.sh production us-central1 us-central1-a flavours.club
 ```
 
 ## 🔍 Verify Setup

@@ -74,7 +74,7 @@ export default function LoginPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@flavours.com"
+                  placeholder="admin@flavours.club"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -145,29 +145,29 @@ export default function LoginPage() {
               <p 
                 className="cursor-pointer hover:bg-muted p-2 rounded transition-colors"
                 onClick={() => {
-                  setEmail('admin@flavours.com')
+                  setEmail('admin@flavours.club')
                   setPassword('admin123')
                 }}
               >
-                <strong>Admin:</strong> admin@flavours.com / admin123
+                <strong>Admin:</strong> admin@flavours.club / admin123
               </p>
               <p 
                 className="cursor-pointer hover:bg-muted p-2 rounded transition-colors"
                 onClick={() => {
-                  setEmail('mod@flavours.com')
+                  setEmail('mod@flavours.club')
                   setPassword('mod123')
                 }}
               >
-                <strong>Moderator:</strong> mod@flavours.com / mod123
+                <strong>Moderator:</strong> mod@flavours.club / mod123
               </p>
               <p 
                 className="cursor-pointer hover:bg-muted p-2 rounded transition-colors"
                 onClick={() => {
-                  setEmail('viewer@flavours.com')
+                  setEmail('viewer@flavours.club')
                   setPassword('viewer123')
                 }}
               >
-                <strong>Viewer:</strong> viewer@flavours.com / viewer123
+                <strong>Viewer:</strong> viewer@flavours.club / viewer123
               </p>
             </div>
             <p className="mt-2 text-xs text-blue-600">

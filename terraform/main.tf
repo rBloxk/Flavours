@@ -52,7 +52,7 @@ variable "environment" {
 variable "domain" {
   description = "Domain name"
   type        = string
-  default     = "flavours.app"
+  default     = "flavours.club"
 }
 
 # Enable required APIs

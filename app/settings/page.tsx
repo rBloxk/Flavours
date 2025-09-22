@@ -42,7 +42,9 @@ import {
   MoreHorizontal,
   Edit,
   Trash,
-  DollarSign
+  DollarSign,
+  Building2,
+  Wallet
 } from 'lucide-react'
 import { AddPaymentMethodModal } from '@/components/ui/add-payment-method-modal'
 import { UpgradeCreatorModal } from '@/components/ui/upgrade-creator-modal'
@@ -59,6 +61,8 @@ export default function SettingsPage() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showBankAccountModal, setShowBankAccountModal] = useState(false)
+  const [showCreditCardModal, setShowCreditCardModal] = useState(false)
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<any>(null)
   const [paymentMethods, setPaymentMethods] = useState([
     {
@@ -108,6 +112,8 @@ export default function SettingsPage() {
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'privacy', label: 'Privacy', icon: Lock },
     { id: 'appearance', label: 'Appearance', icon: Palette },
+    { id: 'bank-account', label: 'Add Bank Account (To Earn)', icon: Building2 },
+    { id: 'credit-card', label: 'Add Credit Card (To Subscribe)', icon: Wallet },
     { id: 'billing', label: 'Billing', icon: Crown }
   ]
 
@@ -896,6 +902,54 @@ export default function SettingsPage() {
     </div>
   )
 
+  const renderBankAccountSettings = () => (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Add Bank Account</CardTitle>
+          <CardDescription>Set up a bank account to receive payments and earnings</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="text-center py-8">
+            <Building2 className="h-16 w-16 text-blue-600 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold mb-2">Add Your Bank Account</h3>
+            <p className="text-muted-foreground mb-6">
+              Connect your bank account to receive payments from subscribers and tips
+            </p>
+            <Button onClick={() => setShowBankAccountModal(true)} size="lg">
+              <Building2 className="h-4 w-4 mr-2" />
+              Add Bank Account
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+
+  const renderCreditCardSettings = () => (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Add Credit Card</CardTitle>
+          <CardDescription>Set up a credit card for subscriptions and purchases</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="text-center py-8">
+            <Wallet className="h-16 w-16 text-green-600 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold mb-2">Add Your Credit Card</h3>
+            <p className="text-muted-foreground mb-6">
+              Add a credit card to subscribe to creators and make purchases
+            </p>
+            <Button onClick={() => setShowCreditCardModal(true)} size="lg">
+              <Wallet className="h-4 w-4 mr-2" />
+              Add Credit Card
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+
   const renderTabContent = () => {
     switch (activeTab) {
       case 'profile':
@@ -908,6 +962,10 @@ export default function SettingsPage() {
         return renderPrivacySettings()
       case 'appearance':
         return renderAppearanceSettings()
+      case 'bank-account':
+        return renderBankAccountSettings()
+      case 'credit-card':
+        return renderCreditCardSettings()
       case 'billing':
         return renderBillingSettings()
       default:
@@ -1010,6 +1068,32 @@ export default function SettingsPage() {
           paymentMethod={selectedPaymentMethod}
         />
       )}
+
+      {/* Add Bank Account Modal */}
+      <AddPaymentMethodModal
+        isOpen={showBankAccountModal}
+        onClose={() => setShowBankAccountModal(false)}
+        onSuccess={() => {
+          setShowBankAccountModal(false)
+          // Handle bank account addition success
+        }}
+        title="Add Bank Account"
+        description="Add a bank account to receive payments and earnings"
+        type="bank"
+      />
+
+      {/* Add Credit Card Modal */}
+      <AddPaymentMethodModal
+        isOpen={showCreditCardModal}
+        onClose={() => setShowCreditCardModal(false)}
+        onSuccess={() => {
+          setShowCreditCardModal(false)
+          // Handle credit card addition success
+        }}
+        title="Add Credit Card"
+        description="Add a credit card for subscriptions and purchases"
+        type="card"
+      />
       </div>
     </AuthGuard>
   )

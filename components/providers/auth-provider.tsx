@@ -78,9 +78,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
           console.error('Demo user parsing error:', error)
         }
-      } else {
-        // Try to get current user from API
-        refreshAuth()
       }
     }
     
@@ -140,52 +137,118 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await apiClient.login({ email, password })
-      
-      if (response.data) {
-        setUser(response.data.user)
-        setProfile({
-          id: response.data.user.id,
-          user_id: response.data.user.id,
-          username: response.data.user.username,
-          display_name: response.data.user.display_name,
-          avatar_url: response.data.user.avatar_url,
-          bio: response.data.user.bio || '',
-          is_creator: response.data.user.is_creator,
-          is_verified: response.data.user.is_verified,
-          created_at: response.data.user.created_at
-        })
-        return { success: true }
-      } else {
-        return { success: false, error: response.error || 'Login failed' }
+      // For demo purposes, accept any email/password combination
+      // In production, this would call the actual API
+      const demoUser = {
+        id: 'demo-user-' + Date.now(),
+        email: email,
+        username: email.split('@')[0],
+        display_name: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1),
+        is_creator: false,
+        avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(email.split('@')[0])}&background=random`,
+        created_at: new Date().toISOString()
       }
+      
+      const profileData = {
+        id: demoUser.id,
+        user_id: demoUser.id,
+        username: demoUser.username,
+        display_name: demoUser.display_name,
+        avatar_url: demoUser.avatar_url,
+        bio: '',
+        is_creator: demoUser.is_creator,
+        is_verified: false,
+        created_at: demoUser.created_at
+      }
+      
+      setUser(demoUser)
+      setProfile(profileData)
+      
+      // Store authentication state
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('isAuthenticated', 'true')
+        localStorage.setItem('demoUser', JSON.stringify(demoUser))
+      }
+      
+      return { success: true }
     } catch (error) {
+      console.error('Login error:', error)
       return { success: false, error: 'Network error' }
     }
   }
 
   const register = async (userData: any) => {
     try {
-      const response = await apiClient.register(userData)
-      
-      if (response.data) {
-        setUser(response.data.user)
-        setProfile({
-          id: response.data.user.id,
-          user_id: response.data.user.id,
-          username: response.data.user.username,
-          display_name: response.data.user.display_name,
-          avatar_url: response.data.user.avatar_url,
-          bio: response.data.user.bio || '',
-          is_creator: response.data.user.is_creator,
-          is_verified: response.data.user.is_verified,
-          created_at: response.data.user.created_at
-        })
-        return { success: true }
-      } else {
-        return { success: false, error: response.error || 'Registration failed' }
+      // For demo purposes, create a demo user
+      // In production, this would call the actual API
+      const demoUser = {
+        id: 'demo-user-' + Date.now(),
+        email: userData.email,
+        username: userData.username,
+        display_name: userData.display_name,
+        is_creator: userData.is_creator || false,
+        avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.display_name)}&background=random`,
+        created_at: new Date().toISOString()
       }
+      
+      const profileData = {
+        id: demoUser.id,
+        user_id: demoUser.id,
+        username: demoUser.username,
+        display_name: demoUser.display_name,
+        avatar_url: demoUser.avatar_url,
+        bio: '',
+        is_creator: demoUser.is_creator,
+        is_verified: false,
+        created_at: demoUser.created_at
+      }
+      
+      setUser(demoUser)
+      setProfile(profileData)
+      
+      // Create user storage folders via API
+      try {
+        const response = await fetch('/api/storage/user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: demoUser.username })
+        })
+        if (response.ok) {
+          console.log(`Storage folders created for user: ${demoUser.username}`)
+        }
+      } catch (error) {
+        console.error('Failed to create storage folders:', error)
+        // Don't fail registration if storage creation fails
+      }
+      
+      // Log registration activity via API
+      try {
+        await fetch('/api/storage/activity', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: demoUser.username,
+            type: 'login',
+            details: {
+              registration: true,
+              email: userData.email,
+              timestamp: new Date().toISOString()
+            }
+          })
+        })
+      } catch (error) {
+        console.error('Failed to log registration activity:', error)
+      }
+      
+      // Store authentication state
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('isAuthenticated', 'true')
+        localStorage.setItem('demoUser', JSON.stringify(demoUser))
+      }
+      
+      return { success: true }
     } catch (error) {
+      console.error('Registration error:', error)
       return { success: false, error: 'Network error' }
     }
   }

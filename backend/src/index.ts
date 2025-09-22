@@ -118,7 +118,7 @@ app.get('/metrics', metricsEndpoint)
 setupRoutes(app)
 
 // WebSocket setup
-setupWebSocket(io)
+const websocketHandlers = setupWebSocket(io)
 
 // 404 handler
 app.use('*', (req, res) => {

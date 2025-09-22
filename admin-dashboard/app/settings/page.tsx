@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { AdminLayout } from '@/components/admin-layout'
-import { AuthGuard } from '@/components/auth-guard'
+import { AdminLayout } from '../../components/admin-layout'
+import { AuthGuard } from '../../components/auth-guard'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -86,7 +86,7 @@ export default function SettingsPage() {
         general: {
           siteName: 'Flavours',
           siteDescription: 'Creator Monetization Platform',
-          siteUrl: 'https://flavours.app',
+          siteUrl: 'https://flavours.club',
           timezone: 'UTC',
           language: 'en'
         },
@@ -121,7 +121,7 @@ export default function SettingsPage() {
         api: {
           rateLimit: 1000,
           enableApiKeys: true,
-          webhookUrl: 'https://api.flavours.app/webhooks',
+          webhookUrl: 'https://api.flavours.club/webhooks',
           enableLogging: true
         }
       }

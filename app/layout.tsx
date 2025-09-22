@@ -3,10 +3,11 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { AuthProvider } from '@/components/providers/auth-provider'
+// import { RealtimeProvider } from '@/components/providers/realtime-provider'
 import { Navigation } from '@/components/ui/navigation'
 import { Sidebar } from '@/components/ui/sidebar'
 import { Toaster } from '@/components/ui/sonner'
-import { LayoutWrapper } from '@/components/layout-wrapper'
+import { ConditionalLayout } from '@/components/conditional-layout'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -30,9 +31,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <div className="min-h-screen bg-background">
-              <LayoutWrapper>{children}</LayoutWrapper>
-            </div>
+            <ConditionalLayout>{children}</ConditionalLayout>
             <Toaster />
           </AuthProvider>
         </ThemeProvider>

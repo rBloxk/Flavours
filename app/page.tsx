@@ -192,6 +192,7 @@ export default function LandingPage() {
               <a href="#" className="hover:text-foreground transition-colors">Terms of Service</a>
               <a href="#" className="hover:text-foreground transition-colors">Support</a>
             </div>
+
           </div>
           <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t text-center text-sm text-muted-foreground">
             <p>&copy; 2025 Flavours Platform. All rights reserved.</p>

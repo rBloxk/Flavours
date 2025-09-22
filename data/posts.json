@@ -1,0 +1,50 @@
+[
+  {
+    "id": "1",
+    "creator": {
+      "id": "user_1",
+      "username": "jane_fitness",
+      "displayName": "Jane Smith",
+      "avatarUrl": "https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=150",
+      "isVerified": true,
+      "followerCount": 125000,
+      "engagementRate": 8.5,
+      "category": [
+        "fitness",
+        "wellness",
+        "motivation"
+      ],
+      "trustScore": 9.2,
+      "isFollowing": true
+    },
+    "content": "New workout video is live! 💪 Who's ready to sweat with me? This 30-minute HIIT session will challenge every muscle group. Perfect for beginners and advanced athletes alike! #FitnessMotivation #HIIT #Workout",
+    "mediaUrl": "https://images.pexels.com/photos/416809/pexels-photo-416809.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "mediaType": "video",
+    "isPaid": false,
+    "privacy": "public",
+    "metrics": {
+      "likesCount": 2340,
+      "commentsCount": 180,
+      "sharesCount": 95,
+      "viewsCount": 15600,
+      "engagementRate": 8.2,
+      "viralityScore": 7.8,
+      "freshnessScore": 9.5,
+      "relevanceScore": 8.9
+    },
+    "createdAt": "2h",
+    "createdAtTimestamp": 1758533316430,
+    "tags": [
+      "fitness",
+      "workout",
+      "motivation",
+      "hiit"
+    ],
+    "category": "fitness",
+    "isLiked": false,
+    "isBookmarked": false,
+    "isViewed": false,
+    "qualityScore": 9.1,
+    "trendingScore": 8.7
+  }
+]

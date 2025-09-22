@@ -3,7 +3,7 @@ project_id = "flavours-production"
 region     = "us-central1"
 zone       = "us-central1-a"
 environment = "production"
-domain     = "flavours.app"
+domain     = "flavours.club"
 
 # Database Configuration
 db_password = "your_secure_database_password_here"
@@ -40,8 +40,8 @@ content_moderation_api_key = "your_moderation_api_key_here"
 age_verification_api_key = "your_age_verification_api_key_here"
 
 # Legal Compliance
-dmca_email = "dmca@flavours.app"
-alert_email = "alerts@flavours.app"
+dmca_email = "dmca@flavours.club"
+alert_email = "alerts@flavours.club"
 alert_slack_webhook = "https://hooks.slack.com/services/your/slack/webhook"
 alert_discord_webhook = "https://discord.com/api/webhooks/your/discord/webhook"
 

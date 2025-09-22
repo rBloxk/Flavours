@@ -34,9 +34,9 @@ class AuthService {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     // Mock authentication for demo purposes
     const mockUsers = [
-      { email: 'admin@flavours.com', password: 'admin123', role: 'admin' as const, name: 'Admin User' },
-      { email: 'mod@flavours.com', password: 'mod123', role: 'moderator' as const, name: 'Moderator User' },
-      { email: 'viewer@flavours.com', password: 'viewer123', role: 'viewer' as const, name: 'Viewer User' }
+      { email: 'admin@flavours.club', password: 'admin123', role: 'admin' as const, name: 'Admin User' },
+      { email: 'mod@flavours.club', password: 'mod123', role: 'moderator' as const, name: 'Moderator User' },
+      { email: 'viewer@flavours.club', password: 'viewer123', role: 'viewer' as const, name: 'Viewer User' }
     ]
 
     const user = mockUsers.find(u => u.email === credentials.email && u.password === credentials.password)
@@ -179,9 +179,9 @@ class AuthService {
         return userData
       }
 
-      // If no user data in localStorage, try to decode token
-      const payload = JSON.parse(atob(token.split('.')[1]))
-      const now = Date.now() / 1000
+      // If no user data in localStorage, try to decode mock token
+      const payload = JSON.parse(atob(token))
+      const now = Date.now()
       
       if (payload.exp < now) {
         this.clearAuthData()
@@ -235,8 +235,8 @@ class AuthService {
 
     try {
       // Mock token refresh - just check if token is still valid
-      const payload = JSON.parse(atob(token.split('.')[1]))
-      const now = Date.now() / 1000
+      const payload = JSON.parse(atob(token))
+      const now = Date.now()
       
       if (payload.exp < now) {
         this.clearAuthData()
@@ -283,8 +283,8 @@ class AuthService {
     if (!token) return false
 
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]))
-      const now = Date.now() / 1000
+      const payload = JSON.parse(atob(token))
+      const now = Date.now()
       return payload.exp > now
     } catch {
       return false

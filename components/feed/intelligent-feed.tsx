@@ -7,6 +7,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { CreatePostModal } from './create-post-modal'
+import { FlavourTube } from './flavour-tube'
+import { FlavourLicks } from './flavour-licks'
+import { PostOptionsOverlay } from '@/components/ui/post-options-overlay'
+import { useAuth } from '@/components/providers/auth-provider'
 import { 
   Heart, 
   MessageCircle, 
@@ -31,8 +35,10 @@ import {
   RefreshCw,
   Sparkles,
   Target,
-  Brain
+  Brain,
+  Play
 } from 'lucide-react'
+import { toast } from 'sonner'
 
 // Advanced Feed Algorithm Types
 interface UserProfile {
@@ -75,6 +81,7 @@ interface Post {
   category: string
   isLiked: boolean
   isBookmarked: boolean
+  isFavorited: boolean
   isViewed: boolean
   qualityScore: number
   trendingScore: number
@@ -148,6 +155,7 @@ const mockPosts: Post[] = [
     category: 'fitness',
     isLiked: false,
     isBookmarked: false,
+    isFavorited: false,
     isViewed: false,
     qualityScore: 9.1,
     trendingScore: 8.7
@@ -188,6 +196,7 @@ const mockPosts: Post[] = [
     category: 'art',
     isLiked: false,
     isBookmarked: false,
+    isFavorited: false,
     isViewed: false,
     qualityScore: 8.9,
     trendingScore: 7.2
@@ -228,6 +237,7 @@ const mockPosts: Post[] = [
     category: 'food',
     isLiked: true,
     isBookmarked: false,
+    isFavorited: false,
     isViewed: false,
     qualityScore: 9.4,
     trendingScore: 8.9
@@ -267,6 +277,7 @@ const mockPosts: Post[] = [
     category: 'technology',
     isLiked: false,
     isBookmarked: true,
+    isFavorited: false,
     isViewed: false,
     qualityScore: 9.6,
     trendingScore: 9.5
@@ -306,6 +317,7 @@ const mockPosts: Post[] = [
     category: 'travel',
     isLiked: false,
     isBookmarked: false,
+    isFavorited: false,
     isViewed: false,
     qualityScore: 8.7,
     trendingScore: 6.9
@@ -390,6 +402,51 @@ class IntelligentFeedAlgorithm implements FeedAlgorithm {
     })).sort((a, b) => b.finalScore - a.finalScore)
   }
 
+  // Trending algorithm - prioritize posts with high engagement velocity
+  rankPostsByTrending(posts: Post[]): Post[] {
+    return posts.map(post => ({
+      ...post,
+      trendingScore: this.calculateTrendingScore(post),
+      finalScore: this.calculateTrendingScore(post)
+    })).sort((a, b) => b.finalScore - a.finalScore)
+  }
+
+  // Following algorithm - show only posts from followed users
+  rankPostsByFollowing(posts: Post[], followingList: string[]): Post[] {
+    const followingPosts = posts.filter(post => followingList.includes(post.creator.id))
+    return followingPosts.map(post => ({
+      ...post,
+      finalScore: this.calculateTrendingScore(post) // Use trending score for recency
+    })).sort((a, b) => b.finalScore - a.finalScore)
+  }
+
+  // Discovery algorithm - find new and diverse content
+  rankPostsByDiscovery(posts: Post[], userPrefs: UserPreferences): Post[] {
+    // Filter out posts from followed users and already engaged content
+    const discoveryPosts = posts.filter(post => 
+      !userPrefs.followingList.includes(post.creator.id) &&
+      !userPrefs.engagementHistory.likedPosts.includes(post.id) &&
+      !userPrefs.engagementHistory.viewedPosts.includes(post.id)
+    )
+
+    return discoveryPosts.map(post => ({
+      ...post,
+      discoveryScore: this.calculateDiscoveryScore(post, userPrefs),
+      finalScore: this.calculateDiscoveryScore(post, userPrefs)
+    })).sort((a, b) => b.finalScore - a.finalScore)
+  }
+
+  private calculateDiscoveryScore(post: Post, userPrefs: UserPreferences): number {
+    // Discovery focuses on new creators and diverse content
+    const creatorNovelty = post.creator.followerCount < 10000 ? 3 : 0 // Boost smaller creators
+    const categoryNovelty = !userPrefs.preferredCategories.includes(post.category) ? 2 : 0
+    const contentNovelty = post.mediaType && !userPrefs.preferredContentTypes.includes(post.mediaType as any) ? 1 : 0
+    const engagementPotential = post.metrics.engagementRate * 0.5
+    const qualityScore = this.calculateQualityScore(post) * 0.3
+    
+    return Math.min(10, creatorNovelty + categoryNovelty + contentNovelty + engagementPotential + qualityScore)
+  }
+
   private calculateFinalScore(post: Post, userPrefs: UserPreferences, allPosts: Post[]): number {
     const engagementScore = this.calculateEngagementScore(post, userPrefs) * 0.3
     const relevanceScore = this.calculateRelevanceScore(post, userPrefs) * 0.25
@@ -403,6 +460,7 @@ class IntelligentFeedAlgorithm implements FeedAlgorithm {
 
 export function IntelligentFeed() {
   const router = useRouter()
+  const { user } = useAuth()
   const [posts, setPosts] = useState<Post[]>([])
   const [userPreferences, setUserPreferences] = useState<UserPreferences>({
     interests: ['fitness', 'technology', 'art', 'cooking', 'travel'],
@@ -428,17 +486,151 @@ export function IntelligentFeed() {
   
   const [feedMode, setFeedMode] = useState<'intelligent' | 'trending' | 'following' | 'discover'>('intelligent')
   const [isLoading, setIsLoading] = useState(false)
+  const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null)
+  const [isPullToRefresh, setIsPullToRefresh] = useState(false)
+  const [pullDistance, setPullDistance] = useState(0)
   const [algorithm] = useState(new IntelligentFeedAlgorithm())
+  // Removed activeTab state - tabs moved to sidebar
+
+
+  // Fetch posts from API with different algorithms based on feed mode
+  const fetchPosts = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const response = await fetch('/api/posts')
+      const data = await response.json()
+      
+      let postsToRank = data.success ? data.posts : mockPosts
+      
+      // Apply different algorithms based on feed mode
+      let rankedPosts: Post[]
+      
+      switch (feedMode) {
+        case 'trending':
+          rankedPosts = algorithm.rankPostsByTrending(postsToRank)
+          break
+        case 'following':
+          rankedPosts = algorithm.rankPostsByFollowing(postsToRank, userPreferences.followingList)
+          break
+        case 'discover':
+          rankedPosts = algorithm.rankPostsByDiscovery(postsToRank, userPreferences)
+          break
+        case 'intelligent':
+        default:
+          rankedPosts = algorithm.rankPosts(postsToRank, userPreferences)
+          break
+      }
+      
+      setPosts(rankedPosts)
+      setLastRefreshed(new Date())
+    } catch (error) {
+      console.error('Error fetching posts:', error)
+      // Fallback to mock data with current feed mode
+      let rankedPosts: Post[]
+      switch (feedMode) {
+        case 'trending':
+          rankedPosts = algorithm.rankPostsByTrending(mockPosts)
+          break
+        case 'following':
+          rankedPosts = algorithm.rankPostsByFollowing(mockPosts, userPreferences.followingList)
+          break
+        case 'discover':
+          rankedPosts = algorithm.rankPostsByDiscovery(mockPosts, userPreferences)
+          break
+        case 'intelligent':
+        default:
+          rankedPosts = algorithm.rankPosts(mockPosts, userPreferences)
+          break
+      }
+      setPosts(rankedPosts)
+      setLastRefreshed(new Date())
+    } finally {
+      setIsLoading(false)
+    }
+  }, [userPreferences, feedMode, algorithm])
 
   // Initialize feed with intelligent ranking
   useEffect(() => {
-    setIsLoading(true)
-    setTimeout(() => {
-      const rankedPosts = algorithm.rankPosts(mockPosts, userPreferences)
-      setPosts(rankedPosts)
-      setIsLoading(false)
-    }, 1000)
-  }, [userPreferences, feedMode])
+    fetchPosts()
+  }, [fetchPosts])
+
+  // Add keyboard shortcut for refresh (Ctrl+R or Cmd+R)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
+        event.preventDefault()
+        handleRefreshFeed()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
+  // Pull-to-refresh functionality
+  useEffect(() => {
+    let startY = 0
+    let currentY = 0
+    let isPulling = false
+
+    const handleTouchStart = (e: TouchEvent) => {
+      startY = e.touches[0].clientY
+      isPulling = false
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      currentY = e.touches[0].clientY
+      const distance = currentY - startY
+
+      if (distance > 0 && window.scrollY === 0) {
+        isPulling = true
+        setPullDistance(Math.min(distance, 100))
+        
+        if (distance > 60) {
+          setIsPullToRefresh(true)
+        } else {
+          setIsPullToRefresh(false)
+        }
+      }
+    }
+
+    const handleTouchEnd = () => {
+      if (isPulling && isPullToRefresh) {
+        handleRefreshFeed()
+      }
+      
+      setPullDistance(0)
+      setIsPullToRefresh(false)
+      isPulling = false
+    }
+
+    document.addEventListener('touchstart', handleTouchStart, { passive: true })
+    document.addEventListener('touchmove', handleTouchMove, { passive: true })
+    document.addEventListener('touchend', handleTouchEnd, { passive: true })
+
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart)
+      document.removeEventListener('touchmove', handleTouchMove)
+      document.removeEventListener('touchend', handleTouchEnd)
+    }
+  }, [isPullToRefresh])
+
+  // Listen for new posts
+  useEffect(() => {
+    const handlePostCreated = (event: CustomEvent) => {
+      const newPost = event.detail
+      setPosts(prev => {
+        const updatedPosts = [newPost, ...prev]
+        return algorithm.rankPosts(updatedPosts, userPreferences)
+      })
+    }
+
+    window.addEventListener('postCreated', handlePostCreated as EventListener)
+    
+    return () => {
+      window.removeEventListener('postCreated', handlePostCreated as EventListener)
+    }
+  }, [algorithm, userPreferences])
 
   const handlePostClick = (postId: string) => {
     router.push(`/post/${postId}`)
@@ -448,57 +640,260 @@ export function IntelligentFeed() {
     router.push(`/profile/${username}`)
   }
 
-  const handleLike = (postId: string) => {
-    setPosts(prev => prev.map(post => 
-      post.id === postId 
-        ? { 
-            ...post, 
-            isLiked: !post.isLiked,
-            metrics: {
-              ...post.metrics,
-              likesCount: post.isLiked ? post.metrics.likesCount - 1 : post.metrics.likesCount + 1
-            }
+  const handleLike = async (postId: string) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}/interact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: 'like' })
+      })
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        setPosts(prev => prev.map(post => 
+          post.id === postId 
+            ? { 
+                ...post, 
+                isLiked: data.userInteractions.isLiked,
+                metrics: {
+                  ...post.metrics,
+                  likesCount: data.counts.likes
+                }
+              }
+            : post
+        ))
+        
+        // Update user preferences
+        setUserPreferences(prev => ({
+          ...prev,
+          engagementHistory: {
+            ...prev.engagementHistory,
+            likedPosts: data.userInteractions.isLiked
+              ? [...prev.engagementHistory.likedPosts, postId]
+              : prev.engagementHistory.likedPosts.filter(id => id !== postId)
           }
-        : post
-    ))
-    
-    // Update user preferences
-    setUserPreferences(prev => ({
-      ...prev,
-      engagementHistory: {
-        ...prev.engagementHistory,
-        likedPosts: prev.engagementHistory.likedPosts.includes(postId)
-          ? prev.engagementHistory.likedPosts.filter(id => id !== postId)
-          : [...prev.engagementHistory.likedPosts, postId]
+        }))
       }
-    }))
+    } catch (error) {
+      console.error('Error liking post:', error)
+    }
   }
 
-  const handleBookmark = (postId: string) => {
-    setPosts(prev => prev.map(post => 
-      post.id === postId 
-        ? { ...post, isBookmarked: !post.isBookmarked }
-        : post
-    ))
-    
-    setUserPreferences(prev => ({
-      ...prev,
-      engagementHistory: {
-        ...prev.engagementHistory,
-        bookmarkedPosts: prev.engagementHistory.bookmarkedPosts.includes(postId)
-          ? prev.engagementHistory.bookmarkedPosts.filter(id => id !== postId)
-          : [...prev.engagementHistory.bookmarkedPosts, postId]
+  const handleBookmark = async (postId: string) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}/interact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: 'bookmark' })
+      })
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        setPosts(prev => prev.map(post => 
+          post.id === postId 
+            ? { ...post, isBookmarked: data.userInteractions.isBookmarked }
+            : post
+        ))
+        
+        setUserPreferences(prev => ({
+          ...prev,
+          engagementHistory: {
+            ...prev.engagementHistory,
+            bookmarkedPosts: data.userInteractions.isBookmarked
+              ? [...prev.engagementHistory.bookmarkedPosts, postId]
+              : prev.engagementHistory.bookmarkedPosts.filter(id => id !== postId)
+          }
+        }))
       }
-    }))
+    } catch (error) {
+      console.error('Error bookmarking post:', error)
+    }
   }
 
-  const handleRefreshFeed = () => {
-    setIsLoading(true)
-    setTimeout(() => {
-      const rankedPosts = algorithm.rankPosts(mockPosts, userPreferences)
-      setPosts(rankedPosts)
-      setIsLoading(false)
-    }, 1000)
+  const handleComment = async (postId: string) => {
+    try {
+      // In a real app, this would open a comment modal or navigate to post detail
+      const response = await fetch(`/api/posts/${postId}/interact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: 'view' })
+      })
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        setPosts(prev => prev.map(post => 
+          post.id === postId 
+            ? { 
+                ...post, 
+                isViewed: data.userInteractions.isViewed,
+                metrics: {
+                  ...post.metrics,
+                  viewsCount: data.counts.views
+                }
+              }
+            : post
+        ))
+      }
+      
+      // Navigate to post detail page for comments
+      router.push(`/post/${postId}`)
+    } catch (error) {
+      console.error('Error viewing post:', error)
+      router.push(`/post/${postId}`)
+    }
+  }
+
+  const handleShare = async (postId: string) => {
+    try {
+      // Update share count
+      setPosts(prev => prev.map(post => 
+        post.id === postId 
+          ? { 
+              ...post, 
+              metrics: {
+                ...post.metrics,
+                sharesCount: post.metrics.sharesCount + 1
+              }
+            }
+          : post
+      ))
+      
+      // In a real app, this would open a share modal
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Check out this post on Flavours',
+          url: `${window.location.origin}/post/${postId}`
+        })
+      } else {
+        // Fallback: copy to clipboard
+        await navigator.clipboard.writeText(`${window.location.origin}/post/${postId}`)
+        toast.success('Link copied to clipboard!')
+      }
+    } catch (error) {
+      console.error('Error sharing post:', error)
+    }
+  }
+
+  const handleRefreshFeed = async () => {
+    try {
+      await fetchPosts()
+      toast.success('Feed refreshed successfully!')
+    } catch (error) {
+      console.error('Error refreshing feed:', error)
+      toast.error('Failed to refresh feed')
+    }
+  }
+
+  // New handlers for post options overlay
+  const handleDeletePost = async (postId: string) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      if (response.ok) {
+        setPosts(prev => prev.filter(post => post.id !== postId))
+        toast.success('Post deleted successfully')
+      } else {
+        throw new Error('Failed to delete post')
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error)
+      throw error
+    }
+  }
+
+  const handleEditPost = (postId: string) => {
+    // Navigate to edit page or open edit modal
+    router.push(`/post/${postId}/edit`)
+  }
+
+  const handleSavePost = async (postId: string) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}/interact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: 'save' })
+      })
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        setPosts(prev => prev.map(post => 
+          post.id === postId 
+            ? { ...post, isBookmarked: data.userInteractions.isBookmarked }
+            : post
+        ))
+      }
+    } catch (error) {
+      console.error('Error saving post:', error)
+      throw error
+    }
+  }
+
+  const handleAddToFavorites = async (postId: string) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}/interact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: 'favorite' })
+      })
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        setPosts(prev => prev.map(post => 
+          post.id === postId 
+            ? { ...post, isFavorited: data.userInteractions.isFavorited }
+            : post
+        ))
+      }
+    } catch (error) {
+      console.error('Error adding to favorites:', error)
+      throw error
+    }
+  }
+
+  const handleReportPost = async (postId: string) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}/report`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ reason: 'inappropriate' })
+      })
+      
+      if (response.ok) {
+        toast.success('Post reported successfully')
+      } else {
+        throw new Error('Failed to report post')
+      }
+    } catch (error) {
+      console.error('Error reporting post:', error)
+      throw error
+    }
+  }
+
+  const handleViewInsights = (postId: string) => {
+    // Navigate to insights page
+    router.push(`/post/${postId}/insights`)
   }
 
   const getPrivacyIcon = (privacy: string) => {
@@ -530,10 +925,31 @@ export function IntelligentFeed() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto"><br />
-      {/* Feed Header with Algorithm Controls */}
+    <div className="w-full">
+
+      {/* Pull-to-refresh indicator */}
+      {pullDistance > 0 && (
+        <div 
+          className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b transition-all duration-200"
+          style={{ transform: `translateY(${Math.max(0, pullDistance - 60)}px)` }}
+        >
+          <div className="flex items-center justify-center py-4">
+            <RefreshCw className={`h-6 w-6 mr-2 ${isPullToRefresh ? 'animate-spin text-primary' : 'text-muted-foreground'}`} />
+            <span className={`text-sm ${isPullToRefresh ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+              {isPullToRefresh ? 'Release to refresh' : 'Pull to refresh'}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Tab Navigation removed - moved to sidebar */}
+
+      {/* Feed Content - Only Feeds tab content remains */}
+      <>
+        {/* Feed Header with Algorithm Controls */}
       <Card className="mb-6">
         <CardContent className="p-4">
+
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Sparkles className="h-5 w-5 text-primary" />
@@ -544,12 +960,20 @@ export function IntelligentFeed() {
               </Badge>
             </div>
             <div className="flex items-center space-x-2">
-              <Button
+              
+              {lastRefreshed && (
+                <span className="text-xs text-muted-foreground">
+                  Last refreshed: {lastRefreshed.toLocaleTimeString()}
+                </span>
+              )}
+
+            <Button
                 variant="outline"
                 size="sm"
                 onClick={handleRefreshFeed}
                 disabled={isLoading}
-              >
+                title="Refresh feed (Ctrl+R)"
+               >
                 <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
                 Refresh
               </Button>
@@ -559,22 +983,36 @@ export function IntelligentFeed() {
           {/* Feed Mode Selector */}
           <div className="flex space-x-1 mt-3 p-1 bg-muted rounded-lg">
             {[
-              { key: 'intelligent', label: 'Smart', icon: Brain },
-              { key: 'trending', label: 'Trending', icon: TrendingUp },
-              { key: 'following', label: 'Following', icon: Users },
-              { key: 'discover', label: 'Discover', icon: Sparkles }
+              { key: 'intelligent', label: 'Smart', icon: Brain, description: 'AI-powered personalized feed' },
+              { key: 'trending', label: 'Trending', icon: TrendingUp, description: 'Most popular content now' },
+              { key: 'following', label: 'Following', icon: Users, description: 'Posts from people you follow' },
+              { key: 'discover', label: 'Discover', icon: Sparkles, description: 'Find new creators & content' }
             ].map((mode) => (
               <Button
                 key={mode.key}
                 variant={feedMode === mode.key ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setFeedMode(mode.key as any)}
-                className="flex-1"
+                className="flex-1 relative group"
+                title={mode.description}
               >
                 <mode.icon className="h-4 w-4 mr-1" />
                 {mode.label}
+                {feedMode === mode.key && (
+                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    {mode.description}
+                  </div>
+                )}
               </Button>
             ))}
+          </div>
+          
+          {/* Feed Mode Description */}
+          <div className="mt-2 text-xs text-muted-foreground text-center">
+            {feedMode === 'intelligent' && '🤖 Personalized content based on your interests and behavior'}
+            {feedMode === 'trending' && '🔥 Posts gaining momentum and high engagement'}
+            {feedMode === 'following' && '👥 Latest posts from creators you follow'}
+            {feedMode === 'discover' && '✨ New creators and diverse content to explore'}
           </div>
         </CardContent>
       </Card>
@@ -684,9 +1122,20 @@ export function IntelligentFeed() {
                     {getPrivacyIcon(post.privacy)}
                     <span className="text-muted-foreground text-sm capitalize">{post.privacy}</span>
                   </div>
-                  <Button variant="ghost" size="sm" className="ml-auto h-6 w-6 p-0">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
+                  <PostOptionsOverlay
+                    postId={post.id}
+                    isOwnPost={user?.id === post.creator.id}
+                    isBookmarked={post.isBookmarked}
+                    isFavorited={post.isFavorited}
+                    onDelete={handleDeletePost}
+                    onEdit={handleEditPost}
+                    onSave={handleSavePost}
+                    onAddToFavorites={handleAddToFavorites}
+                    onReport={handleReportPost}
+                    onViewInsights={handleViewInsights}
+                    onShare={handleShare}
+                    className="ml-auto"
+                  />
                 </div>
 
                 {/* Text Content */}
@@ -703,17 +1152,20 @@ export function IntelligentFeed() {
                     className="relative mb-3 rounded-2xl overflow-hidden cursor-pointer"
                     onClick={() => handlePostClick(post.id)}
                   >
-                    <div className="aspect-video bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
-                      <div className="text-center text-white">
-                        {post.mediaType === 'video' ? (
-                          <Video className="h-12 w-12 mx-auto mb-2" />
-                        ) : (
-                          <Image className="h-12 w-12 mx-auto mb-2" />
-                        )}
-                        <p className="text-lg font-medium">Media Preview</p>
-                        <p className="text-sm opacity-80">Click to view</p>
-                      </div>
-                    </div>
+                    {post.mediaType === 'video' ? (
+                      <video
+                        src={post.mediaUrl}
+                        className="w-full aspect-video object-cover"
+                        controls
+                        poster="/api/placeholder/800/450"
+                      />
+                    ) : (
+                      <img
+                        src={post.mediaUrl}
+                        alt="Post media"
+                        className="w-full aspect-video object-cover"
+                      />
+                    )}
                     {post.isPaid && (
                       <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                         <div className="text-center text-white">
@@ -737,7 +1189,7 @@ export function IntelligentFeed() {
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      onClick={() => console.log('Comment on post:', post.id)}
+                      onClick={() => handleComment(post.id)}
                       className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground hover:text-blue-600 p-2"
                     >
                       <MessageCircle className="h-4 w-4" />
@@ -774,7 +1226,7 @@ export function IntelligentFeed() {
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      onClick={() => console.log('Share post:', post.id)}
+                      onClick={() => handleShare(post.id)}
                       className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground hover:text-green-600 p-2"
                     >
                       <Share2 className="h-4 w-4" />
@@ -782,14 +1234,20 @@ export function IntelligentFeed() {
                     </Button>
                   </div>
                   
-                  {/* More options button for mobile */}
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="p-2 sm:hidden"
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
+                  {/* Post options overlay - visible on all screen sizes */}
+                  <PostOptionsOverlay
+                    postId={post.id}
+                    isOwnPost={user?.id === post.creator.id}
+                    isBookmarked={post.isBookmarked}
+                    isFavorited={post.isFavorited}
+                    onDelete={handleDeletePost}
+                    onEdit={handleEditPost}
+                    onSave={handleSavePost}
+                    onAddToFavorites={handleAddToFavorites}
+                    onReport={handleReportPost}
+                    onViewInsights={handleViewInsights}
+                    onShare={handleShare}
+                  />
                 </div>
 
                 {/* Premium Badge */}
@@ -806,6 +1264,8 @@ export function IntelligentFeed() {
           </div>
         ))}
       </div>
+      </>
     </div>
   )
 }
+

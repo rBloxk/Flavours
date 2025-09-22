@@ -533,4 +533,498 @@ export class ContentService {
       return 0
     }
   }
+
+  /**
+   * Search posts
+   */
+  async searchPosts(params: { query: string; page: number; limit: number; category?: string }) {
+    try {
+      const { data: posts, error } = await supabase
+        .from('posts')
+        .select(`
+          *,
+          profiles!posts_creator_id_fkey (
+            id,
+            username,
+            display_name,
+            avatar_url
+          )
+        `)
+        .textSearch('content', params.query)
+        .eq('is_public', true)
+        .order('created_at', { ascending: false })
+        .range(
+          (params.page - 1) * params.limit,
+          params.page * params.limit - 1
+        )
+
+      if (error) {
+        logger.error('Search posts error:', error)
+        throw new Error('Failed to search posts')
+      }
+
+      return posts || []
+    } catch (error) {
+      logger.error('Search posts service error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get post interactions
+   */
+  async getPostInteractions(postId: string, userId: string) {
+    try {
+      const [likes, comments, shares] = await Promise.all([
+        this.getLikesCount(postId),
+        this.getCommentsCount(postId),
+        this.getSharesCount(postId)
+      ])
+
+      // Check if user has liked the post
+      const { data: userLike } = await supabase
+        .from('likes')
+        .select('id')
+        .eq('post_id', postId)
+        .eq('user_id', userId)
+        .single()
+
+      return {
+        likes,
+        comments,
+        shares,
+        isLiked: !!userLike
+      }
+    } catch (error) {
+      logger.error('Get post interactions error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Share post
+   */
+  async sharePost(postId: string, userId: string, platform: string, message?: string) {
+    try {
+      const { data, error } = await supabase
+        .from('shares')
+        .insert({
+          post_id: postId,
+          user_id: userId,
+          platform,
+          message
+        })
+        .select()
+        .single()
+
+      if (error) {
+        logger.error('Share post error:', error)
+        throw new Error('Failed to share post')
+      }
+
+      return data
+    } catch (error) {
+      logger.error('Share post service error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get content analytics
+   */
+  async getContentAnalytics(userId: string, period: string) {
+    try {
+      const dateRange = this.getDateRange(period)
+      
+      const [posts, likes, comments, shares] = await Promise.all([
+        this.getPostsCount(userId, dateRange),
+        this.getLikesReceived(userId, dateRange),
+        this.getCommentsReceived(userId, dateRange),
+        this.getSharesReceived(userId, dateRange)
+      ])
+
+      return {
+        posts,
+        likes,
+        comments,
+        shares,
+        engagement: likes + comments + shares,
+        period
+      }
+    } catch (error) {
+      logger.error('Get content analytics error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get posts count for user
+   */
+  private async getPostsCount(userId: string, dateRange: { start: Date; end: Date }): Promise<number> {
+    try {
+      const { count } = await supabase
+        .from('posts')
+        .select('*', { count: 'exact' })
+        .eq('creator_id', userId)
+        .gte('created_at', dateRange.start.toISOString())
+        .lte('created_at', dateRange.end.toISOString())
+
+      return count || 0
+    } catch (error) {
+      logger.error('Get posts count error:', error)
+      return 0
+    }
+  }
+
+  /**
+   * Get likes received by user
+   */
+  private async getLikesReceived(userId: string, dateRange: { start: Date; end: Date }): Promise<number> {
+    try {
+      const { count } = await supabase
+        .from('likes')
+        .select('*', { count: 'exact' })
+        .eq('posts.creator_id', userId)
+        .gte('created_at', dateRange.start.toISOString())
+        .lte('created_at', dateRange.end.toISOString())
+
+      return count || 0
+    } catch (error) {
+      logger.error('Get likes received error:', error)
+      return 0
+    }
+  }
+
+  /**
+   * Get comments received by user
+   */
+  private async getCommentsReceived(userId: string, dateRange: { start: Date; end: Date }): Promise<number> {
+    try {
+      const { count } = await supabase
+        .from('comments')
+        .select('*', { count: 'exact' })
+        .eq('posts.creator_id', userId)
+        .gte('created_at', dateRange.start.toISOString())
+        .lte('created_at', dateRange.end.toISOString())
+
+      return count || 0
+    } catch (error) {
+      logger.error('Get comments received error:', error)
+      return 0
+    }
+  }
+
+  /**
+   * Get shares received by user
+   */
+  private async getSharesReceived(userId: string, dateRange: { start: Date; end: Date }): Promise<number> {
+    try {
+      const { count } = await supabase
+        .from('shares')
+        .select('*', { count: 'exact' })
+        .eq('posts.creator_id', userId)
+        .gte('created_at', dateRange.start.toISOString())
+        .lte('created_at', dateRange.end.toISOString())
+
+      return count || 0
+    } catch (error) {
+      logger.error('Get shares received error:', error)
+      return 0
+    }
+  }
+
+  /**
+   * Get comments count for post
+   */
+  private async getCommentsCount(postId: string): Promise<number> {
+    try {
+      const { count } = await supabase
+        .from('comments')
+        .select('*', { count: 'exact' })
+        .eq('post_id', postId)
+
+      return count || 0
+    } catch (error) {
+      logger.error('Get comments count error:', error)
+      return 0
+    }
+  }
+
+  /**
+   * Get shares count for post
+   */
+  private async getSharesCount(postId: string): Promise<number> {
+    try {
+      const { count } = await supabase
+        .from('shares')
+        .select('*', { count: 'exact' })
+        .eq('post_id', postId)
+
+      return count || 0
+    } catch (error) {
+      logger.error('Get shares count error:', error)
+      return 0
+    }
+  }
+
+  /**
+   * Get date range for analytics
+   */
+  private getDateRange(period: string): { start: Date; end: Date } {
+    const end = new Date()
+    const start = new Date()
+
+    switch (period) {
+      case '7d':
+        start.setDate(end.getDate() - 7)
+        break
+      case '30d':
+        start.setDate(end.getDate() - 30)
+        break
+      case '90d':
+        start.setDate(end.getDate() - 90)
+        break
+      case '1y':
+        start.setFullYear(end.getFullYear() - 1)
+        break
+      default:
+        start.setDate(end.getDate() - 30)
+    }
+
+    return { start, end }
+  }
+
+  /**
+   * Toggle save post
+   */
+  async toggleSave(postId: string, userId: string) {
+    try {
+      // Check if already saved
+      const { data: existingSave } = await supabase
+        .from('saved_posts')
+        .select('id')
+        .eq('post_id', postId)
+        .eq('user_id', userId)
+        .single()
+
+      if (existingSave) {
+        // Remove from saved
+        await supabase
+          .from('saved_posts')
+          .delete()
+          .eq('post_id', postId)
+          .eq('user_id', userId)
+        
+        return { saved: false }
+      } else {
+        // Add to saved
+        await supabase
+          .from('saved_posts')
+          .insert({
+            post_id: postId,
+            user_id: userId
+          })
+        
+        return { saved: true }
+      }
+    } catch (error) {
+      logger.error('Toggle save error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Toggle favorite post
+   */
+  async toggleFavorite(postId: string, userId: string) {
+    try {
+      // Check if already favorited
+      const { data: existingFavorite } = await supabase
+        .from('favorite_posts')
+        .select('id')
+        .eq('post_id', postId)
+        .eq('user_id', userId)
+        .single()
+
+      if (existingFavorite) {
+        // Remove from favorites
+        await supabase
+          .from('favorite_posts')
+          .delete()
+          .eq('post_id', postId)
+          .eq('user_id', userId)
+        
+        return { favorited: false }
+      } else {
+        // Add to favorites
+        await supabase
+          .from('favorite_posts')
+          .insert({
+            post_id: postId,
+            user_id: userId
+          })
+        
+        return { favorited: true }
+      }
+    } catch (error) {
+      logger.error('Toggle favorite error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get saved posts
+   */
+  async getSavedPosts(userId: string, params: { page: number; limit: number }) {
+    try {
+      const { data: posts, error } = await supabase
+        .from('saved_posts')
+        .select(`
+          *,
+          posts!saved_posts_post_id_fkey (
+            *,
+            profiles!posts_creator_id_fkey (
+              id,
+              username,
+              display_name,
+              avatar_url
+            )
+          )
+        `)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .range(
+          (params.page - 1) * params.limit,
+          params.page * params.limit - 1
+        )
+
+      if (error) {
+        logger.error('Get saved posts error:', error)
+        throw new Error('Failed to fetch saved posts')
+      }
+
+      return posts?.map(item => item.posts).filter(Boolean) || []
+    } catch (error) {
+      logger.error('Get saved posts service error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get favorite posts
+   */
+  async getFavoritePosts(userId: string, params: { page: number; limit: number }) {
+    try {
+      const { data: posts, error } = await supabase
+        .from('favorite_posts')
+        .select(`
+          *,
+          posts!favorite_posts_post_id_fkey (
+            *,
+            profiles!posts_creator_id_fkey (
+              id,
+              username,
+              display_name,
+              avatar_url
+            )
+          )
+        `)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .range(
+          (params.page - 1) * params.limit,
+          params.page * params.limit - 1
+        )
+
+      if (error) {
+        logger.error('Get favorite posts error:', error)
+        throw new Error('Failed to fetch favorite posts')
+      }
+
+      return posts?.map(item => item.posts).filter(Boolean) || []
+    } catch (error) {
+      logger.error('Get favorite posts service error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get post insights
+   */
+  async getPostInsights(postId: string) {
+    try {
+      const [likes, comments, shares, views] = await Promise.all([
+        this.getLikesCount(postId),
+        this.getCommentsCount(postId),
+        this.getSharesCount(postId),
+        this.getViewsCount(postId)
+      ])
+
+      return {
+        likes,
+        comments,
+        shares,
+        views,
+        engagement: likes + comments + shares,
+        engagementRate: views > 0 ? ((likes + comments + shares) / views) * 100 : 0
+      }
+    } catch (error) {
+      logger.error('Get post insights error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get views count for post
+   */
+  private async getViewsCount(postId: string): Promise<number> {
+    try {
+      const { count } = await supabase
+        .from('post_views')
+        .select('*', { count: 'exact' })
+        .eq('post_id', postId)
+
+      return count || 0
+    } catch (error) {
+      logger.error('Get views count error:', error)
+      return 0
+    }
+  }
+
+  /**
+   * Get personalized feed
+   */
+  async getPersonalizedFeed(userId: string, params: { page: number; limit: number }) {
+    try {
+      // Get posts from followed users and trending posts
+      const { data: posts, error } = await supabase
+        .from('posts')
+        .select(`
+          *,
+          profiles!posts_creator_id_fkey (
+            id,
+            username,
+            display_name,
+            avatar_url
+          )
+        `)
+        .eq('is_public', true)
+        .order('likes_count', { ascending: false })
+        .order('created_at', { ascending: false })
+        .range(
+          (params.page - 1) * params.limit,
+          params.page * params.limit - 1
+        )
+
+      if (error) {
+        logger.error('Get personalized feed error:', error)
+        throw new Error('Failed to fetch personalized feed')
+      }
+
+      return posts || []
+    } catch (error) {
+      logger.error('Get personalized feed service error:', error)
+      throw error
+    }
+  }
 }

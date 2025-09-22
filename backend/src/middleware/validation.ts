@@ -1,10 +1,47 @@
 import { Request, Response, NextFunction } from 'express'
 import Joi from 'joi'
+import { z } from 'zod'
 import { logger } from '../utils/logger'
 import { CustomError } from './errorHandler'
 
-// Enhanced validation middleware
-export const validateRequest = (schema: Joi.ObjectSchema) => {
+// Enhanced validation middleware for Zod schemas
+export const validateRequest = (schema: z.ZodSchema) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = schema.parse(req.body)
+      req.body = result
+      next()
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorDetails = error.errors.map(err => ({
+          field: err.path.join('.'),
+          message: err.message,
+          value: err.input
+        }))
+
+        logger.warn('Validation error', {
+          errors: errorDetails,
+          body: req.body,
+          ip: req.ip,
+          userAgent: req.get('User-Agent')
+        })
+
+        return res.status(400).json({
+          error: 'Validation failed',
+          details: errorDetails
+        })
+      }
+      
+      logger.error('Unexpected validation error:', error)
+      return res.status(500).json({
+        error: 'Internal server error'
+      })
+    }
+  }
+}
+
+// Joi validation middleware (for backward compatibility)
+export const validateRequestJoi = (schema: Joi.ObjectSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const { error, value } = schema.validate(req.body, {
       abortEarly: false,

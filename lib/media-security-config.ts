@@ -88,7 +88,7 @@ export const defaultMediaSecurityConfig: MediaSecurityConfig = {
   drm: {
     enabled: false, // Disabled in development
     provider: 'custom',
-    licenseServer: 'https://license.flavours.app',
+    licenseServer: 'https://license.flavours.club',
     encryptionKey: process.env.MEDIA_ENCRYPTION_KEY || 'dev-key-change-in-production'
   },
   
@@ -161,7 +161,7 @@ export const productionMediaSecurityConfig: MediaSecurityConfig = {
   drm: {
     enabled: true,
     provider: 'widevine',
-    licenseServer: 'https://license.flavours.app',
+    licenseServer: 'https://license.flavours.club',
     encryptionKey: process.env.MEDIA_ENCRYPTION_KEY!
   },
   

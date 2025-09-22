@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 PROJECT_NAME="flavours"
 ENVIRONMENT=${1:-production}
 REGION=${2:-us-east-1}
-DOMAIN=${3:-flavours.app}
+DOMAIN=${3:-flavours.club}
 
 echo -e "${BLUE}🚀 Starting Flavours Production Deployment${NC}"
 echo -e "${BLUE}Environment: ${ENVIRONMENT}${NC}"
