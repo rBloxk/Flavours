@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { 
   MessageSquare, 
+  Send,
   Users, 
   Mic, 
   MicOff, 
@@ -290,7 +291,7 @@ export default function FlavoursTalkPage() {
       {/* Video Column - 30% */}
       <div className="w-[30%] bg-white dark:bg-black flex flex-col">
         {/* Video Header */}
-        <div className="bg-gray-100 dark:bg-gray-800 p-4 border-b border-gray-300 dark:border-gray-700">
+        <div className="bg-gray-100 dark:bg-black p-4 border-b border-gray-300 dark:border-black">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Avatar className="h-8 w-8">
@@ -357,7 +358,7 @@ export default function FlavoursTalkPage() {
       {/* Chat Column - 70% */}
       <div className="w-[70%] flex flex-col bg-white dark:bg-black">
         {/* Chat Header */}
-        <div className="bg-gray-100 dark:bg-gray-800 p-4 border-b border-gray-300 dark:border-gray-700">
+        <div className="bg-gray-100 dark:bg-black p-4 border-b border-gray-300 dark:border-black">
           <div className="flex items-center justify-between">
             <h2 className="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
@@ -403,20 +404,20 @@ export default function FlavoursTalkPage() {
         </div>
 
         {/* Chat Input */}
-        <div className="bg-gray-100 dark:bg-gray-800 p-4 border-t border-gray-300 dark:border-gray-700">
+        <div className="bg-gray-100 dark:bg-black p-4 border-t border-gray-300 dark:border-gray-700">
           <div className="flex gap-2">
             <Input
               placeholder="Type a message..."
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-              className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500"
+              className="bg-white dark:bg-black border-gray-900 dark:border-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-black"
             />
             <Button 
               onClick={handleSendMessage}
               className="bg-blue-600 hover:bg-blue-700 text-white"
             >
-              <MessageSquare className="h-4 w-4" />
+              <Send className="h-4 w-4" />
             </Button>
           </div>
         </div>

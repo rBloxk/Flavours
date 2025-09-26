@@ -10,9 +10,10 @@ interface ActivityHeatmapProps {
     activity: number
   }[]
   className?: string
+  height?: string
 }
 
-export function ActivityHeatmap({ data, className }: ActivityHeatmapProps) {
+export function ActivityHeatmap({ data, className, height = "400px" }: ActivityHeatmapProps) {
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
   const hours = Array.from({ length: 24 }, (_, i) => i)
   
@@ -30,7 +31,7 @@ export function ActivityHeatmap({ data, className }: ActivityHeatmapProps) {
   
   return (
     <Chart className={className}>
-      <ChartContainer className="h-[400px]">
+      <ChartContainer style={{ height }}>
         <div className="h-full w-full p-6">
           <div className="grid grid-cols-8 gap-2 h-full">
             {/* Hour labels */}

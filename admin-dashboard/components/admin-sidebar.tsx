@@ -33,7 +33,7 @@ const navigation = [
   { name: 'Payments', href: '/payments', icon: CreditCard },
   { name: 'System', href: '/system', icon: Database },
   { name: 'Settings', href: '/settings', icon: Settings },
-  { name: 'Test Auth', href: '/test-auth', icon: TestTube },
+
 ]
 
 export function AdminSidebar() {

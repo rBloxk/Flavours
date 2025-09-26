@@ -1,1 +1,12 @@
-{}
+{
+  "/content/page": "app/content/page.js",
+  "/analytics/page": "app/analytics/page.js",
+  "/page": "app/page.js",
+  "/creators/page": "app/creators/page.js",
+  "/api/dashboard/route": "app/api/dashboard/route.js",
+  "/api/users/route": "app/api/users/route.js",
+  "/users/page": "app/users/page.js",
+  "/reports/page": "app/reports/page.js",
+  "/login/page": "app/login/page.js",
+  "/moderation/page": "app/moderation/page.js"
+}

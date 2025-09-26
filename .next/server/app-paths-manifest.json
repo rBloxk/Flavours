@@ -1,7 +1,9 @@
 {
+  "/not-found": "app/not-found.js",
+  "/flavourstalk/page": "app/flavourstalk/page.js",
+  "/help/page": "app/help/page.js",
+  "/statistics/page": "app/statistics/page.js",
+  "/messages/page": "app/messages/page.js",
   "/feed/page": "app/feed/page.js",
-  "/explore/page": "app/explore/page.js",
-  "/dating/page": "app/dating/page.js",
-  "/notifications/page": "app/notifications/page.js",
-  "/video/[id]/page": "app/video/[id]/page.js"
+  "/api/posts/route": "app/api/posts/route.js"
 }
