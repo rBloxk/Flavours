@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { cn } from '@/lib/utils'
+import { VideoPlayer } from '@/components/media/video-player'
 
 // Intersection Observer hook for lazy loading
 function useIntersectionObserver(
@@ -155,50 +156,41 @@ export function LazyVideo({
   onLoad,
   onError
 }: LazyVideoProps) {
-  const [videoSrc, setVideoSrc] = useState<string | null>(null)
   const [isLoaded, setIsLoaded] = useState(false)
   const [hasError, setHasError] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const { hasIntersected } = useIntersectionObserver(videoRef, {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const { hasIntersected } = useIntersectionObserver(containerRef, {
     threshold: 0.1
   })
 
-  useEffect(() => {
-    if (hasIntersected && !videoSrc && !hasError) {
-      setVideoSrc(src)
-    }
-  }, [hasIntersected, src, videoSrc, hasError])
-
-  const handleLoadedData = useCallback(() => {
+  const handleReady = useCallback(() => {
     setIsLoaded(true)
     onLoad?.()
   }, [onLoad])
 
-  const handleError = useCallback(() => {
+  const handleError = useCallback((error: any) => {
     setHasError(true)
     onError?.()
   }, [onError])
 
   return (
-    <div className={cn("relative overflow-hidden", className)}>
-      {videoSrc ? (
-        <video
-          ref={videoRef}
-          src={videoSrc}
+    <div ref={containerRef} className={cn("relative overflow-hidden", className)}>
+      {hasIntersected && !hasError ? (
+        <VideoPlayer
+          src={src}
           poster={poster}
           width={width}
           height={height}
           controls={controls}
-          autoPlay={autoPlay}
+          autoplay={autoPlay}
           muted={muted}
           loop={loop}
-          onLoadedData={handleLoadedData}
+          onReady={handleReady}
           onError={handleError}
           className={cn(
             "transition-all duration-300",
             isLoaded ? "opacity-100" : "opacity-0"
           )}
-          preload="metadata"
         />
       ) : (
         <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
@@ -207,7 +199,7 @@ export function LazyVideo({
       )}
       
       {/* Loading skeleton */}
-      {!isLoaded && !hasError && (
+      {!isLoaded && !hasError && hasIntersected && (
         <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse" />
       )}
     </div>

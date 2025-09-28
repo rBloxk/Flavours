@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/providers/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { FlavoursLogo } from '@/components/ui/flavours-logo'
 import { Crown, Users, DollarSign, Shield, Zap, Star } from 'lucide-react'
 
 export default function LandingPage() {
@@ -79,12 +80,7 @@ export default function LandingPage() {
       <section className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700">
         <div className="container mx-auto px-6 py-24 text-center">
           <div className="flex items-center justify-center space-x-2 mb-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary">
-              <Crown className="h-8 w-8 text-primary-foreground" />
-            </div>
-            <span className="font-bold text-4xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Flavours
-            </span>
+            <FlavoursLogo size="xl" />
           </div>
           
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
@@ -180,12 +176,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center space-x-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-                <Crown className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <span className="font-bold text-lg sm:text-xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Flavours
-              </span>
+              <FlavoursLogo size="md" />
             </div>
             <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm text-muted-foreground">
               <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>

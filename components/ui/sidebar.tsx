@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/components/providers/auth-provider'
 import { CreatePostModal } from '@/components/feed/create-post-modal'
+import { FlavoursLogo } from './flavours-logo'
 import { 
   Home, 
   Bell, 
@@ -169,12 +170,7 @@ export function Sidebar() {
       {/* Logo Section */}
       <div className="p-6">
         <Link href="/feed" className="flex items-center space-x-2" prefetch={true}>
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-            <Crown className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <span className="font-bold text-xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Flavours
-          </span>
+          <FlavoursLogo size="md" />
         </Link>
       </div>
 

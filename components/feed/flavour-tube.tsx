@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import { VideoPlayer } from '@/components/media/video-player'
 import { Play, Crown } from 'lucide-react'
 
 // Mock data for FlavourTube videos
@@ -251,12 +252,26 @@ export function FlavourTube() {
           <div key={video.id} className="group cursor-pointer" onClick={() => handleVideoClick(video.id)}>
             {/* Video Thumbnail */}
             <div className="relative w-full aspect-video bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg overflow-hidden mb-3">
-              <div className="absolute inset-0 flex items-center justify-center">
+              <VideoPlayer
+                src={`/api/video/${video.id}`}
+                poster={video.thumbnail}
+                autoplay={false}
+                controls={false}
+                muted={true}
+                loop={false}
+                width="100%"
+                height="100%"
+                className="w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              />
+              
+              {/* Static Preview Overlay */}
+              <div className="absolute inset-0 flex items-center justify-center group-hover:opacity-0 transition-opacity duration-300">
                 <div className="text-center text-white">
                   <Play className="h-12 w-12 mx-auto mb-2 opacity-80 group-hover:opacity-100 transition-opacity" />
                   <p className="text-sm font-medium opacity-80">Video Preview</p>
                 </div>
               </div>
+              
               {/* Duration Badge */}
               <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">
                 {video.duration}

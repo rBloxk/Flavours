@@ -13,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 // Removed Supabase auth imports - using demo mode only
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { FlavoursLogo } from '@/components/ui/flavours-logo'
 import { Crown, Loader2 } from 'lucide-react'
 import { useAuth } from '@/components/providers/auth-provider'
 import Link from 'next/link'
@@ -145,12 +146,7 @@ export function AuthForms() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
-              <Crown className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <span className="font-bold text-2xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Flavours
-            </span>
+            <FlavoursLogo size="lg" />
           </div>
           <CardTitle className="text-2xl">Welcome</CardTitle>
           <p className="text-muted-foreground">

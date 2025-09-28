@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useAuth } from '@/components/providers/auth-provider'
 import { CreatePostModal } from '@/components/feed/create-post-modal'
+import { FlavoursLogo } from './flavours-logo'
 import { 
   Home, 
   Bell, 
@@ -160,12 +161,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
           {/* Header */}
           <div className="flex items-center justify-between p-3 border-b">
             <Link href="/feed" className="flex items-center space-x-2" onClick={onClose}>
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary">
-                <Crown className="h-4 w-4 text-primary-foreground" />
-              </div>
-              <span className="font-bold text-lg bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Flavours
-              </span>
+              <FlavoursLogo size="md" />
             </Link>
             <Button variant="ghost" size="sm" onClick={onClose} className="p-1">
               <X className="h-4 w-4" />

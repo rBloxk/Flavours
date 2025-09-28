@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { FlavoursLogo } from '@/components/ui/flavours-logo'
 import { Loader2, CheckCircle, XCircle, Mail } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -190,7 +191,9 @@ export default function VerifyEmailPage() {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">🍃 Flavours</CardTitle>
+          <div className="flex justify-center mb-4">
+            <FlavoursLogo size="lg" />
+          </div>
           <CardDescription>
             Email Verification
           </CardDescription>

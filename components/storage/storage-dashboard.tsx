@@ -144,7 +144,7 @@ export function StorageDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <div className="flex items-center justify-between">
@@ -157,7 +157,7 @@ export function StorageDashboard() {
       )}
 
       {/* Storage Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Files</CardTitle>
@@ -210,10 +210,10 @@ export function StorageDashboard() {
         <CardHeader>
           <CardTitle>Upload Content</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4 sm:space-y-6">
           <div className="space-y-3">
             <p className="text-sm font-medium text-foreground">Content Type</p>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <Button
                 variant={uploadType === 'image' ? 'default' : 'outline'}
                 size="sm"
@@ -260,7 +260,7 @@ export function StorageDashboard() {
               />
               <label
                 htmlFor="file-upload"
-                className="flex items-center justify-center w-full h-32 border-2 border-dashed border-muted-foreground/25 rounded-lg cursor-pointer hover:border-primary/50 hover:bg-muted/50 transition-all duration-200 group"
+                className="flex items-center justify-center w-full h-24 sm:h-32 border-2 border-dashed border-muted-foreground/25 rounded-lg cursor-pointer hover:border-primary/50 hover:bg-muted/50 transition-all duration-200 group"
               >
                 <div className="flex flex-col items-center space-y-2 text-center">
                   <div className="p-3 rounded-full bg-muted/50 group-hover:bg-primary/10 transition-colors">

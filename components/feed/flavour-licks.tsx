@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import { VideoPlayer } from '@/components/media/video-player'
 import { Play, Heart, MessageCircle, Crown, Share2, MoreHorizontal, Volume2, VolumeX } from 'lucide-react'
 
 // Mock data for Flavour Licks (shorts)
@@ -214,17 +215,36 @@ export function FlavourLicks() {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Video Background */}
-        <div 
-          className="relative w-full max-w-full mx-auto h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center cursor-pointer"
-          onClick={handleVideoClick}
-        >
-          <div className="text-center text-white">
-            <Play className="h-12 w-12 mx-auto mb-4 opacity-80" />
-            <p className="text-xl font-medium mb-2">Short Video</p>
-            <p className="text-base opacity-80">{currentShort.title}</p>
-            <p className="text-sm opacity-60 mt-2">{currentShort.duration}</p>
-          </div>
+        {/* Video Player */}
+        <div className="relative w-full h-full">
+          <VideoPlayer
+            src={currentShort.videoUrl}
+            poster={currentShort.thumbnail}
+            autoplay={isPlaying}
+            controls={false}
+            muted={isMuted}
+            loop={true}
+            width="100%"
+            height="100%"
+            className="w-full h-full object-cover"
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+          />
+          
+          {/* Play/Pause Overlay */}
+          {!isPlaying && (
+            <div 
+              className="absolute inset-0 flex items-center justify-center cursor-pointer"
+              onClick={handleVideoClick}
+            >
+              <div className="text-center text-white">
+                <Play className="h-12 w-12 mx-auto mb-4 opacity-80" />
+                <p className="text-xl font-medium mb-2">Short Video</p>
+                <p className="text-base opacity-80">{currentShort.title}</p>
+                <p className="text-sm opacity-60 mt-2">{currentShort.duration}</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Top Controls */}

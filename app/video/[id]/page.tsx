@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import { VideoPlayer } from '@/components/media/video-player'
 import { 
   ArrowLeft, 
   Play, 
@@ -180,47 +181,19 @@ export default function VideoDetailPage() {
           <div className="lg:col-span-2">
             {/* Video Player */}
             <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden mb-4">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center text-white">
-                  <div className="mb-4">
-                    {isPlaying ? (
-                      <Pause className="h-16 w-16 mx-auto opacity-80" />
-                    ) : (
-                      <Play className="h-16 w-16 mx-auto opacity-80" />
-                    )}
-                  </div>
-                  <p className="text-lg font-medium">Video Player</p>
-                  <p className="text-sm opacity-60 mt-2">{video.duration}</p>
-                </div>
-              </div>
-              
-              {/* Video Controls Overlay */}
-              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handlePlayPause}
-                    className="text-white hover:text-white/80"
-                  >
-                    {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleMuteToggle}
-                    className="text-white hover:text-white/80"
-                  >
-                    {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                  </Button>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <span className="text-white text-sm">
-                    {Math.floor(currentTime / 60)}:{(currentTime % 60).toFixed(0).padStart(2, '0')} / {video.duration}
-                  </span>
-                </div>
-              </div>
+              <VideoPlayer
+                src={`/api/video/${video.id}`}
+                poster={`/api/video/${video.id}/thumbnail`}
+                autoplay={false}
+                controls={true}
+                muted={isMuted}
+                loop={false}
+                width="100%"
+                height="100%"
+                className="w-full h-full"
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+              />
             </div>
 
             {/* Video Info */}

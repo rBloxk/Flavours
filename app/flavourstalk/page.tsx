@@ -215,7 +215,7 @@ export default function FlavoursTalkPage() {
   const renderConnectionScreen = () => (
     <div className="container mx-auto px-4 py-4 lg:py-6 space-y-4 lg:space-y-6 h-full flex flex-col">
       {/* Full Screen Connection View */}
-      <div className="flex-1 flex items-center justify-center bg-white dark:bg-black">
+      <div className="flex-1 flex items-center justify-center bg-background">
         <div className="text-center space-y-8">
           {/* Logo/Icon */}
           <div className="w-32 h-32 bg-gray-100 dark:bg-gray-800 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto">

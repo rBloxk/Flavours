@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import React, { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { AuthGuard } from '@/components/auth/auth-guard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -15,7 +15,7 @@ import {
   Star, 
   Heart, 
   MessageCircle, 
-  Share,
+  Share2,
   Crown,
   Shield,
   Clock,
@@ -25,38 +25,6 @@ import {
 export default function ExplorePage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
-
-  // Add CSS for fixed header layout
-  useEffect(() => {
-    const style = document.createElement('style')
-    style.textContent = `
-      .explore-page-wrapper {
-        height: calc(100vh - 4rem) !important;
-        max-height: calc(100vh - 4rem) !important;
-        overflow: hidden !important;
-        display: flex !important;
-        flex-direction: column !important;
-      }
-      .explore-header {
-        position: sticky !important;
-        top: 0 !important;
-        z-index: 10 !important;
-        background: hsl(var(--background)) !important;
-        border-bottom: 1px solid hsl(var(--border)) !important;
-        flex-shrink: 0 !important;
-      }
-      .explore-content {
-        flex: 1 !important;
-        overflow-y: auto !important;
-        overflow-x: hidden !important;
-      }
-    `
-    document.head.appendChild(style)
-    
-    return () => {
-      document.head.removeChild(style)
-    }
-  }, [])
 
   const categories = [
     { id: 'all', label: 'All', icon: TrendingUp },
@@ -163,61 +131,53 @@ export default function ExplorePage() {
 
   return (
     <AuthGuard>
-      <div className="explore-page-wrapper">
-        {/* Fixed Header */}
-        <div className="explore-header">
-          <div className="container mx-auto px-4 py-4 lg:py-6 space-y-4 lg:space-y-6">
-            {/* Page Title */}
-            <div className="text-left space-y-2 lg:space-y-4">
-              <h1 className="text-2xl lg:text-3xl font-bold">Explore</h1>
-              <p className="text-sm lg:text-base text-muted-foreground">Discover amazing creators and trending content</p>
-            </div>
-
-            {/* Search and Filters */}
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                    <Input
-                      placeholder="Search creators, content, or topics..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                  <Button variant="outline">
-                    <Filter className="h-4 w-4 mr-2" />
-                    Filters
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Categories */}
-            <div className="flex flex-wrap gap-2">
-              {categories.map((category) => {
-                const Icon = category.icon
-                return (
-                  <Button
-                    key={category.id}
-                    variant={selectedCategory === category.id ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setSelectedCategory(category.id)}
-                    className="flex items-center space-x-2"
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span>{category.label}</span>
-                  </Button>
-                )
-              })}
-            </div>
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-6 space-y-6">
+          {/* Page Title */}
+          <div className="text-left space-y-2">
+            <h1 className="text-3xl font-bold">Explore</h1>
+            <p className="text-muted-foreground">Discover amazing creators and trending content</p>
           </div>
-        </div>
 
-        {/* Scrollable Content */}
-        <div className="explore-content">
-          <div className="container mx-auto px-4 py-4 lg:py-6 space-y-4 lg:space-y-6">
+          {/* Search and Filters */}
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input
+                    placeholder="Search creators, content, or topics..."
+                    value={searchQuery}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <Button variant="outline">
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filters
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Categories */}
+          <div className="flex flex-wrap gap-2">
+            {categories.map((category) => {
+              const Icon = category.icon
+              return (
+                <Button
+                  key={category.id}
+                  variant={selectedCategory === category.id ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setSelectedCategory(category.id)}
+                  className="flex items-center space-x-2"
+                >
+                  <Icon className="h-4 w-4" />
+                  <span>{category.label}</span>
+                </Button>
+              )
+            })}
+          </div>
 
       {/* Trending Creators */}
       <Card>
@@ -331,11 +291,11 @@ export default function ExplorePage() {
                         <span>{post.comments}</span>
                       </div>
                       <div className="flex items-center space-x-1">
-                        <Share className="h-4 w-4" />
+                        <Share2 className="h-4 w-4" />
                         <span>Share</span>
                       </div>
                     </div>
-                    <Badge variant="secondary">{post.category}</Badge>
+                    <Badge variant="secondary" className="text-xs">{post.category}</Badge>
                   </div>
                 </div>
               </div>
@@ -371,7 +331,6 @@ export default function ExplorePage() {
           </div>
         </CardContent>
       </Card>
-          </div>
         </div>
       </div>
     </AuthGuard>
