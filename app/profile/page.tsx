@@ -27,7 +27,7 @@ import {
   Crown,
   Heart,
   MessageCircle,
-  Share,
+  Share2 as Share,
   Image,
   Video,
   Play,
@@ -450,7 +450,10 @@ export default function ProfilePage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card 
+          className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-105"
+          onClick={() => router.push(`/profile/${currentProfile.username}/followers`)}
+        >
           <CardContent className="pt-6">
             <div className="text-center">
               <div className="text-2xl font-bold">
@@ -463,7 +466,10 @@ export default function ProfilePage() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card 
+          className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-105"
+          onClick={() => router.push(`/profile/${currentProfile.username}/following`)}
+        >
           <CardContent className="pt-6">
             <div className="text-center">
               <div className="text-2xl font-bold">
@@ -476,7 +482,10 @@ export default function ProfilePage() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card 
+          className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-105"
+          onClick={() => router.push(`/profile/${currentProfile.username}/posts`)}
+        >
           <CardContent className="pt-6">
             <div className="text-center">
               <div className="text-2xl font-bold">{currentProfile.posts_count}</div>
@@ -484,7 +493,10 @@ export default function ProfilePage() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card 
+          className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-105"
+          onClick={() => router.push(`/profile/${currentProfile.username}/likes`)}
+        >
           <CardContent className="pt-6">
             <div className="text-center">
               <div className="text-2xl font-bold">

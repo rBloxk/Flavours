@@ -1,23 +1,23 @@
 import { Router, Request, Response } from 'express'
-import { authMiddleware, requireCreator, AuthenticatedRequest } from '../middleware/auth'
+import { supabase } from '../config/database'
+import { authMiddleware } from '../middleware/auth'
 import { validateRequest } from '../middleware/validation'
-import { contentSchemas } from '../schemas/content'
-import { ContentService } from '../services/contentService'
 import { logger } from '../utils/logger'
+import Joi from 'joi'
 import multer from 'multer'
 import { v4 as uuidv4 } from 'uuid'
 
 const router = Router()
-const contentService = new ContentService()
 
 // Configure multer for file uploads
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 3650722201, // 3.4GB limit
+    fileSize: 100 * 1024 * 1024, // 100MB
+    files: 10
   },
   fileFilter: (req, file, cb) => {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm', 'audio/mpeg', 'audio/wav']
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/webm', 'video/quicktime']
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true)
     } else {
@@ -26,56 +26,270 @@ const upload = multer({
   }
 })
 
-// Create post
-router.post('/', authMiddleware, requireCreator, upload.array('media', 10), validateRequest(contentSchemas.createPost), async (req: Request, res: Response) => {
+// =============================================
+// CONTENT MANAGEMENT ENDPOINTS
+// =============================================
+
+// Get posts feed with advanced filtering
+router.get('/feed', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const userId = (req as AuthenticatedRequest).user.id
-    const postData = req.body
-    const files = req.files as Express.Multer.File[]
+    const { 
+      page = 1, 
+      limit = 20, 
+      mode = 'intelligent', // intelligent, following, trending, discover
+      search = '',
+      category = '',
+      content_type = '',
+      sort = 'recent'
+    } = req.query
 
-    const post = await contentService.createPost({
-      ...postData,
-      creatorId: userId,
-      files
-    })
+    const offset = (Number(page) - 1) * Number(limit)
 
-    res.status(201).json({
-      message: 'Post created successfully',
-      post
+    let query = supabase
+      .from('posts')
+      .select(`
+        *,
+        profiles!posts_author_id_fkey (
+          id,
+          username,
+          display_name,
+          avatar_url,
+          is_verified,
+          is_creator,
+          followers_count
+        ),
+        media (
+          id,
+          file_url,
+          file_type,
+          thumbnail_url,
+          width,
+          height,
+          duration
+        )
+      `)
+
+    // Apply mode-specific filtering
+    if (mode === 'following') {
+      // Get posts from users that the current user follows
+      query = query.in('author_id', 
+        supabase
+          .from('follows')
+          .select('following_id')
+          .eq('follower_id', req.user.id)
+      )
+    } else if (mode === 'trending') {
+      // Get posts with high engagement in the last 24 hours
+      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000)
+      query = query
+        .gte('created_at', yesterday.toISOString())
+        .order('likes_count', { ascending: false })
+    } else if (mode === 'discover') {
+      // Get posts from users not followed by current user
+      query = query.not('author_id', 'in', 
+        supabase
+          .from('follows')
+          .select('following_id')
+          .eq('follower_id', req.user.id)
+      )
+    }
+
+    // Apply privacy filter
+    if (mode !== 'following') {
+      query = query.eq('privacy', 'public')
+    }
+
+    // Apply search filter
+    if (search) {
+      query = query.or(`content.ilike.%${search}%,tags.cs.{${search}},category.ilike.%${search}%`)
+    }
+
+    // Apply category filter
+    if (category) {
+      query = query.eq('category', category)
+    }
+
+    // Apply content type filter
+    if (content_type) {
+      query = query.eq('content_type', content_type)
+    }
+
+    // Apply sorting
+    if (sort === 'popular') {
+      query = query.order('likes_count', { ascending: false })
+    } else if (sort === 'trending') {
+      query = query.order('views_count', { ascending: false })
+    } else if (sort === 'recent') {
+      query = query.order('created_at', { ascending: false })
+    }
+
+    // Apply pagination
+    query = query.range(offset, offset + Number(limit) - 1)
+
+    const { data: posts, error } = await query
+
+    if (error) {
+      throw error
+    }
+
+    // Get interaction status for each post
+    const postsWithInteractions = await Promise.all(
+      posts.map(async (post) => {
+        const [likesResult, bookmarksResult, sharesResult] = await Promise.all([
+          supabase
+            .from('likes')
+            .select('*')
+            .eq('user_id', req.user.id)
+            .eq('post_id', post.id)
+            .single(),
+          supabase
+            .from('bookmarks')
+            .select('*')
+            .eq('user_id', req.user.id)
+            .eq('post_id', post.id)
+            .single(),
+          supabase
+            .from('shares')
+            .select('*')
+            .eq('user_id', req.user.id)
+            .eq('post_id', post.id)
+            .single()
+        ])
+
+        return {
+          ...post,
+          is_liked: !!likesResult.data,
+          is_bookmarked: !!bookmarksResult.data,
+          is_shared: !!sharesResult.data
+        }
+      })
+    )
+
+    res.json({
+      success: true,
+      data: {
+        posts: postsWithInteractions,
+        pagination: {
+          page: Number(page),
+          limit: Number(limit),
+          hasMore: posts.length === Number(limit)
+        }
+      }
     })
   } catch (error) {
-    logger.error('Create post error:', error)
+    logger.error('Get feed error:', error)
     res.status(500).json({
-      error: 'Failed to create post'
+      error: 'Internal server error'
     })
   }
 })
 
-// Get posts (with pagination and filtering)
-router.get('/', async (req: Request, res: Response) => {
+// Create new post
+router.post('/', authMiddleware, upload.array('media', 10), validateRequest({
+  body: Joi.object({
+    content: Joi.string().min(1).max(2000).required(),
+    content_type: Joi.string().valid('text', 'image', 'video', 'short_video').default('text'),
+    privacy: Joi.string().valid('public', 'followers', 'paid', 'private').default('public'),
+    is_paid: Joi.boolean().default(false),
+    price: Joi.when('is_paid', {
+      is: true,
+      then: Joi.number().min(0.01).max(1000).required(),
+      otherwise: Joi.number().optional()
+    }),
+    preview_content: Joi.string().max(500).optional(),
+    tags: Joi.array().items(Joi.string().max(50)).max(10).optional(),
+    mentions: Joi.array().items(Joi.string().max(50)).max(10).optional(),
+    location: Joi.string().max(100).optional(),
+    category: Joi.string().max(50).optional(),
+    scheduled_at: Joi.date().iso().optional()
+  })
+}), async (req: Request, res: Response) => {
   try {
-    const { page = 1, limit = 20, creatorId, isPaid, search } = req.query
+    const postData = req.body
+    const files = req.files as Express.Multer.File[]
 
-    const posts = await contentService.getPosts({
-      page: Number(page),
-      limit: Number(limit),
-      creatorId: creatorId as string,
-      isPaid: isPaid === 'true',
-      search: search as string
-    })
+    // Create post
+    const { data: post, error: postError } = await supabase
+      .from('posts')
+      .insert({
+        author_id: req.user.id,
+        content: postData.content,
+        content_type: postData.content_type,
+        privacy: postData.privacy,
+        is_paid: postData.is_paid,
+        price: postData.price || 0,
+        preview_content: postData.preview_content,
+        tags: postData.tags || [],
+        mentions: postData.mentions || [],
+        location: postData.location,
+        category: postData.category,
+        scheduled_at: postData.scheduled_at
+      })
+      .select()
+      .single()
 
-    res.json({
-      posts,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total: posts.length
-      }
+    if (postError) {
+      throw postError
+    }
+
+    // Handle media uploads
+    if (files && files.length > 0) {
+      const mediaPromises = files.map(async (file) => {
+        // Upload file to storage (implement your storage logic here)
+        const fileUrl = await uploadToStorage(file)
+        
+        return supabase
+          .from('media')
+          .insert({
+            post_id: post.id,
+            user_id: req.user.id,
+            file_url: fileUrl,
+            file_type: file.mimetype.startsWith('image/') ? 'image' : 'video',
+            file_size: file.size,
+            mime_type: file.mimetype,
+            storage_provider: 's3',
+            storage_path: `posts/${post.id}/${uuidv4()}`
+          })
+      })
+
+      await Promise.all(mediaPromises)
+    }
+
+    // Get the complete post with media
+    const { data: completePost } = await supabase
+      .from('posts')
+      .select(`
+        *,
+        profiles!posts_author_id_fkey (
+          id,
+          username,
+          display_name,
+          avatar_url,
+          is_verified,
+          is_creator
+        ),
+        media (
+          id,
+          file_url,
+          file_type,
+          thumbnail_url,
+          width,
+          height,
+          duration
+        )
+      `)
+      .eq('id', post.id)
+      .single()
+
+    res.status(201).json({
+      success: true,
+      data: completePost,
+      message: 'Post created successfully'
     })
   } catch (error) {
-    logger.error('Get posts error:', error)
+    logger.error('Create post error:', error)
     res.status(500).json({
-      error: 'Failed to fetch posts'
+      error: 'Internal server error'
     })
   }
 })
@@ -84,7 +298,227 @@ router.get('/', async (req: Request, res: Response) => {
 router.get('/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params
-    const post = await contentService.getPost(id)
+
+    const { data: post, error } = await supabase
+      .from('posts')
+      .select(`
+        *,
+        profiles!posts_author_id_fkey (
+          id,
+          username,
+          display_name,
+          avatar_url,
+          is_verified,
+          is_creator,
+          followers_count
+        ),
+        media (
+          id,
+          file_url,
+          file_type,
+          thumbnail_url,
+          width,
+          height,
+          duration
+        ),
+        comments (
+          id,
+          content,
+          created_at,
+          likes_count,
+          profiles!comments_author_id_fkey (
+            id,
+            username,
+            display_name,
+            avatar_url,
+            is_verified
+          )
+        )
+      `)
+      .eq('id', id)
+      .single()
+
+    if (error || !post) {
+      return res.status(404).json({
+        error: 'Post not found'
+      })
+    }
+
+    // Check privacy
+    if (post.privacy === 'private' && (!req.user || req.user.id !== post.author_id)) {
+      return res.status(403).json({
+        error: 'Post is private'
+      })
+    }
+
+    // Get interaction status if authenticated
+    let postWithInteractions = post
+    if (req.user) {
+      const [likesResult, bookmarksResult, sharesResult] = await Promise.all([
+        supabase
+          .from('likes')
+          .select('*')
+          .eq('user_id', req.user.id)
+          .eq('post_id', post.id)
+          .single(),
+        supabase
+          .from('bookmarks')
+          .select('*')
+          .eq('user_id', req.user.id)
+          .eq('post_id', post.id)
+          .single(),
+        supabase
+          .from('shares')
+          .select('*')
+          .eq('user_id', req.user.id)
+          .eq('post_id', post.id)
+          .single()
+      ])
+
+      postWithInteractions = {
+        ...post,
+        is_liked: !!likesResult.data,
+        is_bookmarked: !!bookmarksResult.data,
+        is_shared: !!sharesResult.data
+      }
+    }
+
+    // Increment view count
+    await supabase
+      .from('posts')
+      .update({ views_count: post.views_count + 1 })
+      .eq('id', id)
+
+    res.json({
+      success: true,
+      data: postWithInteractions
+    })
+  } catch (error) {
+    logger.error('Get post error:', error)
+    res.status(500).json({
+      error: 'Internal server error'
+    })
+  }
+})
+
+// Update post
+router.put('/:id', authMiddleware, validateRequest({
+  body: Joi.object({
+    content: Joi.string().min(1).max(2000).optional(),
+    privacy: Joi.string().valid('public', 'followers', 'paid', 'private').optional(),
+    is_paid: Joi.boolean().optional(),
+    price: Joi.when('is_paid', {
+      is: true,
+      then: Joi.number().min(0.01).max(1000).required(),
+      otherwise: Joi.number().optional()
+    }),
+    preview_content: Joi.string().max(500).optional(),
+    tags: Joi.array().items(Joi.string().max(50)).max(10).optional(),
+    mentions: Joi.array().items(Joi.string().max(50)).max(10).optional(),
+    location: Joi.string().max(100).optional(),
+    category: Joi.string().max(50).optional()
+  })
+}), async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const updates = req.body
+
+    // Check if user owns the post
+    const { data: existingPost } = await supabase
+      .from('posts')
+      .select('author_id')
+      .eq('id', id)
+      .single()
+
+    if (!existingPost || existingPost.author_id !== req.user.id) {
+      return res.status(403).json({
+        error: 'Not authorized to update this post'
+      })
+    }
+
+    // Update post
+    const { data: updatedPost, error } = await supabase
+      .from('posts')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) {
+      throw error
+    }
+
+    res.json({
+      success: true,
+      data: updatedPost,
+      message: 'Post updated successfully'
+    })
+  } catch (error) {
+    logger.error('Update post error:', error)
+    res.status(500).json({
+      error: 'Internal server error'
+    })
+  }
+})
+
+// Delete post
+router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+
+    // Check if user owns the post
+    const { data: existingPost } = await supabase
+      .from('posts')
+      .select('author_id')
+      .eq('id', id)
+      .single()
+
+    if (!existingPost || existingPost.author_id !== req.user.id) {
+      return res.status(403).json({
+        error: 'Not authorized to delete this post'
+      })
+    }
+
+    // Delete post (cascade will handle related records)
+    const { error } = await supabase
+      .from('posts')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      throw error
+    }
+
+    res.json({
+      success: true,
+      message: 'Post deleted successfully'
+    })
+  } catch (error) {
+    logger.error('Delete post error:', error)
+    res.status(500).json({
+      error: 'Internal server error'
+    })
+  }
+})
+
+// =============================================
+// CONTENT INTERACTIONS
+// =============================================
+
+// Like/Unlike post
+router.post('/:id/like', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+
+    // Check if post exists
+    const { data: post } = await supabase
+      .from('posts')
+      .select('id, author_id, privacy')
+      .eq('id', id)
+      .single()
 
     if (!post) {
       return res.status(404).json({
@@ -92,473 +526,436 @@ router.get('/:id', async (req: Request, res: Response) => {
       })
     }
 
-    res.json({
-      post
-    })
+    // Check if already liked
+    const { data: existingLike } = await supabase
+      .from('likes')
+      .select('*')
+      .eq('user_id', req.user.id)
+      .eq('post_id', id)
+      .single()
+
+    if (existingLike) {
+      // Unlike
+      await supabase
+        .from('likes')
+        .delete()
+        .eq('user_id', req.user.id)
+        .eq('post_id', id)
+
+      res.json({
+        success: true,
+        action: 'unliked',
+        message: 'Post unliked'
+      })
+    } else {
+      // Like
+      await supabase
+        .from('likes')
+        .insert({
+          user_id: req.user.id,
+          post_id: id
+        })
+
+      res.json({
+        success: true,
+        action: 'liked',
+        message: 'Post liked'
+      })
+    }
   } catch (error) {
-    logger.error('Get post error:', error)
+    logger.error('Like/Unlike error:', error)
     res.status(500).json({
-      error: 'Failed to fetch post'
+      error: 'Internal server error'
     })
   }
 })
 
-// Update post
-router.put('/:id', authMiddleware, requireCreator, upload.array('media', 10), validateRequest(contentSchemas.updatePost), async (req: Request, res: Response) => {
+// Bookmark/Unbookmark post
+router.post('/:id/bookmark', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const userId = (req as AuthenticatedRequest).user.id
     const { id } = req.params
-    const updateData = req.body
-    const files = req.files as Express.Multer.File[]
 
-    // Verify ownership
-    const post = await contentService.getPost(id)
-    if (!post || post.creator_id !== userId) {
-      return res.status(403).json({
-        error: 'Not authorized to update this post'
+    // Check if post exists
+    const { data: post } = await supabase
+      .from('posts')
+      .select('id')
+      .eq('id', id)
+      .single()
+
+    if (!post) {
+      return res.status(404).json({
+        error: 'Post not found'
       })
     }
 
-    const updatedPost = await contentService.updatePost(id, {
-      ...updateData,
-      files
-    })
+    // Check if already bookmarked
+    const { data: existingBookmark } = await supabase
+      .from('bookmarks')
+      .select('*')
+      .eq('user_id', req.user.id)
+      .eq('post_id', id)
+      .single()
 
-    res.json({
-      message: 'Post updated successfully',
-      post: updatedPost
-    })
-  } catch (error) {
-    logger.error('Update post error:', error)
-    res.status(500).json({
-      error: 'Failed to update post'
-    })
-  }
-})
+    if (existingBookmark) {
+      // Unbookmark
+      await supabase
+        .from('bookmarks')
+        .delete()
+        .eq('user_id', req.user.id)
+        .eq('post_id', id)
 
-// Delete post
-router.delete('/:id', authMiddleware, requireCreator, async (req: Request, res: Response) => {
-  try {
-    const userId = (req as AuthenticatedRequest).user.id
-    const { id } = req.params
+      res.json({
+        success: true,
+        action: 'unbookmarked',
+        message: 'Post unbookmarked'
+      })
+    } else {
+      // Bookmark
+      await supabase
+        .from('bookmarks')
+        .insert({
+          user_id: req.user.id,
+          post_id: id
+        })
 
-    // Verify ownership
-    const post = await contentService.getPost(id)
-    if (!post || post.creator_id !== userId) {
-      return res.status(403).json({
-        error: 'Not authorized to delete this post'
+      res.json({
+        success: true,
+        action: 'bookmarked',
+        message: 'Post bookmarked'
       })
     }
-
-    await contentService.deletePost(id)
-
-    res.json({
-      message: 'Post deleted successfully'
-    })
   } catch (error) {
-    logger.error('Delete post error:', error)
+    logger.error('Bookmark/Unbookmark error:', error)
     res.status(500).json({
-      error: 'Failed to delete post'
-    })
-  }
-})
-
-// Like/Unlike post
-router.post('/:id/like', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const userId = (req as AuthenticatedRequest).user.id
-    const { id } = req.params
-
-    const result = await contentService.toggleLike(id, userId)
-
-    res.json({
-      message: result.liked ? 'Post liked' : 'Post unliked',
-      liked: result.liked,
-      likesCount: result.likesCount
-    })
-  } catch (error) {
-    logger.error('Toggle like error:', error)
-    res.status(500).json({
-      error: 'Failed to toggle like'
-    })
-  }
-})
-
-// Add comment
-router.post('/:id/comments', authMiddleware, validateRequest(contentSchemas.addComment), async (req: Request, res: Response) => {
-  try {
-    const userId = (req as AuthenticatedRequest).user.id
-    const { id } = req.params
-    const { content } = req.body
-
-    const comment = await contentService.addComment(id, userId, content)
-
-    res.status(201).json({
-      message: 'Comment added successfully',
-      comment
-    })
-  } catch (error) {
-    logger.error('Add comment error:', error)
-    res.status(500).json({
-      error: 'Failed to add comment'
-    })
-  }
-})
-
-// Get comments for post
-router.get('/:id/comments', async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params
-    const { page = 1, limit = 20 } = req.query
-
-    const comments = await contentService.getComments(id, {
-      page: Number(page),
-      limit: Number(limit)
-    })
-
-    res.json({
-      comments,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total: comments.length
-      }
-    })
-  } catch (error) {
-    logger.error('Get comments error:', error)
-    res.status(500).json({
-      error: 'Failed to fetch comments'
-    })
-  }
-})
-
-// Delete comment
-router.delete('/comments/:commentId', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const userId = (req as AuthenticatedRequest).user.id
-    const { commentId } = req.params
-
-    await contentService.deleteComment(commentId, userId)
-
-    res.json({
-      message: 'Comment deleted successfully'
-    })
-  } catch (error) {
-    logger.error('Delete comment error:', error)
-    res.status(500).json({
-      error: 'Failed to delete comment'
-    })
-  }
-})
-
-// Report post
-router.post('/:id/report', authMiddleware, validateRequest(contentSchemas.reportPost), async (req: Request, res: Response) => {
-  try {
-    const userId = (req as AuthenticatedRequest).user.id
-    const { id } = req.params
-    const { reason, description } = req.body
-
-    await contentService.reportPost(id, userId, reason, description)
-
-    res.json({
-      message: 'Post reported successfully'
-    })
-  } catch (error) {
-    logger.error('Report post error:', error)
-    res.status(500).json({
-      error: 'Failed to report post'
-    })
-  }
-})
-
-// Get creator's posts
-router.get('/creator/:creatorId', async (req: Request, res: Response) => {
-  try {
-    const { creatorId } = req.params
-    const { page = 1, limit = 20, isPaid } = req.query
-
-    const posts = await contentService.getCreatorPosts(creatorId, {
-      page: Number(page),
-      limit: Number(limit),
-      isPaid: isPaid === 'true'
-    })
-
-    res.json({
-      posts,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total: posts.length
-      }
-    })
-  } catch (error) {
-    logger.error('Get creator posts error:', error)
-    res.status(500).json({
-      error: 'Failed to fetch creator posts'
-    })
-  }
-})
-
-// Get trending posts
-router.get('/trending/feed', async (req: Request, res: Response) => {
-  try {
-    const { page = 1, limit = 20 } = req.query
-
-    const posts = await contentService.getTrendingPosts({
-      page: Number(page),
-      limit: Number(limit)
-    })
-
-    res.json({
-      posts,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total: posts.length
-      }
-    })
-  } catch (error) {
-    logger.error('Get trending posts error:', error)
-    res.status(500).json({
-      error: 'Failed to fetch trending posts'
-    })
-  }
-})
-
-// Save/Unsave post
-router.post('/:id/save', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const userId = (req as AuthenticatedRequest).user.id
-    const { id } = req.params
-
-    const result = await contentService.toggleSave(id, userId)
-
-    res.json({
-      message: result.saved ? 'Post saved' : 'Post unsaved',
-      saved: result.saved
-    })
-  } catch (error) {
-    logger.error('Toggle save error:', error)
-    res.status(500).json({
-      error: 'Failed to toggle save'
-    })
-  }
-})
-
-// Add to favorites
-router.post('/:id/favorite', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const userId = (req as AuthenticatedRequest).user.id
-    const { id } = req.params
-
-    const result = await contentService.toggleFavorite(id, userId)
-
-    res.json({
-      message: result.favorited ? 'Post added to favorites' : 'Post removed from favorites',
-      favorited: result.favorited
-    })
-  } catch (error) {
-    logger.error('Toggle favorite error:', error)
-    res.status(500).json({
-      error: 'Failed to toggle favorite'
-    })
-  }
-})
-
-// Get saved posts
-router.get('/saved/posts', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const userId = (req as AuthenticatedRequest).user.id
-    const { page = 1, limit = 20 } = req.query
-
-    const posts = await contentService.getSavedPosts(userId, {
-      page: Number(page),
-      limit: Number(limit)
-    })
-
-    res.json({
-      posts,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total: posts.length
-      }
-    })
-  } catch (error) {
-    logger.error('Get saved posts error:', error)
-    res.status(500).json({
-      error: 'Failed to fetch saved posts'
-    })
-  }
-})
-
-// Get favorite posts
-router.get('/favorites/posts', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const userId = (req as AuthenticatedRequest).user.id
-    const { page = 1, limit = 20 } = req.query
-
-    const posts = await contentService.getFavoritePosts(userId, {
-      page: Number(page),
-      limit: Number(limit)
-    })
-
-    res.json({
-      posts,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total: posts.length
-      }
-    })
-  } catch (error) {
-    logger.error('Get favorite posts error:', error)
-    res.status(500).json({
-      error: 'Failed to fetch favorite posts'
-    })
-  }
-})
-
-// Get post insights (for creators)
-router.get('/:id/insights', authMiddleware, requireCreator, async (req: Request, res: Response) => {
-  try {
-    const userId = (req as AuthenticatedRequest).user.id
-    const { id } = req.params
-
-    // Verify ownership
-    const post = await contentService.getPost(id)
-    if (!post || post.creator_id !== userId) {
-      return res.status(403).json({
-        error: 'Not authorized to view insights for this post'
-      })
-    }
-
-    const insights = await contentService.getPostInsights(id)
-
-    res.json({ insights })
-  } catch (error) {
-    logger.error('Get post insights error:', error)
-    res.status(500).json({
-      error: 'Failed to fetch post insights'
-    })
-  }
-})
-
-// Get user's feed (personalized)
-router.get('/feed/personalized', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const userId = (req as AuthenticatedRequest).user.id
-    const { page = 1, limit = 20 } = req.query
-
-    const posts = await contentService.getPersonalizedFeed(userId, {
-      page: Number(page),
-      limit: Number(limit)
-    })
-
-    res.json({
-      posts,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total: posts.length
-      }
-    })
-  } catch (error) {
-    logger.error('Get personalized feed error:', error)
-    res.status(500).json({
-      error: 'Failed to fetch personalized feed'
-    })
-  }
-})
-
-// Search posts
-router.get('/search', async (req: Request, res: Response) => {
-  try {
-    const { q, page = 1, limit = 20, type, category } = req.query
-
-    if (!q || (q as string).trim().length === 0) {
-      return res.status(400).json({
-        error: 'Search query is required'
-      })
-    }
-
-    const posts = await contentService.searchPosts({
-      query: q as string,
-      page: Number(page),
-      limit: Number(limit),
-      type: type as string,
-      category: category as string
-    })
-
-    res.json({
-      posts,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total: posts.length
-      }
-    })
-  } catch (error) {
-    logger.error('Search posts error:', error)
-    res.status(500).json({
-      error: 'Failed to search posts'
-    })
-  }
-})
-
-// Get post interactions
-router.get('/:id/interactions', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const userId = (req as AuthenticatedRequest).user.id
-    const { id } = req.params
-
-    const interactions = await contentService.getPostInteractions(id, userId)
-
-    res.json({ interactions })
-  } catch (error) {
-    logger.error('Get post interactions error:', error)
-    res.status(500).json({
-      error: 'Failed to fetch post interactions'
+      error: 'Internal server error'
     })
   }
 })
 
 // Share post
-router.post('/:id/share', authMiddleware, async (req: Request, res: Response) => {
+router.post('/:id/share', authMiddleware, validateRequest({
+  body: Joi.object({
+    platform: Joi.string().valid('internal', 'twitter', 'facebook', 'instagram', 'linkedin').default('internal'),
+    message: Joi.string().max(500).optional()
+  })
+}), async (req: Request, res: Response) => {
   try {
-    const userId = (req as AuthenticatedRequest).user.id
     const { id } = req.params
     const { platform, message } = req.body
 
-    const share = await contentService.sharePost(id, userId, platform, message)
+    // Check if post exists
+    const { data: post } = await supabase
+      .from('posts')
+      .select('id')
+      .eq('id', id)
+      .single()
+
+    if (!post) {
+      return res.status(404).json({
+        error: 'Post not found'
+      })
+    }
+
+    // Record share
+    await supabase
+      .from('shares')
+      .insert({
+        user_id: req.user.id,
+        post_id: id,
+        platform,
+        message
+      })
 
     res.json({
-      message: 'Post shared successfully',
-      share
+      success: true,
+      message: 'Post shared successfully'
     })
   } catch (error) {
     logger.error('Share post error:', error)
     res.status(500).json({
-      error: 'Failed to share post'
+      error: 'Internal server error'
     })
   }
 })
 
-// Get post analytics (for creators)
-router.get('/analytics/overview', authMiddleware, requireCreator, async (req: Request, res: Response) => {
+// =============================================
+// COMMENTS
+// =============================================
+
+// Get post comments
+router.get('/:id/comments', async (req: Request, res: Response) => {
   try {
-    const userId = (req as AuthenticatedRequest).user.id
-    const { period = '7d' } = req.query
+    const { id } = req.params
+    const { page = 1, limit = 20, sort = 'recent' } = req.query
 
-    const analytics = await contentService.getContentAnalytics(userId, period as string)
+    const offset = (Number(page) - 1) * Number(limit)
 
-    res.json({ analytics })
+    let query = supabase
+      .from('comments')
+      .select(`
+        *,
+        profiles!comments_author_id_fkey (
+          id,
+          username,
+          display_name,
+          avatar_url,
+          is_verified
+        )
+      `)
+      .eq('post_id', id)
+      .eq('is_deleted', false)
+      .is('parent_id', null) // Only top-level comments
+
+    // Apply sorting
+    if (sort === 'popular') {
+      query = query.order('likes_count', { ascending: false })
+    } else {
+      query = query.order('created_at', { ascending: true })
+    }
+
+    // Apply pagination
+    query = query.range(offset, offset + Number(limit) - 1)
+
+    const { data: comments, error } = await query
+
+    if (error) {
+      throw error
+    }
+
+    // Get replies for each comment
+    const commentsWithReplies = await Promise.all(
+      comments.map(async (comment) => {
+        const { data: replies } = await supabase
+          .from('comments')
+          .select(`
+            *,
+            profiles!comments_author_id_fkey (
+              id,
+              username,
+              display_name,
+              avatar_url,
+              is_verified
+            )
+          `)
+          .eq('parent_id', comment.id)
+          .eq('is_deleted', false)
+          .order('created_at', { ascending: true })
+          .limit(3)
+
+        return {
+          ...comment,
+          replies: replies || []
+        }
+      })
+    )
+
+    res.json({
+      success: true,
+      data: {
+        comments: commentsWithReplies,
+        pagination: {
+          page: Number(page),
+          limit: Number(limit),
+          hasMore: comments.length === Number(limit)
+        }
+      }
+    })
   } catch (error) {
-    logger.error('Get content analytics error:', error)
+    logger.error('Get comments error:', error)
     res.status(500).json({
-      error: 'Failed to fetch content analytics'
+      error: 'Internal server error'
     })
   }
 })
+
+// Add comment
+router.post('/:id/comments', authMiddleware, validateRequest({
+  body: Joi.object({
+    content: Joi.string().min(1).max(500).required(),
+    parent_id: Joi.string().uuid().optional()
+  })
+}), async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const { content, parent_id } = req.body
+
+    // Check if post exists
+    const { data: post } = await supabase
+      .from('posts')
+      .select('id, privacy')
+      .eq('id', id)
+      .single()
+
+    if (!post) {
+      return res.status(404).json({
+        error: 'Post not found'
+      })
+    }
+
+    // Create comment
+    const { data: comment, error } = await supabase
+      .from('comments')
+      .insert({
+        post_id: id,
+        author_id: req.user.id,
+        content,
+        parent_id
+      })
+      .select(`
+        *,
+        profiles!comments_author_id_fkey (
+          id,
+          username,
+          display_name,
+          avatar_url,
+          is_verified
+        )
+      `)
+      .single()
+
+    if (error) {
+      throw error
+    }
+
+    res.status(201).json({
+      success: true,
+      data: comment,
+      message: 'Comment added successfully'
+    })
+  } catch (error) {
+    logger.error('Add comment error:', error)
+    res.status(500).json({
+      error: 'Internal server error'
+    })
+  }
+})
+
+// =============================================
+// SEARCH AND DISCOVERY
+// =============================================
+
+// Search posts
+router.get('/search', async (req: Request, res: Response) => {
+  try {
+    const { 
+      q = '', 
+      page = 1, 
+      limit = 20, 
+      type = 'all', // all, images, videos, text
+      category = '',
+      sort = 'recent',
+      date_range = 'all' // all, today, week, month, year
+    } = req.query
+
+    const offset = (Number(page) - 1) * Number(limit))
+
+    let query = supabase
+      .from('posts')
+      .select(`
+        *,
+        profiles!posts_author_id_fkey (
+          id,
+          username,
+          display_name,
+          avatar_url,
+          is_verified,
+          is_creator
+        ),
+        media (
+          id,
+          file_url,
+          file_type,
+          thumbnail_url,
+          width,
+          height,
+          duration
+        )
+      `)
+      .eq('privacy', 'public')
+
+    // Apply search query
+    if (q) {
+      query = query.or(`content.ilike.%${q}%,tags.cs.{${q}},category.ilike.%${q}%`)
+    }
+
+    // Apply content type filter
+    if (type !== 'all') {
+      query = query.eq('content_type', type)
+    }
+
+    // Apply category filter
+    if (category) {
+      query = query.eq('category', category)
+    }
+
+    // Apply date range filter
+    if (date_range !== 'all') {
+      const now = new Date()
+      let startDate: Date
+
+      switch (date_range) {
+        case 'today':
+          startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+          break
+        case 'week':
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+          break
+        case 'month':
+          startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+          break
+        case 'year':
+          startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
+          break
+        default:
+          startDate = new Date(0)
+      }
+
+      query = query.gte('created_at', startDate.toISOString())
+    }
+
+    // Apply sorting
+    if (sort === 'popular') {
+      query = query.order('likes_count', { ascending: false })
+    } else if (sort === 'trending') {
+      query = query.order('views_count', { ascending: false })
+    } else {
+      query = query.order('created_at', { ascending: false })
+    }
+
+    // Apply pagination
+    query = query.range(offset, offset + Number(limit) - 1)
+
+    const { data: posts, error } = await query
+
+    if (error) {
+      throw error
+    }
+
+    res.json({
+      success: true,
+      data: {
+        posts,
+        pagination: {
+          page: Number(page),
+          limit: Number(limit),
+          hasMore: posts.length === Number(limit)
+        }
+      }
+    })
+  } catch (error) {
+    logger.error('Search posts error:', error)
+    res.status(500).json({
+      error: 'Internal server error'
+    })
+  }
+})
+
+// Helper function for file upload (implement based on your storage solution)
+async function uploadToStorage(file: Express.Multer.File): Promise<string> {
+  // Implement your file upload logic here
+  // This could be AWS S3, Google Cloud Storage, etc.
+  // For now, return a placeholder URL
+  return `https://storage.example.com/files/${uuidv4()}-${file.originalname}`
+}
 
 export default router

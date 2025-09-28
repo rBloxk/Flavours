@@ -1,104 +1,172 @@
 import { Router, Request, Response } from 'express'
-import { supabase } from '../config/supabase'
+import { supabase } from '../config/database'
 import { authMiddleware } from '../middleware/auth'
 import { validateRequest } from '../middleware/validation'
 import { logger } from '../utils/logger'
-import { redisManager } from '../config/redis'
-import { notificationsService } from '../services/notificationsService'
-import { z } from 'zod'
+import Joi from 'joi'
+import nodemailer from 'nodemailer'
 
 const router = Router()
 
-// Validation schemas
-const markAsReadSchema = z.object({
-  notificationIds: z.array(z.string().uuid()).min(1)
+// Email transporter configuration
+const emailTransporter = nodemailer.createTransporter({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT),
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  }
 })
 
-const updatePreferencesSchema = z.object({
-  emailNotifications: z.boolean().optional(),
-  pushNotifications: z.boolean().optional(),
-  smsNotifications: z.boolean().optional(),
-  notificationTypes: z.record(z.boolean()).optional()
-})
+// =============================================
+// NOTIFICATION ENDPOINTS
+// =============================================
 
 // Get user notifications
 router.get('/', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user.id
-    const { page = 1, limit = 20, unreadOnly = false, type } = req.query
+    const { 
+      page = 1, 
+      limit = 20, 
+      type = 'all',
+      unread_only = 'false',
+      sort = 'recent'
+    } = req.query
 
-    const notifications = await notificationsService.getUserNotifications(userId, {
-      page: Number(page),
-      limit: Number(limit),
-      unreadOnly: unreadOnly === 'true',
-      type: type as string
-    })
+    const offset = (Number(page) - 1) * Number(limit)
+
+    // Build notifications query
+    let query = supabase
+      .from('notifications')
+      .select(`
+        *,
+        profiles!notifications_actor_id_fkey (
+          id,
+          username,
+          display_name,
+          avatar_url,
+          is_verified
+        )
+      `)
+      .eq('user_id', req.user.id)
+
+    // Apply type filter
+    if (type !== 'all') {
+      query = query.eq('type', type)
+    }
+
+    // Apply unread filter
+    if (unread_only === 'true') {
+      query = query.eq('is_read', false)
+    }
+
+    // Apply sorting
+    if (sort === 'oldest') {
+      query = query.order('created_at', { ascending: true })
+    } else {
+      query = query.order('created_at', { ascending: false })
+    }
+
+    // Apply pagination
+    query = query.range(offset, offset + Number(limit) - 1)
+
+    const { data: notifications, error } = await query
+
+    if (error) {
+      throw error
+    }
+
+    // Get unread count
+    const { count: unreadCount } = await supabase
+      .from('notifications')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', req.user.id)
+      .eq('is_read', false)
 
     res.json({
-      notifications,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total: notifications.length
+      success: true,
+      data: {
+        notifications: notifications || [],
+        unread_count: unreadCount || 0,
+        pagination: {
+          page: Number(page),
+          limit: Number(limit),
+          hasMore: notifications?.length === Number(limit)
+        }
       }
     })
   } catch (error) {
     logger.error('Get notifications error:', error)
     res.status(500).json({
-      error: 'Failed to fetch notifications'
+      error: 'Internal server error'
     })
   }
 })
 
-// Get unread notifications count
-router.get('/unread-count', authMiddleware, async (req: Request, res: Response) => {
+// Mark notification as read
+router.put('/:id/read', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user.id
+    const { id } = req.params
 
-    const count = await notificationsService.getUnreadCount(userId)
+    const { data: notification, error } = await supabase
+      .from('notifications')
+      .update({
+        is_read: true,
+        read_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .eq('user_id', req.user.id)
+      .select()
+      .single()
 
-    res.json({ count })
-  } catch (error) {
-    logger.error('Get unread count error:', error)
-    res.status(500).json({
-      error: 'Failed to fetch unread count'
-    })
-  }
-})
+    if (error) {
+      throw error
+    }
 
-// Mark notifications as read
-router.patch('/mark-read', authMiddleware, validateRequest(markAsReadSchema), async (req: Request, res: Response) => {
-  try {
-    const userId = (req as any).user.id
-    const { notificationIds } = req.body
-
-    await notificationsService.markAsRead(notificationIds, userId)
+    if (!notification) {
+      return res.status(404).json({
+        error: 'Notification not found'
+      })
+    }
 
     res.json({
-      message: 'Notifications marked as read successfully'
+      success: true,
+      data: notification,
+      message: 'Notification marked as read'
     })
   } catch (error) {
-    logger.error('Mark as read error:', error)
+    logger.error('Mark notification read error:', error)
     res.status(500).json({
-      error: 'Failed to mark notifications as read'
+      error: 'Internal server error'
     })
   }
 })
 
 // Mark all notifications as read
-router.patch('/mark-all-read', authMiddleware, async (req: Request, res: Response) => {
+router.put('/read-all', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user.id
+    const { error } = await supabase
+      .from('notifications')
+      .update({
+        is_read: true,
+        read_at: new Date().toISOString()
+      })
+      .eq('user_id', req.user.id)
+      .eq('is_read', false)
 
-    await notificationsService.markAllAsRead(userId)
+    if (error) {
+      throw error
+    }
 
     res.json({
-      message: 'All notifications marked as read successfully'
+      success: true,
+      message: 'All notifications marked as read'
     })
   } catch (error) {
-    logger.error('Mark all as read error:', error)
+    logger.error('Mark all notifications read error:', error)
     res.status(500).json({
-      error: 'Failed to mark all notifications as read'
+      error: 'Internal server error'
     })
   }
 })
@@ -106,195 +174,442 @@ router.patch('/mark-all-read', authMiddleware, async (req: Request, res: Respons
 // Delete notification
 router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user.id
     const { id } = req.params
 
-    await notificationsService.deleteNotification(id, userId)
+    const { error } = await supabase
+      .from('notifications')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', req.user.id)
+
+    if (error) {
+      throw error
+    }
 
     res.json({
-      message: 'Notification deleted successfully'
+      success: true,
+      message: 'Notification deleted'
     })
   } catch (error) {
     logger.error('Delete notification error:', error)
     res.status(500).json({
-      error: 'Failed to delete notification'
+      error: 'Internal server error'
     })
   }
 })
 
 // Delete all notifications
-router.delete('/', authMiddleware, async (req: Request, res: Response) => {
+router.delete('/all', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user.id
+    const { error } = await supabase
+      .from('notifications')
+      .delete()
+      .eq('user_id', req.user.id)
 
-    await notificationsService.deleteAllNotifications(userId)
+    if (error) {
+      throw error
+    }
 
     res.json({
-      message: 'All notifications deleted successfully'
+      success: true,
+      message: 'All notifications deleted'
     })
   } catch (error) {
     logger.error('Delete all notifications error:', error)
     res.status(500).json({
-      error: 'Failed to delete all notifications'
+      error: 'Internal server error'
     })
   }
 })
 
-// Get notification preferences
-router.get('/preferences', authMiddleware, async (req: Request, res: Response) => {
+// Get notification settings
+router.get('/settings', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user.id
-
-    const preferences = await notificationsService.getNotificationPreferences(userId)
-
-    res.json({ preferences })
-  } catch (error) {
-    logger.error('Get notification preferences error:', error)
-    res.status(500).json({
-      error: 'Failed to fetch notification preferences'
-    })
-  }
-})
-
-// Update notification preferences
-router.patch('/preferences', authMiddleware, validateRequest(updatePreferencesSchema), async (req: Request, res: Response) => {
-  try {
-    const userId = (req as any).user.id
-    const preferences = req.body
-
-    const updatedPreferences = await notificationsService.updateNotificationPreferences(userId, preferences)
-
-    res.json({
-      message: 'Notification preferences updated successfully',
-      preferences: updatedPreferences
-    })
-  } catch (error) {
-    logger.error('Update notification preferences error:', error)
-    res.status(500).json({
-      error: 'Failed to update notification preferences'
-    })
-  }
-})
-
-// Send notification (admin only)
-router.post('/send', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const userId = (req as any).user.id
-    const { recipientId, type, title, message, data } = req.body
-
-    // Check if user is admin
+    // Get user's notification preferences
     const { data: profile } = await supabase
       .from('profiles')
-      .select('is_admin')
+      .select('notification_settings')
+      .eq('user_id', req.user.id)
+      .single()
+
+    const defaultSettings = {
+      email_notifications: true,
+      push_notifications: true,
+      in_app_notifications: true,
+      sms_notifications: false,
+      notification_types: {
+        likes: true,
+        comments: true,
+        follows: true,
+        shares: true,
+        mentions: true,
+        subscriptions: true,
+        tips: true,
+        streams: true,
+        messages: true,
+        system: true
+      },
+      quiet_hours: {
+        enabled: false,
+        start_time: '22:00',
+        end_time: '08:00',
+        timezone: 'UTC'
+      },
+      frequency: 'immediate' // immediate, daily, weekly
+    }
+
+    res.json({
+      success: true,
+      data: {
+        settings: profile?.notification_settings || defaultSettings
+      }
+    })
+  } catch (error) {
+    logger.error('Get notification settings error:', error)
+    res.status(500).json({
+      error: 'Internal server error'
+    })
+  }
+})
+
+// Update notification settings
+router.put('/settings', authMiddleware, validateRequest({
+  body: Joi.object({
+    email_notifications: Joi.boolean().optional(),
+    push_notifications: Joi.boolean().optional(),
+    in_app_notifications: Joi.boolean().optional(),
+    sms_notifications: Joi.boolean().optional(),
+    notification_types: Joi.object({
+      likes: Joi.boolean().optional(),
+      comments: Joi.boolean().optional(),
+      follows: Joi.boolean().optional(),
+      shares: Joi.boolean().optional(),
+      mentions: Joi.boolean().optional(),
+      subscriptions: Joi.boolean().optional(),
+      tips: Joi.boolean().optional(),
+      streams: Joi.boolean().optional(),
+      messages: Joi.boolean().optional(),
+      system: Joi.boolean().optional()
+    }).optional(),
+    quiet_hours: Joi.object({
+      enabled: Joi.boolean().optional(),
+      start_time: Joi.string().pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
+      end_time: Joi.string().pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
+      timezone: Joi.string().optional()
+    }).optional(),
+    frequency: Joi.string().valid('immediate', 'daily', 'weekly').optional()
+  })
+}), async (req: Request, res: Response) => {
+  try {
+    const settings = req.body
+
+    // Update profile notification settings
+    const { data: updatedProfile, error } = await supabase
+      .from('profiles')
+      .update({
+        notification_settings: settings,
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', req.user.id)
+      .select()
+      .single()
+
+    if (error) {
+      throw error
+    }
+
+    res.json({
+      success: true,
+      data: updatedProfile,
+      message: 'Notification settings updated successfully'
+    })
+  } catch (error) {
+    logger.error('Update notification settings error:', error)
+    res.status(500).json({
+      error: 'Internal server error'
+    })
+  }
+})
+
+// =============================================
+// NOTIFICATION SERVICE METHODS
+// =============================================
+
+// Create notification
+export async function createNotification(
+  userId: string,
+  type: string,
+  title: string,
+  message: string,
+  context?: any,
+  actorId?: string,
+  deliveryMethods?: string[]
+) {
+  try {
+    // Get user's notification settings
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('notification_settings, email')
       .eq('user_id', userId)
       .single()
 
-    if (!profile?.is_admin) {
-      return res.status(403).json({
-        error: 'Admin access required'
-      })
+    if (!profile) {
+      throw new Error('User not found')
     }
 
-    const notification = await notificationsService.sendNotification({
-      recipientId,
-      type,
-      title,
-      message,
-      data
-    })
+    const settings = profile.notification_settings || {}
+    
+    // Check if this notification type is enabled
+    if (settings.notification_types && !settings.notification_types[type]) {
+      return null // User has disabled this notification type
+    }
 
-    res.json({
-      message: 'Notification sent successfully',
-      notification
-    })
+    // Check quiet hours
+    if (settings.quiet_hours?.enabled) {
+      const now = new Date()
+      const currentTime = now.toTimeString().slice(0, 5)
+      const startTime = settings.quiet_hours.start_time
+      const endTime = settings.quiet_hours.end_time
+
+      if (isInQuietHours(currentTime, startTime, endTime)) {
+        // Schedule notification for after quiet hours
+        return await scheduleNotification(userId, type, title, message, context, actorId, deliveryMethods)
+      }
+    }
+
+    // Create notification in database
+    const { data: notification } = await supabase
+      .from('notifications')
+      .insert({
+        user_id: userId,
+        type,
+        title,
+        message,
+        context_type: context ? Object.keys(context)[0] : null,
+        context_id: context ? Object.values(context)[0] : null,
+        actor_id: actorId,
+        delivery_methods: deliveryMethods || ['in_app'],
+        is_sent: false
+      })
+      .select()
+      .single()
+
+    if (!notification) {
+      throw new Error('Failed to create notification')
+    }
+
+    // Send notification based on user preferences
+    await sendNotification(notification, profile, settings)
+
+    return notification
   } catch (error) {
-    logger.error('Send notification error:', error)
-    res.status(500).json({
-      error: 'Failed to send notification'
-    })
+    logger.error('Create notification error:', error)
+    throw error
   }
-})
+}
 
-// Get notification types
-router.get('/types', async (req: Request, res: Response) => {
-  try {
-    const types = await notificationsService.getNotificationTypes()
+// Send notification through various channels
+async function sendNotification(notification: any, profile: any, settings: any) {
+  const deliveryMethods = notification.delivery_methods || ['in_app']
 
-    res.json({ types })
-  } catch (error) {
-    logger.error('Get notification types error:', error)
-    res.status(500).json({
-      error: 'Failed to fetch notification types'
-    })
+  for (const method of deliveryMethods) {
+    try {
+      switch (method) {
+        case 'in_app':
+          // Real-time notification (handled by WebSocket service)
+          break
+
+        case 'email':
+          if (settings.email_notifications && profile.email) {
+            await sendEmailNotification(profile.email, notification)
+          }
+          break
+
+        case 'push':
+          if (settings.push_notifications) {
+            await sendPushNotification(profile.user_id, notification)
+          }
+          break
+
+        case 'sms':
+          if (settings.sms_notifications && profile.phone) {
+            await sendSMSNotification(profile.phone, notification)
+          }
+          break
+      }
+    } catch (error) {
+      logger.error(`Failed to send ${method} notification:`, error)
+    }
   }
-})
 
-// Subscribe to push notifications
-router.post('/push/subscribe', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const userId = (req as any).user.id
-    const { endpoint, keys } = req.body
+  // Mark as sent
+  await supabase
+    .from('notifications')
+    .update({ is_sent: true })
+    .eq('id', notification.id)
+}
 
-    const subscription = await notificationsService.subscribeToPushNotifications(userId, {
-      endpoint,
-      keys
-    })
-
-    res.json({
-      message: 'Push notification subscription created successfully',
-      subscription
-    })
-  } catch (error) {
-    logger.error('Subscribe to push notifications error:', error)
-    res.status(500).json({
-      error: 'Failed to subscribe to push notifications'
-    })
+// Send email notification
+async function sendEmailNotification(email: string, notification: any) {
+  const mailOptions = {
+    from: process.env.SMTP_USER,
+    to: email,
+    subject: `Flavours - ${notification.title}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
+          <h1 style="color: white; margin: 0;">Flavours</h1>
+        </div>
+        <div style="padding: 30px; background: #f9f9f9;">
+          <h2 style="color: #333; margin-top: 0;">${notification.title}</h2>
+          <p style="color: #666; font-size: 16px; line-height: 1.5;">${notification.message}</p>
+          <div style="margin-top: 30px; text-align: center;">
+            <a href="${process.env.FRONTEND_URL}/notifications" 
+               style="background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+              View Notification
+            </a>
+          </div>
+        </div>
+        <div style="padding: 20px; text-align: center; color: #999; font-size: 12px;">
+          <p>You received this notification because you have email notifications enabled.</p>
+          <p><a href="${process.env.FRONTEND_URL}/settings/notifications">Manage notification preferences</a></p>
+        </div>
+      </div>
+    `
   }
-})
 
-// Unsubscribe from push notifications
-router.delete('/push/unsubscribe', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const userId = (req as any).user.id
+  await emailTransporter.sendMail(mailOptions)
+}
 
-    await notificationsService.unsubscribeFromPushNotifications(userId)
+// Send push notification (implement with your push service)
+async function sendPushNotification(userId: string, notification: any) {
+  // Implement push notification logic here
+  // This could use Firebase Cloud Messaging, OneSignal, etc.
+  logger.info(`Sending push notification to user ${userId}: ${notification.title}`)
+}
 
-    res.json({
-      message: 'Push notification subscription removed successfully'
-    })
-  } catch (error) {
-    logger.error('Unsubscribe from push notifications error:', error)
-    res.status(500).json({
-      error: 'Failed to unsubscribe from push notifications'
-    })
+// Send SMS notification (implement with your SMS service)
+async function sendSMSNotification(phone: string, notification: any) {
+  // Implement SMS notification logic here
+  // This could use Twilio, AWS SNS, etc.
+  logger.info(`Sending SMS notification to ${phone}: ${notification.title}`)
+}
+
+// Schedule notification for later delivery
+async function scheduleNotification(
+  userId: string,
+  type: string,
+  title: string,
+  message: string,
+  context?: any,
+  actorId?: string,
+  deliveryMethods?: string[]
+) {
+  // Implement notification scheduling logic
+  // This could use a job queue like Bull, Agenda, etc.
+  logger.info(`Scheduling notification for user ${userId}: ${title}`)
+}
+
+// Check if current time is within quiet hours
+function isInQuietHours(currentTime: string, startTime: string, endTime: string): boolean {
+  const current = timeToMinutes(currentTime)
+  const start = timeToMinutes(startTime)
+  const end = timeToMinutes(endTime)
+
+  if (start <= end) {
+    // Same day quiet hours (e.g., 22:00 to 08:00)
+    return current >= start || current <= end
+  } else {
+    // Overnight quiet hours (e.g., 22:00 to 08:00)
+    return current >= start || current <= end
   }
-})
+}
 
-// Test notification (for development)
-router.post('/test', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const userId = (req as any).user.id
-    const { type = 'test', title = 'Test Notification', message = 'This is a test notification' } = req.body
+// Convert time string to minutes since midnight
+function timeToMinutes(time: string): number {
+  const [hours, minutes] = time.split(':').map(Number)
+  return hours * 60 + minutes
+}
 
-    const notification = await notificationsService.sendNotification({
-      recipientId: userId,
-      type,
-      title,
-      message,
-      data: { test: true }
-    })
+// =============================================
+// BULK NOTIFICATION METHODS
+// =============================================
 
-    res.json({
-      message: 'Test notification sent successfully',
-      notification
-    })
-  } catch (error) {
-    logger.error('Test notification error:', error)
-    res.status(500).json({
-      error: 'Failed to send test notification'
-    })
+// Send notification to multiple users
+export async function sendBulkNotification(
+  userIds: string[],
+  type: string,
+  title: string,
+  message: string,
+  context?: any,
+  actorId?: string
+) {
+  const notifications = []
+  
+  for (const userId of userIds) {
+    try {
+      const notification = await createNotification(
+        userId,
+        type,
+        title,
+        message,
+        context,
+        actorId
+      )
+      if (notification) {
+        notifications.push(notification)
+      }
+    } catch (error) {
+      logger.error(`Failed to create notification for user ${userId}:`, error)
+    }
   }
-})
+
+  return notifications
+}
+
+// Send notification to all followers
+export async function sendNotificationToFollowers(
+  userId: string,
+  type: string,
+  title: string,
+  message: string,
+  context?: any
+) {
+  // Get followers
+  const { data: followers } = await supabase
+    .from('follows')
+    .select('follower_id')
+    .eq('following_id', userId)
+
+  if (!followers) {
+    return []
+  }
+
+  const followerIds = followers.map(f => f.follower_id)
+  return await sendBulkNotification(followerIds, type, title, message, context, userId)
+}
+
+// Send notification to all subscribers
+export async function sendNotificationToSubscribers(
+  creatorId: string,
+  type: string,
+  title: string,
+  message: string,
+  context?: any
+) {
+  // Get subscribers
+  const { data: subscribers } = await supabase
+    .from('subscriptions')
+    .select('subscriber_id')
+    .eq('creator_id', creatorId)
+    .eq('status', 'active')
+
+  if (!subscribers) {
+    return []
+  }
+
+  const subscriberIds = subscribers.map(s => s.subscriber_id)
+  return await sendBulkNotification(subscriberIds, type, title, message, context, creatorId)
+}
 
 export default router
-

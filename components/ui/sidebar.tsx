@@ -65,6 +65,13 @@ export function Sidebar() {
       badge: null
     },
     {
+      id: 'flavourstalk',
+      label: 'FlavoursTalk',
+      icon: MessageSquare,
+      href: '/flavourstalk',
+      badge: null
+    },
+    {
       id: 'dating',
       label: 'Dating',
       icon: Heart,
@@ -112,13 +119,6 @@ export function Sidebar() {
       label: 'Vault',
       icon: Image,
       href: '/vault',
-      badge: null
-    },
-    {
-      id: 'flavourstalk',
-      label: 'FlavoursTalk',
-      icon: MessageSquare,
-      href: '/flavourstalk',
       badge: null
     },
     {
