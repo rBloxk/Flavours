@@ -136,7 +136,7 @@ export default function AntiSlaveryPage() {
     {
       method: "Internal Reporting",
       description: "Report concerns through our internal channels",
-      contact: "ethics@flavours.com",
+      contact: "ethics@flavours.club",
       icon: Mail
     },
     {
@@ -148,7 +148,7 @@ export default function AntiSlaveryPage() {
     {
       method: "External Authorities",
       description: "Contact local law enforcement or anti-trafficking organizations",
-      contact: "National Human Trafficking Hotline: 1-888-373-7888",
+      contact: "Human Trafficking Hotline: 1-888-373-7888",
       icon: Flag
     }
   ]
@@ -338,7 +338,7 @@ export default function AntiSlaveryPage() {
               <div className="bg-muted p-4 rounded-lg">
                 <p className="text-sm">
                   <strong>Ethics and Compliance Officer</strong><br />
-                  Email: ethics@flavours.com<br />
+                  Email: ethics@flavours.club<br />
                   Phone: +1 (555) ETHICS-1<br />
                   Address: 123 Creator Street, San Francisco, CA 94105
                 </p>

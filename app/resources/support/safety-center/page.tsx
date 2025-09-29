@@ -318,7 +318,7 @@ export default function SafetyCenterPage() {
                   For non-urgent safety concerns
                 </p>
                 <Button variant="outline" size="sm">
-                  safety@flavours.com
+                  safety@flavours.club
                 </Button>
               </div>
               <div className="text-center">

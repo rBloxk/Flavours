@@ -1,5 +1,15 @@
 {
+  "/not-found": "app/not-found.js",
   "/page": "app/page.js",
   "/dating/page": "app/dating/page.js",
-  "/resources/business/contract/page": "app/resources/business/contract/page.js"
+  "/auth/page": "app/auth/page.js",
+  "/feed/page": "app/feed/page.js",
+  "/profile/page": "app/profile/page.js",
+  "/more/page": "app/more/page.js",
+  "/help/page": "app/help/page.js",
+  "/documentation/page": "app/documentation/page.js",
+  "/support/page": "app/support/page.js",
+  "/api/posts/route": "app/api/posts/route.js",
+  "/api/profile/route": "app/api/profile/route.js",
+  "/api/profile/posts/route": "app/api/profile/posts/route.js"
 }

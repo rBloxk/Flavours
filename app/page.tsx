@@ -6,7 +6,8 @@ import { useAuth } from '@/components/providers/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { FlavoursLogo } from '@/components/ui/flavours-logo'
-import { Crown, Users, TrendingUp, Shield, Zap, Star } from 'lucide-react'
+import { Crown, Users, TrendingUp, Shield, Zap, Star, Globe } from 'lucide-react'
+import { ResourceHeader } from '@/components/layout/resource-header'
 
 export default function LandingPage() {
   const { user, loading } = useAuth()
@@ -64,11 +65,11 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen">
+      <ResourceHeader />
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700">
         <div className="container mx-auto px-6 py-24 text-center">
           <div className="flex items-center justify-center space-x-2 mb-6">
-            <FlavoursLogo size="xl" />
           </div>
           
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
@@ -83,7 +84,7 @@ export default function LandingPage() {
             The premium platform where creators share exclusive content and fans get closer to their favorite personalities through subscriptions, tips, and direct interactions.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-4">
+          {/* <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-4">
             <Button size="lg" onClick={() => router.push('/auth')} className="text-lg px-8 w-full sm:w-auto">
               Get Started
             </Button>
@@ -91,7 +92,7 @@ export default function LandingPage() {
               Learn More
             </Button>
           </div>
-          
+           */}
           <div className="mt-16 grid gap-8 grid-cols-1 sm:grid-cols-3 max-w-4xl mx-auto px-4">
             <div className="text-center">
               <div className="text-2xl sm:text-3xl font-bold text-primary">50K+</div>
@@ -186,14 +187,24 @@ export default function LandingPage() {
               </div>
               <div className="border-t border-muted-foreground/20 pt-4">
                 <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
-                  </svg>
-                  <span>English</span>
-                  <span>Russian</span>
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <Globe className="w-4 h-4" />
+                  <select className="bg-transparent border-none outline-none text-sm text-muted-foreground cursor-pointer pr-6">
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                    <option value="it">Italiano</option>
+                    <option value="pt">Português</option>
+                    <option value="ru">Русский</option>
+                    <option value="ja">日本語</option>
+                    <option value="ko">한국어</option>
+                    <option value="zh">中文</option>
+                    <option value="ar">العربية</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="tr">Türkçe</option>
+                    <option value="nl">Nederlands</option>
+                    <option value="sv">Svenska</option>
+                  </select>
                 </div>
               </div>
             </div>
