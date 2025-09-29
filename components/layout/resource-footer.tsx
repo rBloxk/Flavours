@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { FlavoursLogo } from '@/components/ui/flavours-logo'
-import { Heart, MapPin, Mail, Phone } from 'lucide-react'
+import { Heart, MapPin, Mail, Phone, Globe } from 'lucide-react'
 
 export function ResourceFooter() {
   return (
@@ -18,11 +18,28 @@ export function ResourceFooter() {
             <p className="text-sm text-muted-foreground mb-4">
               Empowering creators to build meaningful connections and sustainable businesses.
             </p>
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <MapPin className="h-4 w-4" />
-              <span>English</span>
-              <span>Russian</span>
-            </div>
+            <div className="border-t border-muted-foreground/20 pt-4">
+                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                  <Globe className="w-4 h-4" />
+                  <select className="bg-transparent border-none outline-none text-sm text-muted-foreground cursor-pointer pr-6">
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                    <option value="it">Italiano</option>
+                    <option value="pt">Português</option>
+                    <option value="ru">Русский</option>
+                    <option value="ja">日本語</option>
+                    <option value="ko">한국어</option>
+                    <option value="zh">中文</option>
+                    <option value="ar">العربية</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="tr">Türkçe</option>
+                    <option value="nl">Nederlands</option>
+                    <option value="sv">Svenska</option>
+                  </select>
+                </div>
+              </div>
           </div>
 
           {/* Support Section */}

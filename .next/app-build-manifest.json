@@ -101,6 +101,71 @@
       "static/chunks/main-app.js",
       "static/chunks/app/support/page.js"
     ],
+    "/resources/support/cookie-notice/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/resources/support/cookie-notice/page.js"
+    ],
+    "/resources/legal/terms/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/resources/legal/terms/page.js"
+    ],
+    "/resources/business/branding/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/resources/business/branding/page.js"
+    ],
+    "/tube/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tube/page.js"
+    ],
+    "/licks/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/licks/page.js"
+    ],
+    "/flavourstalk/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/flavourstalk/page.js"
+    ],
+    "/explore/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/explore/page.js"
+    ],
+    "/notifications/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/notifications/page.js"
+    ],
+    "/messages/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/messages/page.js"
+    ],
+    "/cams/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/cams/page.js"
+    ],
+    "/collections/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/collections/page.js"
+    ],
+    "/vault/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/vault/page.js"
+    ],
+    "/queue/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/queue/page.js"
+    ],
     "/not-found": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",

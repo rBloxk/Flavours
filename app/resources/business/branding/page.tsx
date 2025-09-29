@@ -370,10 +370,10 @@ export default function BrandingPage() {
             </p>
             <div className="space-y-2">
               <p className="text-sm">
-                <strong>Brand Manager:</strong> brand@flavours.com
+                <strong>Brand Manager:</strong> brand@flavours.club
               </p>
               <p className="text-sm">
-                <strong>General Inquiries:</strong> hello@flavours.com
+                <strong>General Inquiries:</strong> hello@flavours.club
               </p>
               <p className="text-sm">
                 <strong>Address:</strong> Flavours Brand Team, 123 Creator Street, San Francisco, CA 94105

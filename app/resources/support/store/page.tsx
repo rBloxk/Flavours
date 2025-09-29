@@ -137,39 +137,41 @@ export default function StorePage() {
           <h2 className="text-2xl font-bold mb-6 text-center">Subscription Plans</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {storeItems.map((item) => (
-              <Card key={item.id} className={`relative ${item.popular ? 'ring-2 ring-primary' : ''}`}>
+              <div key={item.id} className={`relative ${item.popular ? 'ring-2 ring-primary rounded-lg' : ''}`}>
                 {item.popular && (
-                  <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-primary">
+                  <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-primary z-10">
                     Most Popular
                   </Badge>
                 )}
-                <CardHeader className="text-center">
-                  <item.icon className="h-12 w-12 mx-auto mb-4 text-primary" />
-                  <CardTitle className="text-xl">{item.name}</CardTitle>
-                  <CardDescription>{item.description}</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-3xl font-bold">${item.price}</span>
-                    <span className="text-muted-foreground">/{item.period}</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 mb-6">
-                    {item.features.map((feature, index) => (
-                      <li key={index} className="flex items-center text-sm">
-                        <Sparkles className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <Button 
-                    className="w-full" 
-                    variant={item.popular ? "default" : "outline"}
-                  >
-                    <ShoppingBag className="h-4 w-4 mr-2" />
-                    Subscribe Now
-                  </Button>
-                </CardContent>
-              </Card>
+                <Card>
+                  <CardHeader className="text-center">
+                    <item.icon className="h-12 w-12 mx-auto mb-4 text-primary" />
+                    <CardTitle className="text-xl">{item.name}</CardTitle>
+                    <CardDescription>{item.description}</CardDescription>
+                    <div className="mt-4">
+                      <span className="text-3xl font-bold">${item.price}</span>
+                      <span className="text-muted-foreground">/{item.period}</span>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2 mb-6">
+                      {item.features.map((feature, index) => (
+                        <li key={index} className="flex items-center text-sm">
+                          <Sparkles className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                    <Button 
+                      className="w-full" 
+                      variant={item.popular ? "default" : "outline"}
+                    >
+                      <ShoppingBag className="h-4 w-4 mr-2" />
+                      Subscribe Now
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
             ))}
           </div>
         </div>
@@ -264,13 +266,13 @@ export default function StorePage() {
                   in exceptional circumstances. Contact support for assistance.
                 </p>
               </div>
-              <div>
+              {/* <div>
                 <h3 className="font-semibold mb-2">Do you offer student discounts?</h3>
                 <p className="text-sm text-muted-foreground">
                   Yes! Students with valid .edu email addresses can get 50% off Creator Pro. 
                   Contact support with your student ID for verification.
                 </p>
-              </div>
+              </div> */}
             </div>
           </CardContent>
         </Card>
