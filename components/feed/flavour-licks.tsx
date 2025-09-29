@@ -21,7 +21,9 @@ const mockShorts = [
     likes: '12K',
     comments: '234',
     timestamp: '2 hours ago',
-    duration: '0:30'
+    duration: '0:30',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg'
   },
   {
     id: 2,
@@ -35,7 +37,9 @@ const mockShorts = [
     likes: '8.5K',
     comments: '156',
     timestamp: '4 hours ago',
-    duration: '0:45'
+    duration: '0:45',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg'
   },
   {
     id: 3,
@@ -49,7 +53,9 @@ const mockShorts = [
     likes: '6.2K',
     comments: '89',
     timestamp: '6 hours ago',
-    duration: '1:00'
+    duration: '1:00',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg'
   },
   {
     id: 4,
@@ -63,7 +69,9 @@ const mockShorts = [
     likes: '15.3K',
     comments: '412',
     timestamp: '1 day ago',
-    duration: '0:25'
+    duration: '0:25',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerEscapes.jpg'
   },
   {
     id: 5,
@@ -77,7 +85,9 @@ const mockShorts = [
     likes: '9.7K',
     comments: '178',
     timestamp: '3 days ago',
-    duration: '0:40'
+    duration: '0:40',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerFun.jpg'
   },
   {
     id: 6,
@@ -91,7 +101,9 @@ const mockShorts = [
     likes: '20.1K',
     comments: '567',
     timestamp: '5 days ago',
-    duration: '0:55'
+    duration: '0:55',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerJoyrides.jpg'
   },
   {
     id: 7,
@@ -105,7 +117,9 @@ const mockShorts = [
     likes: '11.8K',
     comments: '298',
     timestamp: '1 day ago',
-    duration: '0:35'
+    duration: '0:35',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerMeltdowns.jpg'
   },
   {
     id: 8,
@@ -119,7 +133,9 @@ const mockShorts = [
     likes: '7.4K',
     comments: '134',
     timestamp: '2 days ago',
-    duration: '0:50'
+    duration: '0:50',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/Sintel.jpg'
   },
   {
     id: 9,
@@ -133,7 +149,9 @@ const mockShorts = [
     likes: '13.6K',
     comments: '345',
     timestamp: '3 days ago',
-    duration: '0:42'
+    duration: '0:42',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/TearsOfSteel.jpg'
   },
   {
     id: 10,
@@ -147,7 +165,9 @@ const mockShorts = [
     likes: '16.9K',
     comments: '423',
     timestamp: '4 days ago',
-    duration: '0:38'
+    duration: '0:38',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/VolkswagenGTIReview.jpg'
   }
 ]
 

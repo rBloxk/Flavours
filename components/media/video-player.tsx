@@ -57,6 +57,18 @@ export function VideoPlayer({
       onReady?.(video)
     }
 
+    const handleLoadStart = () => {
+      console.log('Video load started:', src)
+    }
+
+    const handleLoadedData = () => {
+      console.log('Video data loaded:', src)
+    }
+
+    const handleLoadedMetadata = () => {
+      console.log('Video metadata loaded:', src)
+    }
+
     const handlePlay = () => {
       onPlay?.()
     }
@@ -73,10 +85,16 @@ export function VideoPlayer({
       const errorMsg = `Video error: ${video.error?.message || 'Unknown error'}`
       setError(errorMsg)
       console.error('Video error:', errorMsg, e, 'Source:', src)
+      console.error('Video element:', video)
+      console.error('Video network state:', video.networkState)
+      console.error('Video ready state:', video.readyState)
       onError?.(e)
     }
 
     // Use canplay event instead of loadeddata for better compatibility
+    video.addEventListener('loadstart', handleLoadStart)
+    video.addEventListener('loadeddata', handleLoadedData)
+    video.addEventListener('loadedmetadata', handleLoadedMetadata)
     video.addEventListener('canplay', handleCanPlay)
     video.addEventListener('play', handlePlay)
     video.addEventListener('pause', handlePause)
@@ -84,6 +102,9 @@ export function VideoPlayer({
     video.addEventListener('error', handleError)
 
     return () => {
+      video.removeEventListener('loadstart', handleLoadStart)
+      video.removeEventListener('loadeddata', handleLoadedData)
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata)
       video.removeEventListener('canplay', handleCanPlay)
       video.removeEventListener('play', handlePlay)
       video.removeEventListener('pause', handlePause)

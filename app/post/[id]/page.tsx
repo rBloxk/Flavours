@@ -376,7 +376,7 @@ export default function PostDetailPage() {
                   src={post.mediaUrl}
                   className="w-full h-[500px] object-contain rounded-lg"
                   controls
-                  poster="/api/placeholder/800/450"
+                  poster=""
                 />
               ) : (
                 <img

@@ -179,7 +179,7 @@ export function QRCodeModal({ children, profileUrl, profileData }: QRCodeModalPr
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <QrCode className="h-5 w-5" />
@@ -187,35 +187,35 @@ export function QRCodeModal({ children, profileUrl, profileData }: QRCodeModalPr
           </DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Profile Preview */}
           <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-3 mb-3">
-                <Avatar className="h-12 w-12">
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center space-x-2 sm:space-x-3 mb-3">
+                <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
                   <AvatarImage src={profileData.avatarUrl} alt={profileData.displayName} />
-                  <AvatarFallback className="text-lg">
+                  <AvatarFallback className="text-sm sm:text-lg">
                     {profileData.displayName?.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2">
-                    <h3 className="font-semibold">{profileData.displayName}</h3>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center space-x-1 sm:space-x-2">
+                    <h3 className="font-semibold text-sm sm:text-base truncate">{profileData.displayName}</h3>
                     {profileData.isVerified && (
-                      <Shield className="h-4 w-4 text-blue-600" />
+                      <Shield className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600 flex-shrink-0" />
                     )}
                     {profileData.isCreator && (
-                      <Crown className="h-4 w-4 text-purple-600" />
+                      <Crown className="h-3 w-3 sm:h-4 sm:w-4 text-purple-600 flex-shrink-0" />
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground">@{profileData.username}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground truncate">@{profileData.username}</p>
                   {profileData.bio && (
-                    <p className="text-sm text-muted-foreground mt-1">{profileData.bio}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-1 line-clamp-2">{profileData.bio}</p>
                   )}
                 </div>
               </div>
               <div className="flex items-center space-x-2">
-                <Badge variant="secondary" className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800">
+                <Badge variant="secondary" className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 text-xs">
                   <Sparkles className="h-3 w-3 mr-1" />
                   Flavours Profile
                 </Badge>
@@ -225,30 +225,30 @@ export function QRCodeModal({ children, profileUrl, profileData }: QRCodeModalPr
 
           {/* QR Code Display */}
           <div className="text-center">
-            <div className="inline-block p-4 bg-white rounded-lg shadow-lg border">
+            <div className="inline-block p-2 sm:p-4 bg-white rounded-lg shadow-lg border">
               {isGenerating ? (
-                <div className="w-64 h-64 flex items-center justify-center">
+                <div className="w-48 h-48 sm:w-64 sm:h-64 flex items-center justify-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 </div>
               ) : qrCodeDataUrl ? (
                 <img 
                   src={qrCodeDataUrl} 
                   alt="Profile QR Code" 
-                  className="w-64 h-64"
+                  className="w-48 h-48 sm:w-64 sm:h-64"
                 />
               ) : (
-                <div className="w-64 h-64 flex items-center justify-center bg-muted rounded">
-                  <QrCode className="h-16 w-16 text-muted-foreground" />
+                <div className="w-48 h-48 sm:w-64 sm:h-64 flex items-center justify-center bg-muted rounded">
+                  <QrCode className="h-12 w-12 sm:h-16 sm:w-16 text-muted-foreground" />
                 </div>
               )}
             </div>
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-xs sm:text-sm text-muted-foreground mt-2">
               Scan with your phone to visit this profile
             </p>
           </div>
 
           {/* Action Buttons */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
             <Button
               variant="outline"
               onClick={downloadQRCode}
@@ -321,12 +321,12 @@ export function QRCodeModal({ children, profileUrl, profileData }: QRCodeModalPr
           </div>
 
           {/* Instructions */}
-          <div className="bg-muted/50 rounded-lg p-4">
-            <h4 className="font-medium mb-2 flex items-center gap-2">
+          <div className="bg-muted/50 rounded-lg p-3 sm:p-4">
+            <h4 className="font-medium mb-2 flex items-center gap-2 text-sm sm:text-base">
               <Smartphone className="h-4 w-4" />
               How to use this QR code
             </h4>
-            <ul className="text-sm text-muted-foreground space-y-1">
+            <ul className="text-xs sm:text-sm text-muted-foreground space-y-1">
               <li>• Open your phone's camera app</li>
               <li>• Point it at the QR code</li>
               <li>• Tap the notification to open the profile</li>

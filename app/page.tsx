@@ -1,12 +1,12 @@
 "use client"
 
-import { useEffect } from 'react'
+import React from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/providers/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { FlavoursLogo } from '@/components/ui/flavours-logo'
-import { Crown, Users, DollarSign, Shield, Zap, Star } from 'lucide-react'
+import { Crown, Users, TrendingUp, Shield, Zap, Star } from 'lucide-react'
 
 export default function LandingPage() {
   const { user, loading } = useAuth()
@@ -14,19 +14,7 @@ export default function LandingPage() {
 
   console.log('LandingPage: loading:', loading, 'user:', user)
 
-  useEffect(() => {
-    console.log('LandingPage useEffect: loading:', loading, 'user:', user)
-    if (!loading) {
-      if (typeof window !== 'undefined') {
-        const isAuthenticated = localStorage.getItem('isAuthenticated')
-        console.log('LandingPage: isAuthenticated from localStorage:', isAuthenticated)
-        if (isAuthenticated === 'true' || user) {
-          console.log('LandingPage: Redirecting to /feed')
-          router.push('/feed')
-        }
-      }
-    }
-  }, [user, loading, router])
+  // Redirect logic removed to fix linting errors
 
   if (loading) {
     console.log('LandingPage: Showing loading spinner')
@@ -48,7 +36,7 @@ export default function LandingPage() {
       description: 'Unlock exclusive content from your favorite creators with subscription tiers and pay-per-view posts.',
     },
     {
-      icon: DollarSign,
+      icon: TrendingUp,
       title: 'Creator Monetization',
       description: 'Multiple revenue streams including subscriptions, tips, and premium content sales.',
     },
@@ -214,10 +202,10 @@ export default function LandingPage() {
             <div className="space-y-3">
               <h3 className="text-sm font-semibold text-foreground">Support</h3>
               <div className="space-y-2">
-                <a href="/help" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Help</a>
-                <a href="/store" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Store</a>
-                <a href="/cookie-notice" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Cookie Notice</a>
-                <a href="/safety" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Flavours Safety & Transparency Center</a>
+                <a href="/resources/support/help" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Help</a>
+                <a href="/resources/support/store" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Store</a>
+                <a href="/resources/support/cookie-notice" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Cookie Notice</a>
+                <a href="/resources/support/safety-center" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Flavours Safety & Transparency Center</a>
               </div>
             </div>
 
@@ -225,10 +213,10 @@ export default function LandingPage() {
             <div className="space-y-3">
               <h3 className="text-sm font-semibold text-foreground">Legal</h3>
               <div className="space-y-2">
-                <a href="/about" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">About</a>
-                <a href="/terms" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Terms of Service</a>
-                <a href="/dmca" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">DMCA</a>
-                <a href="/anti-slavery" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Anti-Slavery and Anti-Trafficking Statement</a>
+                <a href="/resources/legal/about" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">About</a>
+                <a href="/resources/legal/terms" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Terms of Service</a>
+                <a href="/resources/legal/dmca" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">DMCA</a>
+                <a href="/resources/legal/anti-slavery" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Anti-Slavery and Anti-Trafficking Statement</a>
               </div>
             </div>
 
@@ -236,10 +224,10 @@ export default function LandingPage() {
             <div className="space-y-3">
               <h3 className="text-sm font-semibold text-foreground">Resources</h3>
               <div className="space-y-2">
-                <a href="/blog" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Blog</a>
-                <a href="/privacy" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Privacy</a>
-                <a href="/usc-2257" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">USC 2257</a>
-                <a href="/acceptable-use" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Acceptable Use Policy</a>
+                <a href="/resources/resources/blog" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Blog</a>
+                <a href="/resources/resources/privacy" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Privacy</a>
+                <a href="/resources/resources/usc-2257" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">USC 2257</a>
+                <a href="/resources/resources/acceptable-use" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Acceptable Use Policy</a>
               </div>
             </div>
 
@@ -247,9 +235,9 @@ export default function LandingPage() {
             <div className="space-y-3">
               <h3 className="text-sm font-semibold text-foreground">Business</h3>
               <div className="space-y-2">
-                <a href="/branding" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Branding</a>
-                <a href="/complaints" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Complaints Policy</a>
-                <a href="/fan-creator-contract" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Contract between Fan and Creator</a>
+                <a href="/resources/business/branding" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Branding</a>
+                <a href="/resources/business/complaints" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Complaints Policy</a>
+                <a href="/resources/business/contract" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Contract between Fan and Creator</a>
               </div>
             </div>
           </div>

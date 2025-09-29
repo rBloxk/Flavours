@@ -19,7 +19,8 @@ const mockVideos = [
       avatar: 'https://ui-avatars.com/api/?name=Sarah+Johnson&background=random',
       verified: true
     },
-    thumbnail: '/api/placeholder/320/180',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     duration: '12:34',
     views: '125K',
     timestamp: '2 hours ago',
@@ -34,7 +35,8 @@ const mockVideos = [
       avatar: 'https://ui-avatars.com/api/?name=Mike+Chen&background=random',
       verified: true
     },
-    thumbnail: '/api/placeholder/320/180',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
     duration: '8:45',
     views: '89K',
     timestamp: '4 hours ago',
@@ -49,7 +51,8 @@ const mockVideos = [
       avatar: 'https://ui-avatars.com/api/?name=Alex+Rivera&background=random',
       verified: false
     },
-    thumbnail: '/api/placeholder/320/180',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     duration: '15:22',
     views: '67K',
     timestamp: '6 hours ago',
@@ -64,7 +67,8 @@ const mockVideos = [
       avatar: 'https://ui-avatars.com/api/?name=Emma+Wilson&background=random',
       verified: true
     },
-    thumbnail: '/api/placeholder/320/180',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerEscapes.jpg',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
     duration: '10:15',
     views: '156K',
     timestamp: '1 day ago',
@@ -79,7 +83,8 @@ const mockVideos = [
       avatar: 'https://ui-avatars.com/api/?name=David+Park&background=random',
       verified: false
     },
-    thumbnail: '/api/placeholder/320/180',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerFun.jpg',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
     duration: '18:30',
     views: '78K',
     timestamp: '3 days ago',
@@ -94,7 +99,8 @@ const mockVideos = [
       avatar: 'https://ui-avatars.com/api/?name=Lisa+Chen&background=random',
       verified: true
     },
-    thumbnail: '/api/placeholder/320/180',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerJoyrides.jpg',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
     duration: '22:45',
     views: '203K',
     timestamp: '5 days ago',
@@ -109,7 +115,8 @@ const mockVideos = [
       avatar: 'https://ui-avatars.com/api/?name=James+Rodriguez&background=random',
       verified: true
     },
-    thumbnail: '/api/placeholder/320/180',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerMeltdowns.jpg',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     duration: '14:20',
     views: '92K',
     timestamp: '1 day ago',
@@ -124,7 +131,8 @@ const mockVideos = [
       avatar: 'https://ui-avatars.com/api/?name=Maya+Patel&background=random',
       verified: false
     },
-    thumbnail: '/api/placeholder/320/180',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/Sintel.jpg',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
     duration: '16:45',
     views: '134K',
     timestamp: '2 days ago',
@@ -139,7 +147,8 @@ const mockVideos = [
       avatar: 'https://ui-avatars.com/api/?name=Sophie+Kim&background=random',
       verified: true
     },
-    thumbnail: '/api/placeholder/320/180',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/TearsOfSteel.jpg',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
     duration: '11:30',
     views: '87K',
     timestamp: '3 days ago',
@@ -154,7 +163,8 @@ const mockVideos = [
       avatar: 'https://ui-avatars.com/api/?name=Isabella+Torres&background=random',
       verified: true
     },
-    thumbnail: '/api/placeholder/320/180',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/VolkswagenGTIReview.jpg',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4',
     duration: '13:15',
     views: '156K',
     timestamp: '4 days ago',
@@ -169,7 +179,8 @@ const mockVideos = [
       avatar: 'https://ui-avatars.com/api/?name=Ryan+Chen&background=random',
       verified: false
     },
-    thumbnail: '/api/placeholder/320/180',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/WeAreGoingOnBullrun.jpg',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     duration: '25:40',
     views: '78K',
     timestamp: '5 days ago',
@@ -184,7 +195,8 @@ const mockVideos = [
       avatar: 'https://ui-avatars.com/api/?name=Amanda+Foster&background=random',
       verified: true
     },
-    thumbnail: '/api/placeholder/320/180',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/WhatCarCanYouGetForAGrand.jpg',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4',
     duration: '9:25',
     views: '112K',
     timestamp: '6 days ago',
@@ -199,7 +211,8 @@ const mockVideos = [
       avatar: 'https://ui-avatars.com/api/?name=Thomas+Anderson&background=random',
       verified: false
     },
-    thumbnail: '/api/placeholder/320/180',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     duration: '18:50',
     views: '65K',
     timestamp: '1 week ago',
@@ -214,7 +227,8 @@ const mockVideos = [
       avatar: 'https://ui-avatars.com/api/?name=Priya+Sharma&background=random',
       verified: true
     },
-    thumbnail: '/api/placeholder/320/180',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
     duration: '12:10',
     views: '98K',
     timestamp: '1 week ago',
@@ -229,7 +243,8 @@ const mockVideos = [
       avatar: 'https://ui-avatars.com/api/?name=Marcus+Johnson&background=random',
       verified: true
     },
-    thumbnail: '/api/placeholder/320/180',
+    thumbnail: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     duration: '20:35',
     views: '145K',
     timestamp: '1 week ago',
@@ -253,7 +268,7 @@ export function FlavourTube() {
             {/* Video Thumbnail */}
             <div className="relative w-full aspect-video bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg overflow-hidden mb-3">
               <VideoPlayer
-                src={`/api/video/${video.id}`}
+                src={video.videoUrl}
                 poster={video.thumbnail}
                 autoplay={false}
                 controls={false}

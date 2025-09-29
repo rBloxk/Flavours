@@ -1,4 +1,4 @@
-// File: /Users/rishalbabu/Documents/GitHub/Flavours/admin-dashboard/app/api/dashboard/route.ts
+// File: /Users/mastanappapuletipalli/Github/Flavours/admin-dashboard/app/api/dashboard/route.ts
 import * as entry from '../../../../../app/api/dashboard/route.js'
 import type { NextRequest } from 'next/server.js'
 

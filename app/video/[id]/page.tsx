@@ -30,6 +30,7 @@ interface VideoData {
   duration: string
   views: string
   timestamp: string
+  videoUrl: string
   creator: {
     id: string
     name: string
@@ -57,8 +58,25 @@ export default function VideoDetailPage() {
   const [duration, setDuration] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
 
+  // Sample video URLs mapping
+  const sampleVideos = {
+    1: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+    2: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+    3: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+    4: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+    5: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+    6: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
+    7: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+    8: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
+    9: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
+    10: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4'
+  }
+
   // Mock video data - in real app, fetch from API
   useEffect(() => {
+    const videoIdNum = parseInt(videoId)
+    const videoUrl = sampleVideos[videoIdNum as keyof typeof sampleVideos] || sampleVideos[1]
+    
     const mockVideo: VideoData = {
       id: videoId,
       title: `Amazing Video Content ${videoId}`,
@@ -66,6 +84,7 @@ export default function VideoDetailPage() {
       duration: "5:30",
       views: "1.2M",
       timestamp: "2 days ago",
+      videoUrl: videoUrl,
       creator: {
         id: "creator1",
         name: "Creative Creator",
@@ -182,8 +201,8 @@ export default function VideoDetailPage() {
             {/* Video Player */}
             <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden mb-4">
               <VideoPlayer
-                src={`/api/video/${video.id}`}
-                poster={`/api/video/${video.id}/thumbnail`}
+                src={video.videoUrl}
+                poster=""
                 autoplay={false}
                 controls={true}
                 muted={isMuted}

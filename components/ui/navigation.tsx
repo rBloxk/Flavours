@@ -108,6 +108,8 @@ export function Navigation() {
         return 'More'
       case '/dating':
         return 'Dating'
+      case '/video/[id]':
+        return '[id]'
       default:
         return 'Flavours'
     }

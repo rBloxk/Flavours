@@ -1,4 +1,4 @@
-// File: /Users/rishalbabu/Documents/GitHub/Flavours/admin-dashboard/app/payments/page.tsx
+// File: /Users/mastanappapuletipalli/Github/Flavours/admin-dashboard/app/payments/page.tsx
 import * as entry from '../../../../app/payments/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

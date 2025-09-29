@@ -135,7 +135,7 @@ const mockPosts: Post[] = [
       isFollowing: true
     },
     content: 'New workout video is live! 💪 Who\'s ready to sweat with me? This 30-minute HIIT session will challenge every muscle group. Perfect for beginners and advanced athletes alike! #FitnessMotivation #HIIT #Workout',
-    mediaUrl: 'https://images.pexels.com/photos/416809/pexels-photo-416809.jpeg?auto=compress&cs=tinysrgb&w=800',
+    mediaUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     mediaType: 'video',
     isPaid: false,
     privacy: 'public',
@@ -216,7 +216,7 @@ const mockPosts: Post[] = [
       isFollowing: true
     },
     content: 'Exclusive recipe reveal! My signature pasta dish that took me 5 years to perfect 🍝 The secret is in the sauce technique. Subscribers get the full video tutorial!',
-    mediaUrl: 'https://images.pexels.com/photos/1435735/pexels-photo-1435735.jpeg?auto=compress&cs=tinysrgb&w=800',
+    mediaUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
     mediaType: 'video',
     isPaid: true,
     price: 25,
@@ -257,7 +257,7 @@ const mockPosts: Post[] = [
       isFollowing: false
     },
     content: 'Just built an AI that can generate code from natural language! 🤖 The future of programming is here. Check out this demo...',
-    mediaUrl: 'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=800',
+    mediaUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     mediaType: 'video',
     isPaid: false,
     privacy: 'public',
@@ -297,8 +297,8 @@ const mockPosts: Post[] = [
       isFollowing: true
     },
     content: 'Sunset in Santorini 🌅 This view never gets old. Sometimes you have to travel halfway around the world to find yourself.',
-    mediaUrl: 'https://images.pexels.com/photos/1029604/pexels-photo-1029604.jpeg?auto=compress&cs=tinysrgb&w=800',
-    mediaType: 'image',
+    mediaUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+    mediaType: 'video',
     isPaid: false,
     privacy: 'public',
     metrics: {

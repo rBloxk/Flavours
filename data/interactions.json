@@ -1,5 +1,14 @@
 {
   "1": {
+    "likes": [
+      "current_user"
+    ],
+    "bookmarks": [],
+    "views": [
+      "current_user"
+    ]
+  },
+  "2": {
     "likes": [],
     "bookmarks": [],
     "views": [
