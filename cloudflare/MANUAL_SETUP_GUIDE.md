@@ -5,7 +5,7 @@
 ### 1. Add Domain to Cloudflare
 1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com)
 2. Click "Add a Site"
-3. Enter your domain (e.g., `flavours.com`)
+3. Enter your domain (e.g., `flavours.club`)
 4. Choose the **Free plan** (sufficient for most needs)
 5. Review DNS records and click "Continue"
 
