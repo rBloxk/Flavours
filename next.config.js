@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: 'export', // Temporarily disabled for development
+  // Back to development mode for CI/CD
   eslint: {
     ignoreDuringBuilds: true,
   },

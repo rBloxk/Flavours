@@ -315,7 +315,7 @@ export default function USC2257Page() {
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <Mail className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">compliance@flavours.com</span>
+                    <span className="text-sm">compliance@flavours.club</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Phone className="h-4 w-4 text-muted-foreground" />
@@ -342,7 +342,7 @@ export default function USC2257Page() {
             <div className="bg-muted p-4 rounded-lg">
               <p className="text-sm">
                 <strong>Flavours Record Custodian</strong><br />
-                Email: records@flavours.com<br />
+                Email: records@flavours.club<br />
                 Phone: +1 (555) RECORDS<br />
                 Address: 123 Creator Street, San Francisco, CA 94105<br />
                 Hours: Monday - Friday, 9:00 AM - 5:00 PM PST

@@ -1,5 +1,58 @@
 [
   {
+    "id": "post_1759158856950",
+    "creator": {
+      "id": "demo-user-1759158516517",
+      "username": "admin",
+      "displayName": "Admin",
+      "avatarUrl": "https://ui-avatars.com/api/?name=admin&background=random",
+      "isVerified": false,
+      "followerCount": 1000,
+      "engagementRate": 5,
+      "category": [
+        "general"
+      ],
+      "trustScore": 8,
+      "isFollowing": false
+    },
+    "content": "hey took at this video",
+    "mediaUrl": "/uploads/1759158856917_IMG_0093.MOV",
+    "mediaType": "video",
+    "mediaFiles": [
+      {
+        "filename": "1759158856917_IMG_0093.MOV",
+        "originalName": "IMG_0093.MOV",
+        "size": 10411432,
+        "type": "video/quicktime",
+        "mediaType": "video",
+        "url": "/uploads/1759158856917_IMG_0093.MOV"
+      }
+    ],
+    "isPaid": false,
+    "privacy": "public",
+    "metrics": {
+      "likesCount": 0,
+      "commentsCount": 0,
+      "sharesCount": 0,
+      "viewsCount": 0,
+      "engagementRate": 0,
+      "viralityScore": 0,
+      "freshnessScore": 10,
+      "relevanceScore": 5
+    },
+    "createdAt": "now",
+    "createdAtTimestamp": 1759158856950,
+    "tags": [],
+    "mentions": [],
+    "location": "",
+    "category": "general",
+    "isLiked": false,
+    "isBookmarked": false,
+    "isViewed": false,
+    "qualityScore": 5,
+    "trendingScore": 5
+  },
+  {
     "id": "1",
     "creator": {
       "id": "user_1",

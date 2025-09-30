@@ -234,7 +234,7 @@ export default function DMCAPage() {
                 <div className="bg-muted p-4 rounded-lg">
                   <p className="text-sm">
                     <strong>Name:</strong> Flavours DMCA Agent<br />
-                    <strong>Email:</strong> dmca@flavours.com<br />
+                    <strong>Email:</strong> dmca@flavours.club<br />
                     <strong>Address:</strong> 123 Creator Street, San Francisco, CA 94105<br />
                     <strong>Phone:</strong> +1 (555) 123-4567
                   </p>

@@ -180,10 +180,9 @@ export function EnhancedNotifications() {
 
           <CardContent className="p-0">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-4 mx-4 mb-4">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="all">All</TabsTrigger>
                 <TabsTrigger value="unread">Unread</TabsTrigger>
-                <TabsTrigger value="subscription">Subs</TabsTrigger>
                 <TabsTrigger value="message">Messages</TabsTrigger>
               </TabsList>
 

@@ -1,19 +1,6 @@
 {
-  "/not-found": "app/not-found.js",
-  "/page": "app/page.js",
-  "/dating/page": "app/dating/page.js",
   "/auth/page": "app/auth/page.js",
-  "/feed/page": "app/feed/page.js",
-  "/tube/page": "app/tube/page.js",
-  "/licks/page": "app/licks/page.js",
-  "/flavourstalk/page": "app/flavourstalk/page.js",
-  "/explore/page": "app/explore/page.js",
-  "/notifications/page": "app/notifications/page.js",
-  "/messages/page": "app/messages/page.js",
-  "/cams/page": "app/cams/page.js",
-  "/collections/page": "app/collections/page.js",
-  "/vault/page": "app/vault/page.js",
-  "/queue/page": "app/queue/page.js",
-  "/api/posts/route": "app/api/posts/route.js",
-  "/resources/business/branding/page": "app/resources/business/branding/page.js"
+  "/resources/support/cookie-notice/page": "app/resources/support/cookie-notice/page.js",
+  "/resources/legal/about/page": "app/resources/legal/about/page.js",
+  "/resources/resources/usc-2257/page": "app/resources/resources/usc-2257/page.js"
 }

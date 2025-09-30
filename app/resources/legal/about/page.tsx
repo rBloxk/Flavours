@@ -54,30 +54,30 @@ export default function AboutPage() {
 
   const milestones = [
     {
-      year: "2020",
+      year: "2025",
       title: "Flavours Founded",
       description: "Started with a vision to revolutionize creator monetization"
     },
-    {
-      year: "2021",
-      title: "First 1,000 Creators",
-      description: "Reached our first milestone of active creators on the platform"
-    },
-    {
-      year: "2022",
-      title: "Series A Funding",
-      description: "Raised $10M to accelerate platform development and growth"
-    },
-    {
-      year: "2023",
-      title: "Global Expansion",
-      description: "Launched in 15 countries with localized features and support"
-    },
-    {
-      year: "2024",
-      title: "AI Integration",
-      description: "Introduced AI-powered content recommendations and creator tools"
-    }
+    // {
+    //   year: "2026",
+    //   title: "First 1,000 Creators",
+    //   description: "Reached our first milestone of active creators on the platform"
+    // },
+    // {
+    //   year: "2027",
+    //   title: "Series A Funding",
+    //   description: "Raised $10M to accelerate platform development and growth"
+    // },
+    // {
+    //   year: "2028",
+    //   title: "Global Expansion",
+    //   description: "Launched in 15 countries with localized features and support"
+    // },
+    // {
+    //   year: "2029",
+    //   title: "AI Integration",
+    //   description: "Introduced AI-powered content recommendations and creator tools"
+    // }
   ]
 
   const teamStats = [
@@ -244,23 +244,23 @@ export default function AboutPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
                 <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-white text-2xl font-bold">JS</span>
+                  <span className="text-white text-2xl font-bold">RB</span>
                 </div>
-                <h3 className="font-semibold">Jane Smith</h3>
-                <p className="text-sm text-muted-foreground mb-2">CEO & Co-Founder</p>
-                <p className="text-xs text-muted-foreground">
+                <h3 className="font-semibold">Rishal Babu</h3>
+                <p className="text-sm text-muted-foreground mb-2">CEO & Founder</p>
+                {/* <p className="text-xs text-muted-foreground">
                   Former VP of Product at TechCorp, passionate about creator economy
-                </p>
+                </p> */}
               </div>
               <div className="text-center">
                 <div className="w-24 h-24 bg-gradient-to-br from-green-500 to-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center">
                   <span className="text-white text-2xl font-bold">MR</span>
                 </div>
                 <h3 className="font-semibold">Mike Rodriguez</h3>
-                <p className="text-sm text-muted-foreground mb-2">CTO & Co-Founder</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm text-muted-foreground mb-2">Product Manager</p>
+                {/* <p className="text-xs text-muted-foreground">
                   Ex-Google engineer, expert in scalable platform architecture
-                </p>
+                </p> */}
               </div>
               <div className="text-center">
                 <div className="w-24 h-24 bg-gradient-to-br from-pink-500 to-red-600 rounded-full mx-auto mb-4 flex items-center justify-center">
@@ -268,9 +268,9 @@ export default function AboutPage() {
                 </div>
                 <h3 className="font-semibold">Sarah Chen</h3>
                 <p className="text-sm text-muted-foreground mb-2">Head of Creator Success</p>
-                <p className="text-xs text-muted-foreground">
+                {/* <p className="text-xs text-muted-foreground">
                   Former creator herself, understands the challenges creators face
-                </p>
+                </p> */}
               </div>
             </div>
           </CardContent>
@@ -292,7 +292,7 @@ export default function AboutPage() {
                   For general questions and information
                 </p>
                 <Button variant="outline" size="sm">
-                  hello@flavours.com
+                  hello@flavours.club
                 </Button>
               </div>
               <div>
@@ -301,7 +301,7 @@ export default function AboutPage() {
                   For media inquiries and press releases
                 </p>
                 <Button variant="outline" size="sm">
-                  press@flavours.com
+                  press@flavours.club
                 </Button>
               </div>
               <div>
@@ -310,7 +310,7 @@ export default function AboutPage() {
                   For business partnerships and collaborations
                 </p>
                 <Button variant="outline" size="sm">
-                  partnerships@flavours.com
+                  partnerships@flavours.club
                 </Button>
               </div>
             </div>

@@ -1,0 +1,255 @@
+{
+  "zone_settings": {
+    "ssl": {
+      "mode": "full_strict",
+      "certificate_authority": "lets_encrypt",
+      "min_tls_version": "1.2",
+      "tls_1_3": true,
+      "always_use_https": true,
+      "hsts": {
+        "enabled": true,
+        "max_age": 31536000,
+        "include_subdomains": true,
+        "preload": true
+      }
+    },
+    "security": {
+      "security_level": "high",
+      "challenge_passage": 30,
+      "browser_check": true,
+      "hotlink_protection": true,
+      "server_side_exclude": true,
+      "email_obfuscation": true,
+      "ip_geolocation": true
+    },
+    "caching": {
+      "caching_level": "aggressive",
+      "browser_cache_ttl": 14400,
+      "edge_cache_ttl": 86400,
+      "purge_cache_on_change": true
+    },
+    "performance": {
+      "minify": {
+        "css": true,
+        "html": true,
+        "js": true
+      },
+      "brotli": true,
+      "early_hints": true,
+      "http2": true,
+      "http3": true,
+      "0rtt": true
+    }
+  },
+  "page_rules": [
+    {
+      "url": "flavours.com/api/*",
+      "settings": {
+        "cache_level": "bypass",
+        "security_level": "high",
+        "disable_apps": true,
+        "disable_security": false
+      }
+    },
+    {
+      "url": "flavours.com/admin/*",
+      "settings": {
+        "cache_level": "bypass",
+        "security_level": "high",
+        "disable_apps": true,
+        "disable_security": false,
+        "browser_check": true
+      }
+    },
+    {
+      "url": "flavours.com/_next/static/*",
+      "settings": {
+        "cache_level": "cache_everything",
+        "edge_cache_ttl": 31536000,
+        "browser_cache_ttl": 31536000
+      }
+    },
+    {
+      "url": "flavours.com/uploads/*",
+      "settings": {
+        "cache_level": "cache_everything",
+        "edge_cache_ttl": 2592000,
+        "browser_cache_ttl": 2592000
+      }
+    }
+  ],
+  "firewall_rules": [
+    {
+      "name": "Block Suspicious Countries",
+      "expression": "(ip.geoip.country in {\"CN\" \"RU\" \"KP\" \"IR\"}) and (http.request.uri.path contains \"/api/\")",
+      "action": "block"
+    },
+    {
+      "name": "Rate Limit API Endpoints",
+      "expression": "(http.request.uri.path contains \"/api/\") and (cf.threat_score gt 14)",
+      "action": "challenge"
+    },
+    {
+      "name": "Block Admin Brute Force",
+      "expression": "(http.request.uri.path contains \"/admin/\") and (cf.threat_score gt 10)",
+      "action": "block"
+    },
+    {
+      "name": "Block Bad User Agents",
+      "expression": "(http.user_agent contains \"sqlmap\") or (http.user_agent contains \"nikto\") or (http.user_agent contains \"nmap\")",
+      "action": "block"
+    },
+    {
+      "name": "Block Common Attack Patterns",
+      "expression": "(http.request.uri.query contains \"<script\") or (http.request.uri.query contains \"union select\") or (http.request.uri.query contains \"../\")",
+      "action": "block"
+    }
+  ],
+  "rate_limiting": [
+    {
+      "name": "API Rate Limit",
+      "expression": "http.request.uri.path contains \"/api/\"",
+      "requests_per_minute": 60,
+      "action": "block",
+      "duration": 600
+    },
+    {
+      "name": "Login Rate Limit",
+      "expression": "http.request.uri.path contains \"/auth/login\"",
+      "requests_per_minute": 5,
+      "action": "block",
+      "duration": 900
+    },
+    {
+      "name": "Upload Rate Limit",
+      "expression": "http.request.uri.path contains \"/upload\"",
+      "requests_per_minute": 10,
+      "action": "block",
+      "duration": 300
+    }
+  ],
+  "bot_management": {
+    "enabled": true,
+    "challenge_suspicious_bots": true,
+    "allow_verified_bots": true,
+    "allow_search_engines": true,
+    "allow_social_media": true,
+    "allow_advertising": false,
+    "allow_automation": false
+  },
+  "ddos_protection": {
+    "enabled": true,
+    "level": "high",
+    "automatic_mitigation": true,
+    "notifications": true
+  },
+  "waf_rules": [
+    {
+      "name": "OWASP Core Rule Set",
+      "enabled": true,
+      "mode": "block"
+    },
+    {
+      "name": "Cloudflare Managed Rules",
+      "enabled": true,
+      "mode": "block"
+    },
+    {
+      "name": "SQL Injection Protection",
+      "enabled": true,
+      "mode": "block"
+    },
+    {
+      "name": "XSS Protection",
+      "enabled": true,
+      "mode": "block"
+    },
+    {
+      "name": "CSRF Protection",
+      "enabled": true,
+      "mode": "block"
+    }
+  ],
+  "access_rules": [
+    {
+      "name": "Block Tor Exit Nodes",
+      "expression": "cf.tor_guard eq true",
+      "action": "block"
+    },
+    {
+      "name": "Block VPN/Proxy",
+      "expression": "cf.threat_score gt 20",
+      "action": "challenge"
+    },
+    {
+      "name": "Allow Trusted IPs",
+      "expression": "ip.src in {192.168.1.0/24 10.0.0.0/8}",
+      "action": "allow"
+    }
+  ],
+  "transform_rules": [
+    {
+      "name": "Add Security Headers",
+      "expression": "true",
+      "request_modifications": [
+        {
+          "header": "X-Forwarded-Proto",
+          "value": "https"
+        },
+        {
+          "header": "X-Real-IP",
+          "value": "cf.connecting_ip"
+        }
+      ],
+      "response_modifications": [
+        {
+          "header": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "header": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "header": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "header": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
+      ]
+    }
+  ],
+  "workers": [
+    {
+      "name": "security-worker",
+      "script": "security-worker.js",
+      "route": "flavours.com/*",
+      "enabled": true
+    }
+  ],
+  "monitoring": {
+    "analytics": {
+      "enabled": true,
+      "retention_days": 30
+    },
+    "alerts": [
+      {
+        "name": "High Threat Score",
+        "expression": "cf.threat_score gt 25",
+        "enabled": true
+      },
+      {
+        "name": "DDoS Attack",
+        "expression": "cf.ddos_score gt 50",
+        "enabled": true
+      },
+      {
+        "name": "Bot Attack",
+        "expression": "cf.bot_score gt 30",
+        "enabled": true
+      }
+    ]
+  }
+}

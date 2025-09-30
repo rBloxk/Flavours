@@ -36,6 +36,13 @@
       "current_user"
     ]
   },
+  "6": {
+    "likes": [],
+    "bookmarks": [],
+    "views": [
+      "current_user"
+    ]
+  },
   "post_1757742776382": {
     "likes": [],
     "bookmarks": [
@@ -95,6 +102,15 @@
   },
   "post_1757779418737": {
     "likes": [],
+    "bookmarks": [],
+    "views": [
+      "current_user"
+    ]
+  },
+  "post_1759158856950": {
+    "likes": [
+      "current_user"
+    ],
     "bookmarks": [],
     "views": [
       "current_user"
