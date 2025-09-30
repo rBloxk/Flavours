@@ -43,7 +43,7 @@ const mockPosts: Post[] = [
         url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop',
         alt: 'Workout session',
         thumbnail: '',
-        duration: null
+        duration: undefined
       }
     ],
     stats: { likes: 24, comments: 8, shares: 3, views: 156 },
@@ -91,7 +91,7 @@ const mockPosts: Post[] = [
         url: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=800&h=600&fit=crop',
         alt: 'Golden hour photography',
         thumbnail: '',
-        duration: null
+        duration: undefined
       }
     ],
     stats: { likes: 89, comments: 12, shares: 5, views: 234 },
@@ -139,7 +139,7 @@ const mockPosts: Post[] = [
         url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
         alt: 'Sunset photography',
         thumbnail: '',
-        duration: null
+        duration: undefined
       }
     ],
     stats: { likes: 67, comments: 9, shares: 2, views: 123 },

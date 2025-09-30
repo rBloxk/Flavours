@@ -16,8 +16,6 @@ import { useAuth } from '@/components/providers/auth-provider'
 import { useTheme } from 'next-themes'
 import { 
   User, 
-  Mail, 
-  Lock, 
   Bell, 
   Shield, 
   Palette, 
@@ -32,19 +30,275 @@ import {
   CheckCircle,
   Crown,
   Globe,
-  Smartphone,
-  Monitor,
   Sun,
   Moon,
   CreditCard,
   Plus,
-  Receipt,
-  MoreHorizontal,
   Edit,
   Trash,
   DollarSign,
   Building2,
-  Wallet
+  Wallet,
+  Filter,
+  Volume2,
+  Clock,
+  Database,
+  Activity,
+  BarChart3,
+  TrendingUp,
+  HelpCircle,
+  ChevronRight,
+  ChevronDown,
+  X,
+  Check,
+  AlertCircle,
+  Star,
+  Bookmark,
+  Share2,
+  Copy,
+  ExternalLink,
+  Search,
+  Video,
+  Image,
+  File,
+  Link,
+  Key,
+  Smartphone,
+  Tablet,
+  Laptop,
+  Desktop,
+  Headphones,
+  Speaker,
+  Volume1,
+  Mute,
+  Play,
+  Pause,
+  RotateCcw,
+  RotateCw,
+  ZoomIn,
+  ZoomOut,
+  Move,
+  Type,
+  Bold,
+  Italic,
+  Underline,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  List,
+  Grid,
+  Layout,
+  Sidebar,
+  Square,
+  Circle,
+  Triangle,
+  Heart,
+  Smile,
+  ThumbsUp,
+  ThumbsDown,
+  Award,
+  Trophy,
+  Medal,
+  Gift,
+  Package,
+  ShoppingCart,
+  ShoppingBag,
+  Tag,
+  Tags,
+  Hash,
+  AtSign,
+  Percent,
+  Euro,
+  Pound,
+  Yen,
+  Bitcoin,
+  Banknote,
+  Coins,
+  PiggyBank,
+  TrendingDown,
+  PieChart,
+  LineChart,
+  AreaChart,
+  Thermometer,
+  Cloud,
+  CloudRain,
+  CloudSnow,
+  CloudLightning,
+  Sunrise,
+  Sunset,
+  Compass,
+  Navigation,
+  Map,
+  MapPin,
+  Home,
+  Building,
+  Store,
+  Factory,
+  Warehouse,
+  School,
+  Hospital,
+  Church,
+  Landmark,
+  Mountain,
+  Trees,
+  Flower,
+  Leaf,
+  Sprout,
+  Bug,
+  Fish,
+  Bird,
+  Cat,
+  Dog,
+  Rabbit,
+  Mouse,
+  Turtle,
+  Snake,
+  Lizard,
+  Frog,
+  Butterfly,
+  Bee,
+  Ant,
+  Spider,
+  Car,
+  Truck,
+  Bus,
+  Train,
+  Plane,
+  Ship,
+  Bike,
+  Motorcycle,
+  Scooter,
+  Skateboard,
+  Gamepad2,
+  Joystick,
+  Puzzle,
+  Chess,
+  Cards,
+  Spade,
+  Club,
+  Diamond,
+  Flag,
+  Skull,
+  Ghost,
+  Alien,
+  Robot,
+  Android,
+  Apple,
+  Windows,
+  Linux,
+  Firefox,
+  Safari,
+  Edge,
+  Opera,
+  Lock,
+  Unlock,
+  ShieldCheck,
+  ShieldAlert,
+  SortAsc,
+  SortDesc,
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpDown,
+  ChevronUp,
+  ChevronLeft,
+  RefreshCw,
+  RefreshCcw,
+  Undo,
+  Redo,
+  Cut,
+  Paste,
+  Scissors,
+  Eraser,
+  Pen,
+  Pencil,
+  Highlighter,
+  Paintbrush,
+  Dropper,
+  Bucket,
+  Spray,
+  Stamp,
+  Sticker,
+  Emoji,
+  Laugh,
+  Wink,
+  Angry,
+  Sad,
+  Surprised,
+  Confused,
+  Neutral,
+  Expressionless,
+  Unamused,
+  RollingEyes,
+  Grimacing,
+  LyingFace,
+  Relieved,
+  Pensive,
+  Sleepy,
+  DroolingFace,
+  SleepingFace,
+  Mask,
+  FaceWithThermometer,
+  FaceWithHeadBandage,
+  NauseatedFace,
+  FaceVomiting,
+  SneezingFace,
+  HotFace,
+  ColdFace,
+  WoozyFace,
+  ExplodingHead,
+  CowboyHatFace,
+  DisguisedFace,
+  Sunglasses,
+  NerdFace,
+  MonocleFace,
+  WorriedFace,
+  SlightlyFrowningFace,
+  OpenMouth,
+  HushedFace,
+  AstonishedFace,
+  FlushedFace,
+  PleadingFace,
+  FrowningFace,
+  AnguishedFace,
+  FearfulFace,
+  ColdSweat,
+  DisappointedRelieved,
+  Cry,
+  LoudlyCryingFace,
+  ScreamingFace,
+  ConfoundedFace,
+  PerseveringFace,
+  DisappointedFace,
+  SweatFace,
+  WearyFace,
+  TiredFace,
+  YawningFace,
+  SteamFromNose,
+  PoutingFace,
+  AngryFace,
+  FaceWithSymbolsOnMouth,
+  SmilingFaceWithHorns,
+  AngryFaceWithHorns,
+  SkullAndCrossbones,
+  PileOfPoo,
+  ClownFace,
+  Ogre,
+  Goblin,
+  KissingFace,
+  KissingFaceWithClosedEyes,
+  FaceBlowingAKiss,
+  SmilingFaceWithHeartEyes,
+  StarStruck,
+  SmilingFaceWithHalo,
+  SmilingFaceWithHearts,
+  HeartEyes,
+  KissingFaceWithSmilingEyes,
+  SmilingFaceWithTear,
+  PartyingFace,
+  SmilingFaceWithSunglasses,
+  FaceWithMonocle
 } from 'lucide-react'
 import { AddPaymentMethodModal } from '@/components/ui/add-payment-method-modal'
 import { UpgradeCreatorModal } from '@/components/ui/upgrade-creator-modal'
@@ -64,6 +318,49 @@ export default function SettingsPage() {
   const [showBankAccountModal, setShowBankAccountModal] = useState(false)
   const [showCreditCardModal, setShowCreditCardModal] = useState(false)
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<any>(null)
+  
+  // New state for enhanced features
+  const [contentSettings, setContentSettings] = useState({
+    matureContent: false,
+    violenceFilter: true,
+    profanityFilter: true,
+    spamFilter: true,
+    autoPlay: true,
+    dataSaver: false,
+    contentLanguage: 'en'
+  })
+  
+  const [accessibilitySettings, setAccessibilitySettings] = useState({
+    highContrast: false,
+    reducedMotion: false,
+    screenReader: false,
+    colorBlindSupport: false,
+    keyboardNavigation: true,
+    focusIndicators: true,
+    altText: true
+  })
+  
+  const [securitySettings, setSecuritySettings] = useState({
+    twoFactorAuth: false,
+    loginAlerts: true,
+    deviceManagement: true,
+    sessionTimeout: 30,
+    biometricAuth: false,
+    secureBackup: false,
+    privacyMode: false,
+    dataEncryption: true
+  })
+  
+  const [dataSettings, setDataSettings] = useState({
+    autoBackup: true,
+    cloudSync: true,
+    dataRetention: 365,
+    analyticsOptIn: true,
+    crashReporting: true,
+    performanceMonitoring: true,
+    personalizedAds: false,
+    locationTracking: false
+  })
   const [paymentMethods, setPaymentMethods] = useState([
     {
       id: '1',
@@ -112,6 +409,10 @@ export default function SettingsPage() {
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'privacy', label: 'Privacy', icon: Lock },
     { id: 'appearance', label: 'Appearance', icon: Palette },
+    { id: 'content', label: 'Content & Safety', icon: Filter },
+    { id: 'accessibility', label: 'Accessibility', icon: Eye },
+    { id: 'security', label: 'Security', icon: ShieldCheck },
+    { id: 'data', label: 'Data Management', icon: Database },
     { id: 'bank-account', label: 'Add Bank Account (To Earn)', icon: Building2 },
     { id: 'credit-card', label: 'Add Credit Card (To Subscribe)', icon: Wallet },
     { id: 'billing', label: 'Billing', icon: Crown }
@@ -200,11 +501,11 @@ export default function SettingsPage() {
       case 'tip':
         return DollarSign
       case 'ppv':
-        return CreditCard
+        return CreditCardIcon
       case 'payout':
         return Receipt
       default:
-        return CreditCard
+        return CreditCardIcon
     }
   }
 
@@ -578,6 +879,582 @@ export default function SettingsPage() {
     </div>
   )
 
+  const renderContentSettings = () => (
+    <div className="space-y-6">
+      {/* Mature Content */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <AlertTriangle className="h-5 w-5 text-orange-500" />
+            <span>Mature Content</span>
+          </CardTitle>
+          <CardDescription>Control access to mature and adult content</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Enable Mature Content</h4>
+              <p className="text-sm text-muted-foreground">Allow viewing of content marked as mature (18+)</p>
+            </div>
+            <Switch 
+              checked={contentSettings.matureContent}
+              onCheckedChange={(checked) => setContentSettings(prev => ({ ...prev, matureContent: checked }))}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Age Verification</h4>
+              <p className="text-sm text-muted-foreground">Require age verification for mature content</p>
+            </div>
+            <Switch defaultChecked />
+          </div>
+          
+        </CardContent>
+      </Card>
+
+      {/* Content Filters */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Filter className="h-5 w-5" />
+            <span>Content Filters</span>
+          </CardTitle>
+          <CardDescription>Filter out unwanted content types</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Violence Filter</h4>
+              <p className="text-sm text-muted-foreground">Hide content containing violence</p>
+            </div>
+            <Switch 
+              checked={contentSettings.violenceFilter}
+              onCheckedChange={(checked) => setContentSettings(prev => ({ ...prev, violenceFilter: checked }))}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Profanity Filter</h4>
+              <p className="text-sm text-muted-foreground">Hide content with profanity</p>
+            </div>
+            <Switch 
+              checked={contentSettings.profanityFilter}
+              onCheckedChange={(checked) => setContentSettings(prev => ({ ...prev, profanityFilter: checked }))}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Spam Filter</h4>
+              <p className="text-sm text-muted-foreground">Automatically filter spam content</p>
+            </div>
+            <Switch 
+              checked={contentSettings.spamFilter}
+              onCheckedChange={(checked) => setContentSettings(prev => ({ ...prev, spamFilter: checked }))}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Media Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Video className="h-5 w-5" />
+            <span>Media Settings</span>
+          </CardTitle>
+          <CardDescription>Control media playback and quality</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Auto-play Videos</h4>
+              <p className="text-sm text-muted-foreground">Automatically play videos when scrolling</p>
+            </div>
+            <Switch 
+              checked={contentSettings.autoPlay}
+              onCheckedChange={(checked) => setContentSettings(prev => ({ ...prev, autoPlay: checked }))}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Data Saver Mode</h4>
+              <p className="text-sm text-muted-foreground">Reduce data usage by lowering media quality</p>
+            </div>
+            <Switch 
+              checked={contentSettings.dataSaver}
+              onCheckedChange={(checked) => setContentSettings(prev => ({ ...prev, dataSaver: checked }))}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label>Content Language</Label>
+            <Select 
+              value={contentSettings.contentLanguage}
+              onValueChange={(value) => setContentSettings(prev => ({ ...prev, contentLanguage: value }))}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="en">English</SelectItem>
+                <SelectItem value="es">Spanish</SelectItem>
+                <SelectItem value="fr">French</SelectItem>
+                <SelectItem value="de">German</SelectItem>
+                <SelectItem value="it">Italian</SelectItem>
+                <SelectItem value="pt">Portuguese</SelectItem>
+                <SelectItem value="ru">Russian</SelectItem>
+                <SelectItem value="ja">Japanese</SelectItem>
+                <SelectItem value="ko">Korean</SelectItem>
+                <SelectItem value="zh">Chinese</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+
+  const renderAccessibilitySettings = () => (
+    <div className="space-y-6">
+      {/* Visual Accessibility */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Eye className="h-5 w-5" />
+            <span>Visual Accessibility</span>
+          </CardTitle>
+          <CardDescription>Adjust visual settings for better accessibility</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">High Contrast Mode</h4>
+              <p className="text-sm text-muted-foreground">Increase contrast for better visibility</p>
+            </div>
+            <Switch 
+              checked={accessibilitySettings.highContrast}
+              onCheckedChange={(checked) => setAccessibilitySettings(prev => ({ ...prev, highContrast: checked }))}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Color Blind Support</h4>
+              <p className="text-sm text-muted-foreground">Use color-blind friendly palettes</p>
+            </div>
+            <Switch 
+              checked={accessibilitySettings.colorBlindSupport}
+              onCheckedChange={(checked) => setAccessibilitySettings(prev => ({ ...prev, colorBlindSupport: checked }))}
+            />
+          </div>
+          
+        </CardContent>
+      </Card>
+
+      {/* Motion & Interaction */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Activity className="h-5 w-5" />
+            <span>Motion & Interaction</span>
+          </CardTitle>
+          <CardDescription>Control motion and interaction preferences</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Reduce Motion</h4>
+              <p className="text-sm text-muted-foreground">Minimize animations and transitions</p>
+            </div>
+            <Switch 
+              checked={accessibilitySettings.reducedMotion}
+              onCheckedChange={(checked) => setAccessibilitySettings(prev => ({ ...prev, reducedMotion: checked }))}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Keyboard Navigation</h4>
+              <p className="text-sm text-muted-foreground">Enable full keyboard navigation support</p>
+            </div>
+            <Switch 
+              checked={accessibilitySettings.keyboardNavigation}
+              onCheckedChange={(checked) => setAccessibilitySettings(prev => ({ ...prev, keyboardNavigation: checked }))}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Focus Indicators</h4>
+              <p className="text-sm text-muted-foreground">Show clear focus indicators for keyboard users</p>
+            </div>
+            <Switch 
+              checked={accessibilitySettings.focusIndicators}
+              onCheckedChange={(checked) => setAccessibilitySettings(prev => ({ ...prev, focusIndicators: checked }))}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Screen Reader Support */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Volume2 className="h-5 w-5" />
+            <span>Screen Reader Support</span>
+          </CardTitle>
+          <CardDescription>Optimize for screen readers and assistive technologies</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Screen Reader Mode</h4>
+              <p className="text-sm text-muted-foreground">Optimize interface for screen readers</p>
+            </div>
+            <Switch 
+              checked={accessibilitySettings.screenReader}
+              onCheckedChange={(checked) => setAccessibilitySettings(prev => ({ ...prev, screenReader: checked }))}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Alt Text for Images</h4>
+              <p className="text-sm text-muted-foreground">Always show alt text for images</p>
+            </div>
+            <Switch 
+              checked={accessibilitySettings.altText}
+              onCheckedChange={(checked) => setAccessibilitySettings(prev => ({ ...prev, altText: checked }))}
+            />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+
+  const renderSecuritySettings = () => (
+    <div className="space-y-6">
+      {/* Authentication */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <ShieldCheck className="h-5 w-5" />
+            <span>Authentication</span>
+          </CardTitle>
+          <CardDescription>Secure your account with additional authentication methods</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Two-Factor Authentication</h4>
+              <p className="text-sm text-muted-foreground">Add an extra layer of security to your account</p>
+            </div>
+            <Switch 
+              checked={securitySettings.twoFactorAuth}
+              onCheckedChange={(checked) => setSecuritySettings(prev => ({ ...prev, twoFactorAuth: checked }))}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Biometric Authentication</h4>
+              <p className="text-sm text-muted-foreground">Use fingerprint or face recognition</p>
+            </div>
+            <Switch 
+              checked={securitySettings.biometricAuth}
+              onCheckedChange={(checked) => setSecuritySettings(prev => ({ ...prev, biometricAuth: checked }))}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Login Alerts</h4>
+              <p className="text-sm text-muted-foreground">Get notified of new login attempts</p>
+            </div>
+            <Switch 
+              checked={securitySettings.loginAlerts}
+              onCheckedChange={(checked) => setSecuritySettings(prev => ({ ...prev, loginAlerts: checked }))}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Session Management */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Clock className="h-5 w-5" />
+            <span>Session Management</span>
+          </CardTitle>
+          <CardDescription>Control how long you stay logged in</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Session Timeout (minutes)</Label>
+            <Select 
+              value={securitySettings.sessionTimeout.toString()}
+              onValueChange={(value) => setSecuritySettings(prev => ({ ...prev, sessionTimeout: parseInt(value) }))}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="15">15 minutes</SelectItem>
+                <SelectItem value="30">30 minutes</SelectItem>
+                <SelectItem value="60">1 hour</SelectItem>
+                <SelectItem value="120">2 hours</SelectItem>
+                <SelectItem value="480">8 hours</SelectItem>
+                <SelectItem value="1440">24 hours</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Device Management</h4>
+              <p className="text-sm text-muted-foreground">Manage devices that can access your account</p>
+            </div>
+            <Switch 
+              checked={securitySettings.deviceManagement}
+              onCheckedChange={(checked) => setSecuritySettings(prev => ({ ...prev, deviceManagement: checked }))}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Privacy & Data */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Lock className="h-5 w-5" />
+            <span>Privacy & Data</span>
+          </CardTitle>
+          <CardDescription>Control your privacy and data security</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Privacy Mode</h4>
+              <p className="text-sm text-muted-foreground">Hide your online status and activity</p>
+            </div>
+            <Switch 
+              checked={securitySettings.privacyMode}
+              onCheckedChange={(checked) => setSecuritySettings(prev => ({ ...prev, privacyMode: checked }))}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Data Encryption</h4>
+              <p className="text-sm text-muted-foreground">Encrypt your data for additional security</p>
+            </div>
+            <Switch 
+              checked={securitySettings.dataEncryption}
+              onCheckedChange={(checked) => setSecuritySettings(prev => ({ ...prev, dataEncryption: checked }))}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Secure Backup</h4>
+              <p className="text-sm text-muted-foreground">Create encrypted backups of your data</p>
+            </div>
+            <Switch 
+              checked={securitySettings.secureBackup}
+              onCheckedChange={(checked) => setSecuritySettings(prev => ({ ...prev, secureBackup: checked }))}
+            />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+
+  const renderDataSettings = () => (
+    <div className="space-y-6">
+      {/* Data Management */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Database className="h-5 w-5" />
+            <span>Data Management</span>
+          </CardTitle>
+          <CardDescription>Control how your data is stored and managed</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Auto Backup</h4>
+              <p className="text-sm text-muted-foreground">Automatically backup your data</p>
+            </div>
+            <Switch 
+              checked={dataSettings.autoBackup}
+              onCheckedChange={(checked) => setDataSettings(prev => ({ ...prev, autoBackup: checked }))}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Cloud Sync</h4>
+              <p className="text-sm text-muted-foreground">Sync your data across devices</p>
+            </div>
+            <Switch 
+              checked={dataSettings.cloudSync}
+              onCheckedChange={(checked) => setDataSettings(prev => ({ ...prev, cloudSync: checked }))}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label>Data Retention Period (days)</Label>
+            <Select 
+              value={dataSettings.dataRetention.toString()}
+              onValueChange={(value) => setDataSettings(prev => ({ ...prev, dataRetention: parseInt(value) }))}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="30">30 days</SelectItem>
+                <SelectItem value="90">90 days</SelectItem>
+                <SelectItem value="180">6 months</SelectItem>
+                <SelectItem value="365">1 year</SelectItem>
+                <SelectItem value="730">2 years</SelectItem>
+                <SelectItem value="0">Forever</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Analytics & Monitoring */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <BarChart3 className="h-5 w-5" />
+            <span>Analytics & Monitoring</span>
+          </CardTitle>
+          <CardDescription>Control data collection and analytics</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Analytics Opt-in</h4>
+              <p className="text-sm text-muted-foreground">Help improve the platform with usage analytics</p>
+            </div>
+            <Switch 
+              checked={dataSettings.analyticsOptIn}
+              onCheckedChange={(checked) => setDataSettings(prev => ({ ...prev, analyticsOptIn: checked }))}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Crash Reporting</h4>
+              <p className="text-sm text-muted-foreground">Send crash reports to help fix bugs</p>
+            </div>
+            <Switch 
+              checked={dataSettings.crashReporting}
+              onCheckedChange={(checked) => setDataSettings(prev => ({ ...prev, crashReporting: checked }))}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Performance Monitoring</h4>
+              <p className="text-sm text-muted-foreground">Monitor app performance and speed</p>
+            </div>
+            <Switch 
+              checked={dataSettings.performanceMonitoring}
+              onCheckedChange={(checked) => setDataSettings(prev => ({ ...prev, performanceMonitoring: checked }))}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Privacy Controls */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Shield className="h-5 w-5" />
+            <span>Privacy Controls</span>
+          </CardTitle>
+          <CardDescription>Control your privacy and data sharing</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Personalized Ads</h4>
+              <p className="text-sm text-muted-foreground">Show personalized advertisements</p>
+            </div>
+            <Switch 
+              checked={dataSettings.personalizedAds}
+              onCheckedChange={(checked) => setDataSettings(prev => ({ ...prev, personalizedAds: checked }))}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Location Tracking</h4>
+              <p className="text-sm text-muted-foreground">Allow location-based features</p>
+            </div>
+            <Switch 
+              checked={dataSettings.locationTracking}
+              onCheckedChange={(checked) => setDataSettings(prev => ({ ...prev, locationTracking: checked }))}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Data Export/Import */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Download className="h-5 w-5" />
+            <span>Data Export/Import</span>
+          </CardTitle>
+          <CardDescription>Export or import your data</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Export Data</h4>
+              <p className="text-sm text-muted-foreground">Download a copy of your data</p>
+            </div>
+            <Button variant="outline" size="sm">
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Import Data</h4>
+              <p className="text-sm text-muted-foreground">Import data from another platform</p>
+            </div>
+            <Button variant="outline" size="sm">
+              <Upload className="h-4 w-4 mr-2" />
+              Import
+            </Button>
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Delete All Data</h4>
+              <p className="text-sm text-muted-foreground text-red-600">Permanently delete all your data</p>
+            </div>
+            <Button variant="destructive" size="sm">
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+
   const renderPrivacySettings = () => (
     <div className="space-y-6">
       {/* Profile Privacy */}
@@ -796,7 +1673,7 @@ export default function SettingsPage() {
                   <div key={method.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center space-x-3">
                       <div className="flex items-center justify-center w-10 h-6 bg-gray-100 rounded">
-                        <CreditCard className="h-4 w-4 text-gray-600" />
+                        <CreditCardIcon className="h-4 w-4 text-gray-600" />
                       </div>
                       <div>
                         <div className="flex items-center space-x-2">
@@ -839,7 +1716,7 @@ export default function SettingsPage() {
             </>
           ) : (
             <div className="text-center py-8">
-              <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <CreditCardIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="font-medium mb-2">No payment methods</h3>
               <p className="text-sm text-muted-foreground mb-4">Add a payment method to get started</p>
               <Button variant="outline" onClick={() => setShowPaymentModal(true)}>
@@ -962,6 +1839,14 @@ export default function SettingsPage() {
         return renderPrivacySettings()
       case 'appearance':
         return renderAppearanceSettings()
+      case 'content':
+        return renderContentSettings()
+      case 'accessibility':
+        return renderAccessibilitySettings()
+      case 'security':
+        return renderSecuritySettings()
+      case 'data':
+        return renderDataSettings()
       case 'bank-account':
         return renderBankAccountSettings()
       case 'credit-card':

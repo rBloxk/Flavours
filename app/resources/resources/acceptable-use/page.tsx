@@ -371,7 +371,7 @@ export default function AcceptableUsePage() {
                   Send detailed reports to our support team
                 </p>
                 <Button variant="outline" size="sm">
-                  support@flavours.com
+                  support@flavours.club
                 </Button>
               </div>
               <div className="text-center">
@@ -405,10 +405,10 @@ export default function AcceptableUsePage() {
             </p>
             <div className="space-y-2">
               <p className="text-sm">
-                <strong>Policy Questions:</strong> policy@flavours.com
+                <strong>Policy Questions:</strong> policy@flavours.club
               </p>
               <p className="text-sm">
-                <strong>General Support:</strong> support@flavours.com
+                <strong>General Support:</strong> support@flavours.club
               </p>
               <p className="text-sm">
                 <strong>Address:</strong> Flavours Policy Team, 123 Creator Street, San Francisco, CA 94105

@@ -415,10 +415,10 @@ export default function PrivacyPage() {
             </p>
             <div className="space-y-2">
               <p className="text-sm">
-                <strong>Data Protection Officer:</strong> privacy@flavours.com
+                <strong>Data Protection Officer:</strong> privacy@flavours.club
               </p>
               <p className="text-sm">
-                <strong>General Inquiries:</strong> hello@flavours.com
+                <strong>General Inquiries:</strong> hello@flavours.club
               </p>
               <p className="text-sm">
                 <strong>Address:</strong> Flavours Privacy Team, 123 Creator Street, San Francisco, CA 94105

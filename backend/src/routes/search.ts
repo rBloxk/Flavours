@@ -23,7 +23,7 @@ router.get('/global', async (req: Request, res: Response) => {
       sort = 'relevance'
     } = req.query
 
-    const offset = (Number(page) - 1) * Number(limit))
+    const offset = (Number(page) - 1) * Number(limit)
     const parsedFilters = JSON.parse(filters as string)
 
     let results: any = {
@@ -184,7 +184,7 @@ router.get('/users', async (req: Request, res: Response) => {
       sort = 'relevance'
     } = req.query
 
-    const offset = (Number(page) - 1) * Number(limit))
+    const offset = (Number(page) - 1) * Number(limit)
     const parsedFilters = JSON.parse(filters as string)
 
     // Build users query
@@ -283,7 +283,7 @@ router.get('/posts', async (req: Request, res: Response) => {
       sort = 'relevance'
     } = req.query
 
-    const offset = (Number(page) - 1) * Number(limit))
+    const offset = (Number(page) - 1) * Number(limit)
     const parsedFilters = JSON.parse(filters as string)
 
     // Build posts query
@@ -415,7 +415,7 @@ router.get('/streams', async (req: Request, res: Response) => {
       sort = 'relevance'
     } = req.query
 
-    const offset = (Number(page) - 1) * Number(limit))
+    const offset = (Number(page) - 1) * Number(limit)
     const parsedFilters = JSON.parse(filters as string)
 
     // Build streams query

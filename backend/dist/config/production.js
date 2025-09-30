@@ -12,7 +12,7 @@ exports.productionConfig = {
         host: process.env.HOST || '0.0.0.0',
         env: process.env.NODE_ENV || 'production',
         cors: {
-            origin: process.env.FRONTEND_URL || 'https://flavours.app',
+            origin: process.env.FRONTEND_URL || 'https://flavours.club',
             credentials: true,
             methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
             allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Request-ID'],
@@ -92,7 +92,7 @@ exports.productionConfig = {
         },
         from: {
             name: process.env.EMAIL_FROM_NAME || 'Flavours',
-            email: process.env.EMAIL_FROM_EMAIL || 'noreply@flavours.app'
+            email: process.env.EMAIL_FROM_EMAIL || 'noreply@flavours.club'
         }
     },
     payments: {
@@ -129,7 +129,7 @@ exports.productionConfig = {
     },
     websocket: {
         cors: {
-            origin: process.env.FRONTEND_URL || 'https://flavours.app',
+            origin: process.env.FRONTEND_URL || 'https://flavours.club',
             methods: ['GET', 'POST'],
             credentials: true
         },
@@ -156,7 +156,7 @@ exports.productionConfig = {
         bcryptRounds: parseInt(process.env.BCRYPT_ROUNDS || '12'),
         sessionSecret: process.env.SESSION_SECRET || 'your-super-secret-session-key',
         csrfSecret: process.env.CSRF_SECRET || 'your-super-secret-csrf-key',
-        allowedOrigins: (process.env.ALLOWED_ORIGINS || 'https://flavours.app').split(','),
+        allowedOrigins: (process.env.ALLOWED_ORIGINS || 'https://flavours.club').split(','),
         trustedProxies: (process.env.TRUSTED_PROXIES || '').split(',').filter(Boolean)
     },
     logging: {

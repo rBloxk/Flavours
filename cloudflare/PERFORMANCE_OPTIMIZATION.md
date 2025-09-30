@@ -25,7 +25,7 @@ This document provides comprehensive performance optimization strategies for the
 #### Static Assets
 ```json
 {
-  "url": "flavours.com/_next/static/*",
+  "url": "flavours.club/_next/static/*",
   "settings": {
     "cache_level": "cache_everything",
     "edge_cache_ttl": 31536000,
@@ -37,7 +37,7 @@ This document provides comprehensive performance optimization strategies for the
 #### Upload Files
 ```json
 {
-  "url": "flavours.com/uploads/*",
+  "url": "flavours.club/uploads/*",
   "settings": {
     "cache_level": "cache_everything",
     "edge_cache_ttl": 2592000,
@@ -49,7 +49,7 @@ This document provides comprehensive performance optimization strategies for the
 #### API Routes
 ```json
 {
-  "url": "flavours.com/api/*",
+  "url": "flavours.club/api/*",
   "settings": {
     "cache_level": "bypass",
     "security_level": "high"
@@ -60,7 +60,7 @@ This document provides comprehensive performance optimization strategies for the
 #### Admin Routes
 ```json
 {
-  "url": "flavours.com/admin/*",
+  "url": "flavours.club/admin/*",
   "settings": {
     "cache_level": "bypass",
     "security_level": "high",
@@ -85,7 +85,7 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/ZONE_ID/purge_cache" \
   -H "X-Auth-Email: YOUR_EMAIL" \
   -H "X-Auth-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  --data '{"files": ["https://flavours.com/style.css", "https://flavours.com/app.js"]}'
+  --data '{"files": ["https://flavours.club/style.css", "https://flavours.club/app.js"]}'
 ```
 
 #### Automatic Cache Purge

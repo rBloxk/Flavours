@@ -1,6 +1,7 @@
 {
-  "/auth/page": "app/auth/page.js",
-  "/resources/support/cookie-notice/page": "app/resources/support/cookie-notice/page.js",
-  "/resources/legal/about/page": "app/resources/legal/about/page.js",
-  "/resources/resources/usc-2257/page": "app/resources/resources/usc-2257/page.js"
+  "/favorites/page": "app/favorites/page.js",
+  "/messages/page": "app/messages/page.js",
+  "/feed/page": "app/feed/page.js",
+  "/settings/page": "app/settings/page.js",
+  "/cams/page": "app/cams/page.js"
 }

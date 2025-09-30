@@ -847,7 +847,7 @@ router.get('/search', async (req: Request, res: Response) => {
       date_range = 'all' // all, today, week, month, year
     } = req.query
 
-    const offset = (Number(page) - 1) * Number(limit))
+    const offset = (Number(page) - 1) * Number(limit)
 
     let query = supabase
       .from('posts')
@@ -951,7 +951,7 @@ router.get('/search', async (req: Request, res: Response) => {
 })
 
 // Helper function for file upload (implement based on your storage solution)
-async function uploadToStorage(file: Express.Multer.File): Promise<string> {
+async function uploadToStorage(file: any): Promise<string> {
   // Implement your file upload logic here
   // This could be AWS S3, Google Cloud Storage, etc.
   // For now, return a placeholder URL

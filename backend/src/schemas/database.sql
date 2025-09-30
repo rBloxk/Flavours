@@ -600,6 +600,185 @@ CREATE TABLE IF NOT EXISTS reports (
 );
 
 -- =============================================
+-- DATING FEATURES
+-- =============================================
+
+-- Dating profiles
+CREATE TABLE IF NOT EXISTS dating_profiles (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID UNIQUE NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    
+    -- Basic Info
+    age INTEGER NOT NULL,
+    height VARCHAR(10) NOT NULL,
+    weight VARCHAR(10),
+    location VARCHAR(100) NOT NULL,
+    hometown VARCHAR(100),
+    bio TEXT NOT NULL,
+    
+    -- Identity
+    gender VARCHAR(20) NOT NULL,
+    sexuality VARCHAR(20) NOT NULL,
+    relationship_status VARCHAR(20) NOT NULL,
+    pronouns VARCHAR(20),
+    birthday DATE NOT NULL,
+    ethnicity VARCHAR(50),
+    
+    -- Education & Career
+    education VARCHAR(100),
+    occupation VARCHAR(100),
+    college VARCHAR(100),
+    work VARCHAR(100),
+    job_title VARCHAR(100),
+    
+    -- Lifestyle
+    children VARCHAR(20),
+    family_plans VARCHAR(20),
+    pets VARCHAR(20),
+    religion VARCHAR(50),
+    zodiac VARCHAR(20),
+    political_views VARCHAR(20),
+    
+    -- Interests & Preferences
+    interests TEXT[] DEFAULT '{}',
+    interested_in TEXT[] DEFAULT '{}',
+    hobbies TEXT[] DEFAULT '{}',
+    
+    -- Vices
+    marijuana VARCHAR(20),
+    smoke VARCHAR(20),
+    drinks VARCHAR(20),
+    drugs VARCHAR(20),
+    
+    -- Sexual Info
+    body_count VARCHAR(20),
+    affairs VARCHAR(20),
+    sexual_desires TEXT,
+    
+    -- Photos
+    photos TEXT[] DEFAULT '{}',
+    
+    -- Status
+    is_active BOOLEAN DEFAULT TRUE,
+    is_verified BOOLEAN DEFAULT FALSE,
+    last_active TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    
+    CONSTRAINT age_check CHECK (age >= 18 AND age <= 100),
+    CONSTRAINT bio_length CHECK (char_length(bio) >= 10 AND char_length(bio) <= 500)
+);
+
+-- Dating preferences
+CREATE TABLE IF NOT EXISTS dating_preferences (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID UNIQUE NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    
+    -- Age preferences
+    age_range JSONB DEFAULT '{"min": 18, "max": 100}',
+    
+    -- Location preferences
+    max_distance INTEGER DEFAULT 50, -- in miles/km
+    location_preferences TEXT[] DEFAULT '{}',
+    
+    -- Gender preferences
+    interested_in TEXT[] DEFAULT '{}',
+    
+    -- Lifestyle preferences
+    deal_breakers TEXT[] DEFAULT '{}',
+    must_haves TEXT[] DEFAULT '{}',
+    nice_to_haves TEXT[] DEFAULT '{}',
+    
+    -- Other preferences
+    education_preference VARCHAR(100),
+    religion_preference VARCHAR(50),
+    children_preference VARCHAR(20),
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Dating swipes
+CREATE TABLE IF NOT EXISTS dating_swipes (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    target_user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    
+    action VARCHAR(20) NOT NULL, -- like, pass, super_like
+    message TEXT,
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    
+    UNIQUE(user_id, target_user_id)
+);
+
+-- Dating matches
+CREATE TABLE IF NOT EXISTS dating_matches (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user1_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    user2_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    
+    matched_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    is_active BOOLEAN DEFAULT TRUE,
+    
+    -- Match metadata
+    conversation_started BOOLEAN DEFAULT FALSE,
+    last_message_at TIMESTAMP WITH TIME ZONE,
+    
+    UNIQUE(user1_id, user2_id)
+);
+
+-- Dating messages
+CREATE TABLE IF NOT EXISTS dating_messages (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    match_id UUID NOT NULL REFERENCES dating_matches(id) ON DELETE CASCADE,
+    sender_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    
+    message TEXT NOT NULL,
+    message_type VARCHAR(20) DEFAULT 'text', -- text, image, emoji
+    
+    -- Message status
+    is_read BOOLEAN DEFAULT FALSE,
+    read_at TIMESTAMP WITH TIME ZONE,
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    
+    CONSTRAINT message_length CHECK (char_length(message) <= 1000)
+);
+
+-- Dating reports
+CREATE TABLE IF NOT EXISTS dating_reports (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    reporter_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    reported_user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    
+    reason VARCHAR(50) NOT NULL,
+    description TEXT,
+    
+    -- Report status
+    status VARCHAR(20) DEFAULT 'pending', -- pending, reviewed, resolved, dismissed
+    reviewed_by UUID REFERENCES profiles(id),
+    review_notes TEXT,
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    reviewed_at TIMESTAMP WITH TIME ZONE
+);
+
+-- Dating blocks
+CREATE TABLE IF NOT EXISTS dating_blocks (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    blocker_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    blocked_user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    
+    reason TEXT,
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    
+    UNIQUE(blocker_id, blocked_user_id)
+);
+
+-- =============================================
 -- INDEXES FOR PERFORMANCE
 -- =============================================
 
@@ -654,6 +833,23 @@ CREATE INDEX IF NOT EXISTS idx_user_analytics_date ON user_analytics(date);
 CREATE INDEX IF NOT EXISTS idx_content_analytics_post ON content_analytics(post_id);
 CREATE INDEX IF NOT EXISTS idx_content_analytics_date ON content_analytics(date);
 
+-- Dating indexes
+CREATE INDEX IF NOT EXISTS idx_dating_profiles_user ON dating_profiles(user_id);
+CREATE INDEX IF NOT EXISTS idx_dating_profiles_age ON dating_profiles(age);
+CREATE INDEX IF NOT EXISTS idx_dating_profiles_gender ON dating_profiles(gender);
+CREATE INDEX IF NOT EXISTS idx_dating_profiles_location ON dating_profiles(location);
+CREATE INDEX IF NOT EXISTS idx_dating_profiles_active ON dating_profiles(is_active);
+CREATE INDEX IF NOT EXISTS idx_dating_swipes_user ON dating_swipes(user_id);
+CREATE INDEX IF NOT EXISTS idx_dating_swipes_target ON dating_swipes(target_user_id);
+CREATE INDEX IF NOT EXISTS idx_dating_matches_user1 ON dating_matches(user1_id);
+CREATE INDEX IF NOT EXISTS idx_dating_matches_user2 ON dating_matches(user2_id);
+CREATE INDEX IF NOT EXISTS idx_dating_messages_match ON dating_messages(match_id);
+CREATE INDEX IF NOT EXISTS idx_dating_messages_sender ON dating_messages(sender_id);
+CREATE INDEX IF NOT EXISTS idx_dating_reports_reporter ON dating_reports(reporter_id);
+CREATE INDEX IF NOT EXISTS idx_dating_reports_reported ON dating_reports(reported_user_id);
+CREATE INDEX IF NOT EXISTS idx_dating_blocks_blocker ON dating_blocks(blocker_id);
+CREATE INDEX IF NOT EXISTS idx_dating_blocks_blocked ON dating_blocks(blocked_user_id);
+
 -- =============================================
 -- FUNCTIONS AND TRIGGERS
 -- =============================================
@@ -675,6 +871,8 @@ CREATE TRIGGER update_media_updated_at BEFORE UPDATE ON media FOR EACH ROW EXECU
 CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_streams_updated_at BEFORE UPDATE ON streams FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_subscriptions_updated_at BEFORE UPDATE ON subscriptions FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_dating_profiles_updated_at BEFORE UPDATE ON dating_profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_dating_preferences_updated_at BEFORE UPDATE ON dating_preferences FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Function to update follower counts
 CREATE OR REPLACE FUNCTION update_follower_counts()
@@ -774,6 +972,13 @@ ALTER TABLE streams ENABLE ROW LEVEL SECURITY;
 ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tips ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE dating_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE dating_preferences ENABLE ROW LEVEL SECURITY;
+ALTER TABLE dating_swipes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE dating_matches ENABLE ROW LEVEL SECURITY;
+ALTER TABLE dating_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE dating_reports ENABLE ROW LEVEL SECURITY;
+ALTER TABLE dating_blocks ENABLE ROW LEVEL SECURITY;
 
 -- Profile policies
 CREATE POLICY "Public profiles are viewable by everyone" ON profiles
@@ -840,3 +1045,58 @@ CREATE POLICY "Users can view their own notifications" ON notifications
 
 CREATE POLICY "Users can update their own notifications" ON notifications
     FOR UPDATE USING (auth.uid() = (SELECT user_id FROM profiles WHERE id = user_id));
+
+-- Dating profile policies
+CREATE POLICY "Users can view their own dating profile" ON dating_profiles
+    FOR ALL USING (auth.uid() = (SELECT user_id FROM profiles WHERE id = user_id));
+
+CREATE POLICY "Users can view other active dating profiles" ON dating_profiles
+    FOR SELECT USING (is_active = true);
+
+-- Dating preferences policies
+CREATE POLICY "Users can manage their own dating preferences" ON dating_preferences
+    FOR ALL USING (auth.uid() = (SELECT user_id FROM profiles WHERE id = user_id));
+
+-- Dating swipes policies
+CREATE POLICY "Users can view their own swipes" ON dating_swipes
+    FOR SELECT USING (auth.uid() = (SELECT user_id FROM profiles WHERE id = user_id));
+
+CREATE POLICY "Users can create their own swipes" ON dating_swipes
+    FOR INSERT WITH CHECK (auth.uid() = (SELECT user_id FROM profiles WHERE id = user_id));
+
+-- Dating matches policies
+CREATE POLICY "Users can view their own matches" ON dating_matches
+    FOR SELECT USING (auth.uid() = (SELECT user_id FROM profiles WHERE id = user1_id) OR 
+                      auth.uid() = (SELECT user_id FROM profiles WHERE id = user2_id));
+
+CREATE POLICY "Users can create matches" ON dating_matches
+    FOR INSERT WITH CHECK (auth.uid() = (SELECT user_id FROM profiles WHERE id = user1_id) OR 
+                           auth.uid() = (SELECT user_id FROM profiles WHERE id = user2_id));
+
+-- Dating messages policies
+CREATE POLICY "Users can view messages in their matches" ON dating_messages
+    FOR SELECT USING (auth.uid() = (SELECT user_id FROM profiles WHERE id = sender_id) OR
+                      auth.uid() = (SELECT user_id FROM profiles WHERE id = 
+                        (SELECT user1_id FROM dating_matches WHERE id = match_id)) OR
+                      auth.uid() = (SELECT user_id FROM profiles WHERE id = 
+                        (SELECT user2_id FROM dating_matches WHERE id = match_id)));
+
+CREATE POLICY "Users can send messages in their matches" ON dating_messages
+    FOR INSERT WITH CHECK (auth.uid() = (SELECT user_id FROM profiles WHERE id = sender_id));
+
+-- Dating reports policies
+CREATE POLICY "Users can view their own reports" ON dating_reports
+    FOR SELECT USING (auth.uid() = (SELECT user_id FROM profiles WHERE id = reporter_id));
+
+CREATE POLICY "Users can create reports" ON dating_reports
+    FOR INSERT WITH CHECK (auth.uid() = (SELECT user_id FROM profiles WHERE id = reporter_id));
+
+-- Dating blocks policies
+CREATE POLICY "Users can view their own blocks" ON dating_blocks
+    FOR SELECT USING (auth.uid() = (SELECT user_id FROM profiles WHERE id = blocker_id));
+
+CREATE POLICY "Users can create blocks" ON dating_blocks
+    FOR INSERT WITH CHECK (auth.uid() = (SELECT user_id FROM profiles WHERE id = blocker_id));
+
+CREATE POLICY "Users can delete their own blocks" ON dating_blocks
+    FOR DELETE USING (auth.uid() = (SELECT user_id FROM profiles WHERE id = blocker_id));

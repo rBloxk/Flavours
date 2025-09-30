@@ -39,7 +39,7 @@ If you prefer manual setup, follow the steps below:
 
 1. **Add Domain to Cloudflare**
    - Log in to Cloudflare dashboard
-   - Add your domain (e.g., `flavours.com`)
+   - Add your domain (e.g., `flavours.club`)
    - Choose the Free plan (upgrade as needed)
 
 2. **Update Nameservers**
@@ -137,7 +137,7 @@ Create the following page rules:
 
 1. **API Routes**
    ```
-   URL: flavours.com/api/*
+   URL: flavours.club/api/*
    Settings:
    - Cache Level: Bypass
    - Security Level: High
@@ -146,7 +146,7 @@ Create the following page rules:
 
 2. **Admin Routes**
    ```
-   URL: flavours.com/admin/*
+   URL: flavours.club/admin/*
    Settings:
    - Cache Level: Bypass
    - Security Level: High
@@ -156,7 +156,7 @@ Create the following page rules:
 
 3. **Static Assets**
    ```
-   URL: flavours.com/_next/static/*
+   URL: flavours.club/_next/static/*
    Settings:
    - Cache Level: Cache Everything
    - Edge Cache TTL: 1 year
@@ -165,7 +165,7 @@ Create the following page rules:
 
 4. **Upload Files**
    ```
-   URL: flavours.com/uploads/*
+   URL: flavours.club/uploads/*
    Settings:
    - Cache Level: Cache Everything
    - Edge Cache TTL: 30 days
@@ -219,7 +219,7 @@ Configure rate limiting rules:
    - Copy code from `cloudflare/workers/security-worker.js`
 
 2. **Configure Route**
-   - Add route: `flavours.com/*`
+   - Add route: `flavours.club/*`
    - Bind to security-worker
 
 3. **Test Worker**

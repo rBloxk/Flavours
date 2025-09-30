@@ -85,21 +85,21 @@ Go to **Security** → **Firewall Rules** and create these rules:
 Go to **Rules** → **Page Rules** and create:
 
 #### Rule 1: API Routes
-- **URL**: `flavours.com/api/*`
+- **URL**: `flavours.club/api/*`
 - **Settings**:
   - Cache Level: Bypass
   - Security Level: High
   - Disable Apps: Yes
 
 #### Rule 2: Admin Routes
-- **URL**: `flavours.com/admin/*`
+- **URL**: `flavours.club/admin/*`
 - **Settings**:
   - Cache Level: Bypass
   - Security Level: High
   - Browser Check: On
 
 #### Rule 3: Static Assets
-- **URL**: `flavours.com/_next/static/*`
+- **URL**: `flavours.club/_next/static/*`
 - **Settings**:
   - Cache Level: Cache Everything
   - Edge Cache TTL: 1 year

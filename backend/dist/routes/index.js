@@ -8,22 +8,32 @@ const auth_1 = __importDefault(require("./auth"));
 const payments_1 = __importDefault(require("./payments"));
 const content_1 = __importDefault(require("./content"));
 const users_1 = __importDefault(require("./users"));
+const profiles_1 = __importDefault(require("./profiles"));
 const admin_1 = __importDefault(require("./admin"));
 const cams_1 = __importDefault(require("./cams"));
 const flavourstalk_1 = __importDefault(require("./flavourstalk"));
+const dating_1 = __importDefault(require("./dating"));
 const notifications_1 = __importDefault(require("./notifications"));
 const analytics_1 = __importDefault(require("./analytics"));
+const creator_tools_1 = __importDefault(require("./creator-tools"));
+const storage_1 = __importDefault(require("./storage"));
+const search_1 = __importDefault(require("./search"));
 function setupRoutes(app) {
     const API_PREFIX = '/api/v1';
     app.use(`${API_PREFIX}/auth`, auth_1.default);
     app.use(`${API_PREFIX}/payments`, payments_1.default);
     app.use(`${API_PREFIX}/content`, content_1.default);
     app.use(`${API_PREFIX}/users`, users_1.default);
+    app.use(`${API_PREFIX}/profiles`, profiles_1.default);
     app.use(`${API_PREFIX}/admin`, admin_1.default);
     app.use(`${API_PREFIX}/cams`, cams_1.default);
     app.use(`${API_PREFIX}/flavourstalk`, flavourstalk_1.default);
+    app.use(`${API_PREFIX}/dating`, dating_1.default);
     app.use(`${API_PREFIX}/notifications`, notifications_1.default);
     app.use(`${API_PREFIX}/analytics`, analytics_1.default);
+    app.use(`${API_PREFIX}/creator-tools`, creator_tools_1.default);
+    app.use(`${API_PREFIX}/storage`, storage_1.default);
+    app.use(`${API_PREFIX}/search`, search_1.default);
     app.use('*', (req, res) => {
         res.status(404).json({
             error: 'Route not found',

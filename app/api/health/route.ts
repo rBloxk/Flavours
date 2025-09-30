@@ -94,7 +94,7 @@ export async function GET(request: NextRequest) {
           type: 'local'
         }
       },
-      environment: {
+      runtime: {
         nodeVersion: process.version,
         platform: process.platform,
         arch: process.arch,

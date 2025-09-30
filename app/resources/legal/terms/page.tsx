@@ -273,7 +273,7 @@ export default function TermsPage() {
             </p>
             <div className="space-y-2">
               <p className="text-sm">
-                <strong>Email:</strong> legal@flavours.com
+                <strong>Email:</strong> legal@flavours.club
               </p>
               <p className="text-sm">
                 <strong>Address:</strong> Flavours Legal Team, 123 Creator Street, San Francisco, CA 94105

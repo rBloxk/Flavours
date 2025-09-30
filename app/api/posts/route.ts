@@ -88,7 +88,7 @@ export async function GET() {
     const posts = await initializePosts()
     
     // Return posts sorted by creation time (newest first)
-    const sortedPosts = posts.sort((a, b) => b.createdAtTimestamp - a.createdAtTimestamp)
+    const sortedPosts = posts.sort((a: any, b: any) => b.createdAtTimestamp - a.createdAtTimestamp)
     
     return NextResponse.json({
       success: true,

@@ -16,12 +16,12 @@ export const getFirebaseConfig = (environment: string = 'production') => {
   const configs = {
     development: {
       apiKey: "dev_firebase_api_key",
-      authDomain: "flavours-dev.firebaseapp.com",
-      projectId: "flavours-dev",
-      storageBucket: "flavours-dev.appspot.com",
+      authDomain: "flavours-club.firebaseapp.com",
+      projectId: "flavours-club",
+      storageBucket: "flavours-club.appspot.com",
       messagingSenderId: "dev_messaging_sender_id",
       appId: "dev_firebase_app_id",
-      databaseURL: "https://flavours-dev-default-rtdb.firebaseio.com"
+      databaseURL: "https://flavours-club-default-rtdb.firebaseio.com"
     },
     staging: {
       apiKey: "staging_firebase_api_key",

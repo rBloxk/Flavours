@@ -7,6 +7,7 @@ import profileRoutes from './profiles'
 import adminRoutes from './admin'
 import camsRoutes from './cams'
 import flavourstalkRoutes from './flavourstalk'
+import datingRoutes from './dating'
 import notificationsRoutes from './notifications'
 import analyticsRoutes from './analytics'
 import creatorToolsRoutes from './creator-tools'
@@ -26,6 +27,7 @@ export function setupRoutes(app: Express) {
   app.use(`${API_PREFIX}/admin`, adminRoutes)
   app.use(`${API_PREFIX}/cams`, camsRoutes)
   app.use(`${API_PREFIX}/flavourstalk`, flavourstalkRoutes)
+  app.use(`${API_PREFIX}/dating`, datingRoutes)
   app.use(`${API_PREFIX}/notifications`, notificationsRoutes)
   app.use(`${API_PREFIX}/analytics`, analyticsRoutes)
   app.use(`${API_PREFIX}/creator-tools`, creatorToolsRoutes)

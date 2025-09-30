@@ -159,26 +159,26 @@ The Flavours platform is protected by multiple layers of Cloudflare security fea
 ## Page Rules Configuration
 
 ### 1. API Routes
-- **URL**: `flavours.com/api/*`
+- **URL**: `flavours.club/api/*`
 - **Cache Level**: Bypass
 - **Security Level**: High
 - **Apps**: Disabled
 
 ### 2. Admin Routes
-- **URL**: `flavours.com/admin/*`
+- **URL**: `flavours.club/admin/*`
 - **Cache Level**: Bypass
 - **Security Level**: High
 - **Browser Check**: Enabled
 - **Apps**: Disabled
 
 ### 3. Static Assets
-- **URL**: `flavours.com/_next/static/*`
+- **URL**: `flavours.club/_next/static/*`
 - **Cache Level**: Cache Everything
 - **Edge Cache TTL**: 1 year
 - **Browser Cache TTL**: 1 year
 
 ### 4. Upload Files
-- **URL**: `flavours.com/uploads/*`
+- **URL**: `flavours.club/uploads/*`
 - **Cache Level**: Cache Everything
 - **Edge Cache TTL**: 30 days
 - **Browser Cache TTL**: 30 days

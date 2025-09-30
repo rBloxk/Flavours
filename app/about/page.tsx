@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { FlavoursLogo } from '@/components/ui/flavours-logo'
-import { Info, Users, Heart, Shield, Globe, Zap } from 'lucide-react'
+import { Users, Heart, Shield, Zap } from 'lucide-react'
 
 export default function AboutPage() {
   return (
@@ -74,7 +74,7 @@ export default function AboutPage() {
 
           <Card>
             <CardHeader>
-              <Globe className="h-8 w-8 text-primary mb-2" />
+              <Shield className="h-8 w-8 text-primary mb-2" />
               <CardTitle>Inclusivity</CardTitle>
               <CardDescription>
                 Welcoming everyone
@@ -158,7 +158,6 @@ export default function AboutPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Info className="h-6 w-6 text-primary mr-2" />
               Get in Touch
             </CardTitle>
           </CardHeader>

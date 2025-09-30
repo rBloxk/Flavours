@@ -65,7 +65,7 @@ export async function POST(
     switch (action) {
       case 'like':
         if (interactions.likes.includes(userId)) {
-          interactions.likes = interactions.likes.filter(id => id !== userId)
+          interactions.likes = interactions.likes.filter((id: string) => id !== userId)
         } else {
           interactions.likes.push(userId)
         }
@@ -74,7 +74,7 @@ export async function POST(
         
       case 'bookmark':
         if (interactions.bookmarks.includes(userId)) {
-          interactions.bookmarks = interactions.bookmarks.filter(id => id !== userId)
+          interactions.bookmarks = interactions.bookmarks.filter((id: string) => id !== userId)
         } else {
           interactions.bookmarks.push(userId)
         }

@@ -131,25 +131,25 @@ export default function ComplaintsPage() {
       level: "Level 1",
       title: "Initial Support",
       description: "Standard customer support team",
-      contact: "support@flavours.com"
+      contact: "support@flavours.club"
     },
     {
       level: "Level 2",
       title: "Senior Support",
       description: "Experienced support specialists",
-      contact: "senior-support@flavours.com"
+      contact: "senior-support@flavours.club"
     },
     {
       level: "Level 3",
       title: "Management Review",
       description: "Management team review and resolution",
-      contact: "management@flavours.com"
+      contact: "management@flavours.club"
     },
     {
       level: "Level 4",
       title: "Executive Escalation",
       description: "Executive team for complex issues",
-      contact: "executive@flavours.com"
+      contact: "executive@flavours.club"
     }
   ]
 
@@ -380,7 +380,7 @@ export default function ComplaintsPage() {
                   For detailed complaints and documentation
                 </p>
                 <Button variant="outline" size="sm">
-                  complaints@flavours.com
+                  complaints@flavours.club
                 </Button>
               </div>
               <div className="text-center">

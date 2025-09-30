@@ -187,4 +187,4 @@ apiClient.getCurrentUser = async () => {
 }
 
 export default apiClient
-export { ApiClient }
+export { ApiClient, apiClient }

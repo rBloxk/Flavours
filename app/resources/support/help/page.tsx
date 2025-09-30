@@ -190,7 +190,7 @@ export default function HelpPage() {
                   Get help via email within 24 hours
                 </p>
                 <Button variant="outline" size="sm">
-                  support@flavours.com
+                  support@flavours.club
                 </Button>
               </div>
               <div className="text-center">

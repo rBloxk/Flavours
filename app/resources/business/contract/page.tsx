@@ -410,7 +410,7 @@ export default function ContractPage() {
                   For contract questions and legal support
                 </p>
                 <Button variant="outline" size="sm">
-                  legal@flavours.com
+                  legal@flavours.club
                 </Button>
               </div>
               <div className="text-center">
@@ -430,7 +430,7 @@ export default function ContractPage() {
                   For creator-specific contract support
                 </p>
                 <Button size="sm">
-                  creators@flavours.com
+                  creators@flavours.club
                 </Button>
               </div>
             </div>

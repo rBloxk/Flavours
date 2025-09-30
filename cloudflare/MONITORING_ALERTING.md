@@ -163,8 +163,8 @@ This document provides comprehensive monitoring and alerting configuration for t
 ### 1. Email Notifications
 
 #### Configuration
-- **Primary Email**: admin@flavours.com
-- **Secondary Email**: security@flavours.com
+- **Primary Email**: admin@flavours.club
+- **Secondary Email**: security@flavours.club
 - **Frequency**: Immediate for critical, daily digest for others
 - **Format**: HTML with detailed information
 

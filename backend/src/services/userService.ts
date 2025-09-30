@@ -156,7 +156,7 @@ export class UserService {
     }
   }
 
-  async uploadProfilePicture(userId: string, file: Express.Multer.File): Promise<string> {
+  async uploadProfilePicture(userId: string, file: any): Promise<string> {
     try {
       // In a real implementation, you would upload to a cloud storage service
       // For now, we'll just return a placeholder URL

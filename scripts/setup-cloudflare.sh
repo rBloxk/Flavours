@@ -13,7 +13,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-DOMAIN="flavours.com"
+DOMAIN="flavours.club"
 CLOUDFLARE_EMAIL=""
 CLOUDFLARE_API_KEY=""
 CLOUDFLARE_ZONE_ID=""

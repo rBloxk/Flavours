@@ -22,7 +22,7 @@ variable "cloudflare_api_token" {
 variable "domain" {
   description = "Domain name"
   type        = string
-  default     = "flavours.com"
+  default     = "flavours.club"
 }
 
 # Get zone information

@@ -40,7 +40,7 @@ export declare class UserService {
     getProfileByUsername(username: string): Promise<UserProfile | null>;
     getProfileByUserId(userId: string): Promise<UserProfile | null>;
     updateProfile(userId: string, updateData: Partial<UserProfile>): Promise<UserProfile>;
-    uploadProfilePicture(userId: string, file: Express.Multer.File): Promise<string>;
+    uploadProfilePicture(userId: string, file: any): Promise<string>;
     toggleFollow(userId: string, followerId: string): Promise<FollowResult>;
     getFollowers(userId: string, options: PaginationOptions): Promise<UserProfile[]>;
     getFollowing(userId: string, options: PaginationOptions): Promise<UserProfile[]>;

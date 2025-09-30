@@ -2,6 +2,8 @@
  * Production-ready error handling utilities
  */
 
+import React from 'react'
+
 export interface AppError {
   code: string
   message: string

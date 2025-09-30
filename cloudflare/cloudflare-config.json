@@ -43,7 +43,7 @@
   },
   "page_rules": [
     {
-      "url": "flavours.com/api/*",
+      "url": "flavours.club/api/*",
       "settings": {
         "cache_level": "bypass",
         "security_level": "high",
@@ -52,7 +52,7 @@
       }
     },
     {
-      "url": "flavours.com/admin/*",
+      "url": "flavours.club/admin/*",
       "settings": {
         "cache_level": "bypass",
         "security_level": "high",
@@ -62,7 +62,7 @@
       }
     },
     {
-      "url": "flavours.com/_next/static/*",
+      "url": "flavours.club/_next/static/*",
       "settings": {
         "cache_level": "cache_everything",
         "edge_cache_ttl": 31536000,
@@ -70,7 +70,7 @@
       }
     },
     {
-      "url": "flavours.com/uploads/*",
+      "url": "flavours.club/uploads/*",
       "settings": {
         "cache_level": "cache_everything",
         "edge_cache_ttl": 2592000,
@@ -225,7 +225,7 @@
     {
       "name": "security-worker",
       "script": "security-worker.js",
-      "route": "flavours.com/*",
+      "route": "flavours.club/*",
       "enabled": true
     }
   ],

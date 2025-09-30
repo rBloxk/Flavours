@@ -6,7 +6,7 @@ export interface CreatePostData {
     tags?: string[];
     scheduledAt?: string;
     creatorId: string;
-    files?: Express.Multer.File[];
+    files?: any[];
 }
 export interface GetPostsParams {
     page: number;

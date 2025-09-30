@@ -47,7 +47,7 @@ This document provides comprehensive SSL/TLS configuration for the Flavours plat
 1. Go to SSL/TLS → Origin Server
 2. Click "Create Certificate"
 3. Select "Let Cloudflare generate a private key and a CSR"
-4. Set hostnames: `flavours.com`, `*.flavours.com`
+4. Set hostnames: `flavours.club`, `*.flavours.club`
 5. Set certificate validity: 15 years
 6. Click "Create"
 
@@ -89,7 +89,7 @@ add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 
 ```nginx
 server {
     listen 443 ssl http2;
-    server_name flavours.com www.flavours.com;
+    server_name flavours.club www.flavours.club;
 
     # SSL Configuration
     ssl_certificate /etc/nginx/ssl/cloudflare-origin.pem;
@@ -217,7 +217,7 @@ server {
 # Redirect HTTP to HTTPS
 server {
     listen 80;
-    server_name flavours.com www.flavours.com;
+    server_name flavours.club www.flavours.club;
     return 301 https://$server_name$request_uri;
 }
 ```
@@ -227,8 +227,8 @@ server {
 #### SSL Configuration Block
 ```apache
 <VirtualHost *:443>
-    ServerName flavours.com
-    ServerAlias www.flavours.com
+    ServerName flavours.club
+    ServerAlias www.flavours.club
 
     # SSL Configuration
     SSLEngine on
@@ -257,9 +257,9 @@ server {
 
 # Redirect HTTP to HTTPS
 <VirtualHost *:80>
-    ServerName flavours.com
-    ServerAlias www.flavours.com
-    Redirect permanent / https://flavours.com/
+    ServerName flavours.club
+    ServerAlias www.flavours.club
+    Redirect permanent / https://flavours.club/
 </VirtualHost>
 ```
 
@@ -331,7 +331,7 @@ services:
 #### Command Line Testing
 ```bash
 # Test SSL connection
-openssl s_client -connect flavours.com:443 -servername flavours.com
+openssl s_client -connect flavours.club:443 -servername flavours.club
 
 # Check certificate details
 openssl x509 -in cloudflare-origin.pem -text -noout
