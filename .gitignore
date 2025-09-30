@@ -1,57 +1,38 @@
-# Dependencies
-/node_modules
-/.pnp
-.pnp.js
+# dependencies
+node_modules/
 
-# Testing
-/coverage
+# production build
+.next/
+dist/
+out/
 
-# Next.js
-/.next/
-/out/
+# local env files
+.env
+.env.local
+.env.*.local
 
-# Production
-/build
-
-# Misc
-.DS_Store
-*.pem
-
-# Debug
+# log files
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Local env files
-.env*.local
-.env
+# OS generated files
+.DS_Store
+Thumbs.db
 
-# Vercel
-.vercel
-
-# TypeScript
-*.tsbuildinfo
-next-env.d.ts
-
-# IDE
+# IDE settings
 .vscode/
 .idea/
 
-# OS
-Thumbs.db
+# Mac system files
+.DS_Store
 
-# Backend specific
-/backend/dist
-/backend/logs
-/backend/.env
+# TypeScript cache
+*.tsbuildinfo
 
-# Admin dashboard
-/admin-dashboard/.next/
-/admin-dashboard/out/
+# Optional: test coverage
+coverage/
 
-# Static export
-/out
-
-# Deployment
-.deployment
-.azure
+# Optional: lock files (if using yarn/npm interchangeably)
+package-lock.json
+yarn.lock

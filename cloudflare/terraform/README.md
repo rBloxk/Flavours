@@ -46,3 +46,4 @@ terraform apply
 - Version controlled configuration
 - Reproducible deployments
 - Easy to modify and update
+

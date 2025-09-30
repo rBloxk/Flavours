@@ -150,3 +150,4 @@ resource "cloudflare_bot_management" "main" {
   allow_advertising = false
   allow_automation = false
 }
+
