@@ -1,6 +1,4 @@
-"use client"
-
-import React from 'react'
+import { getCurrentDate } from '@/lib/date-utils'
 import { ResourceHeader } from '@/components/layout/resource-header'
 import { ResourceFooter } from '@/components/layout/resource-footer'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -204,7 +202,7 @@ export default function PrivacyPage() {
           <div className="flex items-center justify-center space-x-4">
             <Badge variant="outline" className="flex items-center space-x-1">
               <Calendar className="h-3 w-3" />
-              <span>Last updated: {new Date().toLocaleDateString()}</span>
+              <span>Last updated: {getCurrentDate()}</span>
             </Badge>
             <Badge variant="outline" className="flex items-center space-x-1">
               <FileText className="h-3 w-3" />

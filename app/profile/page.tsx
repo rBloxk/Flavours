@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { QRCodeModal } from '@/components/ui/qr-code-modal'
 import { useProfile } from '@/hooks/use-profile'
+import { formatDate, formatPostDate } from '@/lib/date-utils'
 import { 
   User, 
   Mail, 
@@ -413,7 +414,7 @@ export default function ProfilePage() {
               <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                 <div className="flex items-center space-x-1">
                   <Calendar className="h-4 w-4" />
-                  <span>Joined {new Date(currentProfile.created_at).toLocaleDateString()}</span>
+                  <span>Joined {formatDate(currentProfile.created_at)}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <Mail className="h-4 w-4" />
@@ -574,7 +575,7 @@ export default function ProfilePage() {
                           </Badge>
                         </div>
                         <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                          <span>{new Date(post.created_at).toLocaleDateString()}</span>
+                          <span>{formatPostDate(post.created_at)}</span>
                           <span>•</span>
                           <div className="flex items-center space-x-1">
                             {getPrivacyIcon(post.privacy)}

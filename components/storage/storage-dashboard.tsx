@@ -19,6 +19,7 @@ import {
   Calendar,
   User
 } from 'lucide-react'
+import { formatFileDate } from '@/lib/date-utils'
 
 interface StorageStats {
   totalFiles: number
@@ -344,7 +345,7 @@ export function StorageDashboard() {
                     <div>
                       <p className="font-medium">{file.originalName}</p>
                       <p className="text-sm text-muted-foreground">
-                        {formatFileSize(file.size)} • {new Date(file.uploadedAt).toLocaleDateString()}
+                        {formatFileSize(file.size)} • {formatFileDate(file.uploadedAt)}
                       </p>
                     </div>
                   </div>

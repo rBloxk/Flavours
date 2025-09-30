@@ -11,6 +11,7 @@ import { usePerformanceMonitor } from '@/lib/performance-monitor'
 import { useRealtimeContext } from '@/components/providers/realtime-provider'
 import { Heart, MessageSquare, Share, MoreHorizontal, Play, Pause } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { formatPostDate } from '@/lib/date-utils'
 
 interface Post {
   id: string
@@ -315,7 +316,7 @@ function PostCard({ post, isLiked, onLikeToggle, onView, onLeave, index }: PostC
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              @{post.creator.username} • {new Date(post.created_at).toLocaleDateString()}
+              @{post.creator.username} • {formatPostDate(post.created_at)}
             </p>
           </div>
           <Button variant="ghost" size="sm">

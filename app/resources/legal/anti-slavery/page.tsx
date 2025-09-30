@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import { getCurrentDate } from '@/lib/date-utils'
 import { ResourceHeader } from '@/components/layout/resource-header'
 import { ResourceFooter } from '@/components/layout/resource-footer'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -346,7 +346,7 @@ export default function AntiSlaveryPage() {
               <div className="flex items-center space-x-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
-                  This statement is reviewed and updated annually. Last updated: {new Date().toLocaleDateString()}
+                  This statement is reviewed and updated annually. Last updated: {getCurrentDate()}
                 </span>
               </div>
             </div>

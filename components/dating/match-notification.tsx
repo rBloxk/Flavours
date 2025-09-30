@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Heart, MessageCircle, X, Sparkles } from 'lucide-react'
 import { DatingMatch, DatingProfile } from '@/app/dating/page'
+import { formatDate } from '@/lib/date-utils'
 
 interface MatchNotificationProps {
   match: DatingMatch
@@ -232,7 +233,7 @@ export function MatchList({ matches, profiles, onSelectMatch }: MatchListProps) 
                         {matchedProfile.age} years old • {matchedProfile.location}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        Matched {new Date(match.created_at).toLocaleDateString()}
+                        Matched {formatDate(match.created_at)}
                       </p>
                     </div>
 
