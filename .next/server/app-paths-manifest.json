@@ -1,8 +1,9 @@
 {
-  "/feed/page": "app/feed/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/video/[id]/page": "app/video/[id]/page.js",
+  "/profile/page": "app/profile/page.js",
+  "/notifications/page": "app/notifications/page.js",
+  "/tube/page": "app/tube/page.js",
   "/page": "app/page.js",
-  "/flavourstalk/page": "app/flavourstalk/page.js",
-  "/resources/support/store/page": "app/resources/support/store/page.js",
-  "/resources/resources/blog/page": "app/resources/resources/blog/page.js",
-  "/resources/business/contract/page": "app/resources/business/contract/page.js"
+  "/dating/page": "app/dating/page.js"
 }
