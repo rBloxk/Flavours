@@ -1,8 +1,8 @@
 {
-  "/page": "app/page.js",
-  "/resources/support/store/page": "app/resources/support/store/page.js",
   "/feed/page": "app/feed/page.js",
-  "/resources/business/contract/page": "app/resources/business/contract/page.js",
-  "/resources/support/help/page": "app/resources/support/help/page.js",
-  "/resources/resources/blog/page": "app/resources/resources/blog/page.js"
+  "/page": "app/page.js",
+  "/flavourstalk/page": "app/flavourstalk/page.js",
+  "/resources/support/store/page": "app/resources/support/store/page.js",
+  "/resources/resources/blog/page": "app/resources/resources/blog/page.js",
+  "/resources/business/contract/page": "app/resources/business/contract/page.js"
 }

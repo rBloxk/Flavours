@@ -60,6 +60,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/resources/business/contract/page.js"
+    ],
+    "/flavourstalk/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/flavourstalk/page.js"
     ]
   }
 }
