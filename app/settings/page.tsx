@@ -428,7 +428,7 @@ export default function SettingsPage() {
     { id: 'bank-account', label: 'Add Bank Account (To Earn)', icon: Building2 },
     { id: 'credit-card', label: 'Add Credit Card (To Subscribe)', icon: Wallet },
     { id: 'billing', label: 'Billing', icon: Crown },
-    { id: 'age-verification', label: 'Age Verification', icon: Shield }
+    { id: 'age-verification', label: 'Age Verification', icon: ShieldAlert }
   ]
 
   const handleSave = async () => {
@@ -1857,7 +1857,7 @@ export default function SettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Shield className="h-5 w-5" />
+            <ShieldCheck className="h-5 w-5" />
             <span>Age Verification</span>
           </CardTitle>
           <CardDescription>
