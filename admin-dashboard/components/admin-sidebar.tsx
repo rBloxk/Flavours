@@ -25,6 +25,7 @@ import {
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Users', href: '/users', icon: Users },
+  { name: 'Age Verification', href: '/age-verification', icon: CreditCard },
   { name: 'Creators', href: '/creators', icon: Shield },
   { name: 'Moderation', href: '/moderation', icon: AlertTriangle },
   { name: 'Reports', href: '/reports', icon: MessageCircle },
@@ -125,3 +126,4 @@ export function AdminSidebar() {
     </>
   )
 }
+

@@ -165,7 +165,7 @@ export function ResourceFooter() {
         <div className="border-t border-muted-foreground/20 pt-6 mt-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm text-muted-foreground">
-              <p>&copy; 2025 Flavours Platform. All rights reserved.</p>
+              <p>&copy; 2025 Flavours Platform. A rBloxk Product. All rights reserved.</p>
             </div>
             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
               <span className="flex items-center space-x-1">
@@ -188,7 +188,7 @@ export function ResourceFooter() {
               </div>
               <div className="flex items-center space-x-1">
                 <MapPin className="h-3 w-3" />
-                <span>San Francisco, CA</span>
+                <span>San Francisco, CA, USA</span>
               </div>
             </div>
           </div>

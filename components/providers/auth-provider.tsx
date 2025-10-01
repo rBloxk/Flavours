@@ -109,6 +109,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshAuth = async () => {
     try {
+      // Skip API call in demo mode - just check localStorage
+      if (typeof window !== 'undefined') {
+        const isAuthenticated = localStorage.getItem('isAuthenticated')
+        const demoUserStr = localStorage.getItem('demoUser')
+        
+        if (isAuthenticated === 'true' && demoUserStr) {
+          try {
+            const demoUser = JSON.parse(demoUserStr)
+            const mockUser: User = {
+              id: demoUser.id,
+              email: demoUser.email,
+              username: demoUser.username,
+              display_name: demoUser.display_name,
+              is_creator: demoUser.is_creator,
+              is_verified: false,
+              avatar_url: demoUser.avatar_url,
+              bio: 'Demo user bio',
+              followers_count: 0,
+              following_count: 0,
+              posts_count: 0,
+              created_at: demoUser.created_at,
+              updated_at: demoUser.created_at
+            }
+            
+            setUser(mockUser)
+            setProfile({
+              id: demoUser.id,
+              user_id: demoUser.id,
+              username: demoUser.username,
+              display_name: demoUser.display_name,
+              avatar_url: demoUser.avatar_url,
+              bio: 'Demo user bio',
+              is_creator: demoUser.is_creator,
+              is_verified: false,
+              created_at: demoUser.created_at
+            })
+            return
+          } catch (error) {
+            console.error('Demo user parsing error:', error)
+          }
+        }
+      }
+      
+      // If not in demo mode or no demo user, try API call
       const response = await apiClient.getCurrentUser()
       
       if (response.data) {
@@ -130,8 +174,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error) {
       console.error('Refresh auth error:', error)
-      setUser(null)
-      setProfile(null)
+      // In demo mode, don't clear user state on API errors
+      if (typeof window !== 'undefined') {
+        const isAuthenticated = localStorage.getItem('isAuthenticated')
+        if (isAuthenticated !== 'true') {
+          setUser(null)
+          setProfile(null)
+        }
+      } else {
+        setUser(null)
+        setProfile(null)
+      }
     }
   }
 

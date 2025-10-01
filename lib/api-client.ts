@@ -163,7 +163,7 @@ export interface User {
 
 // Create singleton instance
 const apiClient = new ApiClient({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || '/api',
   timeout: 10000,
   retries: 3,
   retryDelay: 1000

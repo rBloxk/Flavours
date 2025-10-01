@@ -10,7 +10,7 @@ interface ConditionalLayoutProps {
 
 export function ConditionalLayout({ children }: ConditionalLayoutProps) {
   const pathname = usePathname()
-  const { user, isLoading } = useAuth()
+  const { user, loading } = useAuth()
 
   // Pages that should show the full layout with navigation and sidebar
   const authenticatedPages = [
@@ -36,6 +36,17 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
     '/statements',
     '/notifications'
   ]
+
+  // Show loading state while authentication is being checked
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    )
+  }
 
   // Check if current page should show the full layout
   const shouldShowFullLayout = authenticatedPages.some(page => 

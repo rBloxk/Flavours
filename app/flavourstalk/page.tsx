@@ -270,7 +270,7 @@ export default function FlavoursTalkPage() {
           </div>
 
           {/* Safety Notice */}
-          <div className="bg-gray-100 dark:bg-gray-800 backdrop-blur-sm border border-gray-300 dark:border-gray-600 rounded-lg p-4 max-w-md mx-auto">
+          <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-4 max-w-md mx-auto">
             <div className="flex items-start gap-3">
               <Shield className="h-5 w-5 text-gray-800 dark:text-white mt-0.5 flex-shrink-0" />
               <div className="text-left">

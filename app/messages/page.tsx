@@ -1159,7 +1159,7 @@ export default function MessagesPage() {
                   )}
 
                   {/* Message Input */}
-                  <div className="border-t p-4 flex-shrink-0">
+              <div className="border-t px-4 pt-8 pb-2 flex-shrink-0">
                 <div className="flex items-end space-x-2">
                   <Button 
                     size="sm" 

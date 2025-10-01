@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { AuthGuard } from '@/components/auth/auth-guard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -298,7 +298,12 @@ import {
   SmilingFaceWithTear,
   PartyingFace,
   SmilingFaceWithSunglasses,
-  FaceWithMonocle
+  FaceWithMonocle,
+  IdCard,
+  CheckCircle2,
+  FileText,
+  Mail,
+  Monitor
 } from 'lucide-react'
 import { AddPaymentMethodModal } from '@/components/ui/add-payment-method-modal'
 import { UpgradeCreatorModal } from '@/components/ui/upgrade-creator-modal'
@@ -318,6 +323,13 @@ export default function SettingsPage() {
   const [showBankAccountModal, setShowBankAccountModal] = useState(false)
   const [showCreditCardModal, setShowCreditCardModal] = useState(false)
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<any>(null)
+  
+  // Age verification state
+  const [showAgeVerificationModal, setShowAgeVerificationModal] = useState(false)
+  const [ageVerificationStatus, setAgeVerificationStatus] = useState<'pending' | 'verified' | 'rejected' | 'not_submitted'>('not_submitted')
+  const [governmentIdFile, setGovernmentIdFile] = useState<File | null>(null)
+  const [selfieFile, setSelfieFile] = useState<File | null>(null)
+  const [isUploadingVerification, setIsUploadingVerification] = useState(false)
   
   // New state for enhanced features
   const [contentSettings, setContentSettings] = useState({
@@ -415,7 +427,8 @@ export default function SettingsPage() {
     { id: 'data', label: 'Data Management', icon: Database },
     { id: 'bank-account', label: 'Add Bank Account (To Earn)', icon: Building2 },
     { id: 'credit-card', label: 'Add Credit Card (To Subscribe)', icon: Wallet },
-    { id: 'billing', label: 'Billing', icon: Crown }
+    { id: 'billing', label: 'Billing', icon: Crown },
+    { id: 'age-verification', label: 'Age Verification', icon: Shield }
   ]
 
   const handleSave = async () => {
@@ -462,6 +475,65 @@ export default function SettingsPage() {
     setShowDeleteModal(true)
   }
 
+  // Age verification handlers
+  const handleGovernmentIdUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      setGovernmentIdFile(file)
+    }
+  }
+
+  const handleSelfieUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      setSelfieFile(file)
+    }
+  }
+
+  const handleAgeVerificationSubmit = async () => {
+    if (!governmentIdFile || !selfieFile) {
+      alert('Please upload both government ID and selfie')
+      return
+    }
+
+    setIsUploadingVerification(true)
+    try {
+      // Simulate API call for age verification
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      setAgeVerificationStatus('pending')
+      setShowAgeVerificationModal(false)
+      alert('Age verification submitted successfully. You will be notified once verified.')
+      
+      // In a real app, this would:
+      // 1. Upload files to secure storage
+      // 2. Create verification request in database
+      // 3. Notify admin dashboard
+      // 4. Send confirmation email to user
+    } catch (error) {
+      console.error('Age verification error:', error)
+      alert('Failed to submit age verification. Please try again.')
+    } finally {
+      setIsUploadingVerification(false)
+    }
+  }
+
+  // Simulate admin review notification (in real app, this would come from WebSocket or polling)
+  useEffect(() => {
+    const checkVerificationStatus = () => {
+      // This would be a real API call to check verification status
+      // For demo purposes, we'll simulate a status change after 5 seconds
+      if (ageVerificationStatus === 'pending') {
+        setTimeout(() => {
+          // Simulate admin approval
+          setAgeVerificationStatus('verified')
+          alert('🎉 Your age verification has been approved! You can now access age-restricted content.')
+        }, 5000)
+      }
+    }
+
+    checkVerificationStatus()
+  }, [ageVerificationStatus])
+
   const handlePaymentMethodUpdated = () => {
     // Update the payment method in the list
     if (selectedPaymentMethod) {
@@ -501,11 +573,11 @@ export default function SettingsPage() {
       case 'tip':
         return DollarSign
       case 'ppv':
-        return CreditCardIcon
+        return CreditCard
       case 'payout':
         return Receipt
       default:
-        return CreditCardIcon
+        return CreditCard
     }
   }
 
@@ -1673,7 +1745,7 @@ export default function SettingsPage() {
                   <div key={method.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center space-x-3">
                       <div className="flex items-center justify-center w-10 h-6 bg-gray-100 rounded">
-                        <CreditCardIcon className="h-4 w-4 text-gray-600" />
+                        <CreditCard className="h-4 w-4 text-gray-600" />
                       </div>
                       <div>
                         <div className="flex items-center space-x-2">
@@ -1716,7 +1788,7 @@ export default function SettingsPage() {
             </>
           ) : (
             <div className="text-center py-8">
-              <CreditCardIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="font-medium mb-2">No payment methods</h3>
               <p className="text-sm text-muted-foreground mb-4">Add a payment method to get started</p>
               <Button variant="outline" onClick={() => setShowPaymentModal(true)}>
@@ -1772,6 +1844,151 @@ export default function SettingsPage() {
               <Receipt className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="font-medium mb-2">No billing history</h3>
               <p className="text-sm text-muted-foreground">Your transactions will appear here</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  )
+
+  const renderAgeVerificationSettings = () => (
+    <div className="space-y-6">
+      {/* Age Verification */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Shield className="h-5 w-5" />
+            <span>Age Verification</span>
+          </CardTitle>
+          <CardDescription>
+            Verify your age with government ID and facial biometric to access age-restricted content
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium">Verification Status</h4>
+              <p className="text-sm text-muted-foreground">
+                {ageVerificationStatus === 'verified' && 'Your age has been verified'}
+                {ageVerificationStatus === 'pending' && 'Verification is under review'}
+                {ageVerificationStatus === 'rejected' && 'Verification was rejected. Please resubmit.'}
+                {ageVerificationStatus === 'not_submitted' && 'Age verification required for some content'}
+              </p>
+            </div>
+            <Badge 
+              variant={
+                ageVerificationStatus === 'verified' ? 'default' :
+                ageVerificationStatus === 'pending' ? 'secondary' :
+                ageVerificationStatus === 'rejected' ? 'destructive' : 'outline'
+              }
+            >
+              {ageVerificationStatus === 'verified' && (
+                <>
+                  <CheckCircle2 className="h-3 w-3 mr-1" />
+                  Verified
+                </>
+              )}
+              {ageVerificationStatus === 'pending' && (
+                <>
+                  <Clock className="h-3 w-3 mr-1" />
+                  Pending
+                </>
+              )}
+              {ageVerificationStatus === 'rejected' && (
+                <>
+                  <AlertCircle className="h-3 w-3 mr-1" />
+                  Rejected
+                </>
+              )}
+              {ageVerificationStatus === 'not_submitted' && 'Not Submitted'}
+            </Badge>
+          </div>
+
+          {ageVerificationStatus !== 'verified' && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="government-id">Government ID</Label>
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      id="government-id"
+                      type="file"
+                      accept="image/*,.pdf"
+                      onChange={handleGovernmentIdUpload}
+                      className="flex-1"
+                    />
+                    <IdCard className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  {governmentIdFile && (
+                    <p className="text-sm text-green-600">
+                      ✓ {governmentIdFile.name} uploaded
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="selfie">Selfie Photo</Label>
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      id="selfie"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleSelfieUpload}
+                      className="flex-1"
+                    />
+                    <Camera className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  {selfieFile && (
+                    <p className="text-sm text-green-600">
+                      ✓ {selfieFile.name} uploaded
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
+                <div className="flex items-start space-x-2">
+                  <Shield className="h-5 w-5 text-blue-600 mt-0.5" />
+                  <div>
+                    <h5 className="font-medium text-blue-900 dark:text-blue-100">Privacy & Security</h5>
+                    <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                      Your documents are encrypted and processed securely. We only verify your age and do not store your personal information.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <Button 
+                onClick={handleAgeVerificationSubmit}
+                disabled={!governmentIdFile || !selfieFile || isUploadingVerification}
+                className="w-full"
+              >
+                {isUploadingVerification ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Submitting Verification...
+                  </>
+                ) : (
+                  <>
+                    <Shield className="h-4 w-4 mr-2" />
+                    Submit Age Verification
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
+
+          {ageVerificationStatus === 'verified' && (
+            <div className="bg-green-50 dark:bg-green-950 p-4 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <CheckCircle2 className="h-5 w-5 text-green-600" />
+                <div>
+                  <h5 className="font-medium text-green-900 dark:text-green-100">Age Verified</h5>
+                  <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+                    You can now access age-restricted content and features on the platform.
+                  </p>
+                </div>
+              </div>
             </div>
           )}
         </CardContent>
@@ -1853,6 +2070,8 @@ export default function SettingsPage() {
         return renderCreditCardSettings()
       case 'billing':
         return renderBillingSettings()
+      case 'age-verification':
+        return renderAgeVerificationSettings()
       default:
         return renderProfileSettings()
     }

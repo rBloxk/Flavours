@@ -84,11 +84,11 @@ export default function ContractPage() {
       category: "Revenue Sharing",
       description: "How earnings are calculated and distributed",
       terms: [
-        "Standard creators: 70% revenue share",
-        "Premium creators: 80% revenue share",
+        "Standard creators: 77% revenue share",
+        "Premium creators: 88% revenue share",
         "Enterprise clients: Custom rates",
-        "Payment processing: 2.9% + $0.30 per transaction",
-        "Minimum payout: $50 USD"
+        "Payment processing: 2.9% + $3.00 per transaction",
+        "Minimum payout: $300 USD"
       ]
     },
     {

@@ -67,7 +67,7 @@ export default function LandingPage() {
     <div className="min-h-screen">
       <ResourceHeader />
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700">
+      <section className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 dark:from-black dark:via-black dark:bg-background">
         <div className="container mx-auto px-6 py-24 text-center">
           <div className="flex items-center justify-center space-x-2 mb-6">
           </div>
@@ -170,7 +170,7 @@ export default function LandingPage() {
                 <FlavoursLogo size="md" />
               </div>
               <div className="text-sm text-muted-foreground">
-                <p>&copy; 2025 Flavours Platform</p>
+                <p>&copy; 2025 Flavours Platform.</p>
               </div>
               
               <div className="flex items-center space-x-4">
@@ -256,7 +256,7 @@ export default function LandingPage() {
           <div className="border-t border-muted-foreground/20 pt-6">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-sm text-muted-foreground">
-            <p>&copy; 2025 Flavours Platform. All rights reserved.</p>
+            <p>&copy; 2025 Flavours Platform. A rBloxk Product. All rights reserved.</p>
               </div>
               <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                 <span>Made with ❤️ for Creators and Flavours</span>

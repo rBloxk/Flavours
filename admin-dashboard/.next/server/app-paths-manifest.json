@@ -1,4 +1,8 @@
 {
-  "/page": "app/page.js",
-  "/reports/page": "app/reports/page.js"
+  "/age-verification/page": "app/age-verification/page.js",
+  "/users/page": "app/users/page.js",
+  "/api/age-verification/route": "app/api/age-verification/route.js",
+  "/creators/page": "app/creators/page.js",
+  "/moderation/page": "app/moderation/page.js",
+  "/page": "app/page.js"
 }
