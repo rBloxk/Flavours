@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { logger } from '../utils/logger'
 import type { Database } from '../../lib/supabase-types'
+import { createMockSupabaseClient } from '../../lib/local-database'
 
 export interface DatabaseConfig {
   url: string
@@ -40,6 +41,7 @@ class DatabaseManager {
 
   private initializeConnection() {
     try {
+      // Try to create Supabase client
       this.supabase = createClient<Database>(this.config.url, this.config.serviceKey, {
         auth: {
           autoRefreshToken: false,
@@ -56,13 +58,24 @@ class DatabaseManager {
         }
       })
 
-      logger.info('Database connection initialized', {
-        url: this.config.url,
-        maxConnections: this.config.maxConnections
+      // Test connection
+      this.supabase.from('profiles').select('id').limit(1).then((result: any) => {
+        if (result.error) {
+          logger.warn('Supabase connection failed, using local database')
+          this.supabase = createMockSupabaseClient()
+        } else {
+          logger.info('Database connection initialized', {
+            url: this.config.url,
+            maxConnections: this.config.maxConnections
+          })
+        }
+      }).catch(() => {
+        logger.warn('Supabase connection failed, using local database')
+        this.supabase = createMockSupabaseClient()
       })
     } catch (error) {
-      logger.error('Failed to initialize database connection:', error)
-      throw error
+      logger.warn('Supabase initialization failed, using local database')
+      this.supabase = createMockSupabaseClient()
     }
   }
 

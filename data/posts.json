@@ -1,5 +1,47 @@
 [
   {
+    "id": "post_1759411003464",
+    "creator": {
+      "id": "demo-user-1759370026017",
+      "username": "demo_user",
+      "displayName": "Demo User",
+      "avatarUrl": "https://ui-avatars.com/api/?name=Demo+User&background=random",
+      "isVerified": false,
+      "followerCount": 1000,
+      "engagementRate": 5,
+      "category": [
+        "general"
+      ],
+      "trustScore": 8,
+      "isFollowing": false
+    },
+    "content": "Testing the post creation functionality! This is a test post to see if the platform works correctly.",
+    "mediaFiles": [],
+    "isPaid": false,
+    "privacy": "public",
+    "metrics": {
+      "likesCount": 0,
+      "commentsCount": 0,
+      "sharesCount": 0,
+      "viewsCount": 0,
+      "engagementRate": 0,
+      "viralityScore": 0,
+      "freshnessScore": 10,
+      "relevanceScore": 5
+    },
+    "createdAt": "now",
+    "createdAtTimestamp": 1759411003464,
+    "tags": [],
+    "mentions": [],
+    "location": "",
+    "category": "general",
+    "isLiked": false,
+    "isBookmarked": false,
+    "isViewed": false,
+    "qualityScore": 5,
+    "trendingScore": 5
+  },
+  {
     "id": "1",
     "creator": {
       "id": "user_1",

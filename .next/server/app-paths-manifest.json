@@ -1,3 +1,14 @@
 {
-  "/page": "app/page.js"
+  "/feed/page": "app/feed/page.js",
+  "/api/posts/route": "app/api/posts/route.js",
+  "/api/posts/[id]/interact/route": "app/api/posts/[id]/interact/route.js",
+  "/tube/page": "app/tube/page.js",
+  "/licks/page": "app/licks/page.js",
+  "/flavourstalk/page": "app/flavourstalk/page.js",
+  "/profile/[username]/likes/page": "app/profile/[username]/likes/page.js",
+  "/favorites/page": "app/favorites/page.js",
+  "/storage/page": "app/storage/page.js",
+  "/api/storage/user/route": "app/api/storage/user/route.js",
+  "/api/storage/content/route": "app/api/storage/content/route.js",
+  "/api/storage/activity/route": "app/api/storage/activity/route.js"
 }

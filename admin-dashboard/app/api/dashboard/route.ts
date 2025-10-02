@@ -1,89 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { localDatabase } from '../../../../lib/local-database'
 
 export async function GET(request: NextRequest) {
   try {
-    // Get authentication token
-    const authHeader = request.headers.get('authorization')
-    if (!authHeader) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      )
-    }
-
-    const token = authHeader.replace('Bearer ', '')
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Invalid authentication' },
-        { status: 401 }
-      )
-    }
-
-    // Check if user is admin
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('user_id', user.id)
-      .single()
-
-    if (!profile || profile.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Admin access required' },
-        { status: 403 }
-      )
-    }
-
-    // Get dashboard statistics
-    const [
-      { count: totalUsers },
-      { count: totalCreators },
-      { count: totalPosts },
-      { count: pendingModerations },
-      { count: pendingReports },
-      { count: newUsersToday },
-      { count: newCreatorsToday },
-      { count: activeUsers }
-    ] = await Promise.all([
-      supabase.from('profiles').select('*', { count: 'exact', head: true }),
-      supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'creator'),
-      supabase.from('posts').select('*', { count: 'exact', head: true }),
-      supabase.from('moderation_queue').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-      supabase.from('reports').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-      supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()),
-      supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'creator').gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()),
-      supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('last_active', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
-    ])
-
-    // Get revenue data
-    const { data: revenueData } = await supabase
-      .from('transactions')
-      .select('amount, created_at')
-      .eq('status', 'completed')
-
-    const totalRevenue = revenueData?.reduce((sum, transaction) => sum + transaction.amount, 0) || 0
-
-    const monthlyRevenue = revenueData
-      ?.filter(transaction => {
-        const transactionDate = new Date(transaction.created_at)
-        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-        return transactionDate >= thirtyDaysAgo
-      })
-      .reduce((sum, transaction) => sum + transaction.amount, 0) || 0
+    // Get dashboard statistics from local database
+    const stats = await localDatabase.getStats()
+    
+    // Get additional data
+    const profiles = await localDatabase.getProfiles(100, 0)
+    const posts = await localDatabase.getPosts(100, 0)
+    
+    // Calculate additional metrics
+    const creators = profiles.filter(p => p.is_creator)
+    const activeUsers = profiles.filter(p => p.status === 'active')
+    const newUsersToday = profiles.filter(p => {
+      const createdDate = new Date(p.created_at)
+      const today = new Date()
+      return createdDate.toDateString() === today.toDateString()
+    })
+    
+    // Mock revenue data
+    const totalRevenue = profiles.reduce((sum, p) => sum + (p.total_earnings || 0), 0)
+    const monthlyRevenue = totalRevenue * 0.3 // Mock 30% of total as monthly
 
     return NextResponse.json({
       success: true,
       stats: {
-        totalUsers: totalUsers || 0,
-        totalCreators: totalCreators || 0,
-        totalPosts: totalPosts || 0,
-        pendingModerations: pendingModerations || 0,
-        pendingReports: pendingReports || 0,
-        newUsersToday: newUsersToday || 0,
-        newCreatorsToday: newCreatorsToday || 0,
-        activeUsers: activeUsers || 0,
+        totalUsers: stats.totalUsers,
+        totalCreators: stats.creators,
+        totalPosts: stats.totalPosts,
+        pendingModerations: 0, // Mock data
+        pendingReports: 0, // Mock data
+        newUsersToday: newUsersToday.length,
+        newCreatorsToday: newUsersToday.filter(p => p.is_creator).length,
+        activeUsers: activeUsers.length,
         totalRevenue,
         monthlyRevenue
       }

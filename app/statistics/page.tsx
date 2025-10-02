@@ -321,9 +321,9 @@ export default function StatisticsPage() {
     <AuthGuard>
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Statistics</h1>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Statistics</h1>
             <p className="text-muted-foreground">Track your performance and growth metrics</p>
           </div>
           <div className="flex items-center space-x-3">
@@ -343,35 +343,35 @@ export default function StatisticsPage() {
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>
-          </div>
         </div>
+      </div>
 
         {/* Overview Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon
-            return (
+        {stats.map((stat, index) => {
+          const Icon = stat.icon
+          return (
               <Card key={index} className="hover:shadow-md transition-shadow">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">{stat.title}</p>
-                      <p className="text-2xl font-bold">{stat.value}</p>
-                      <Badge variant="secondary" className="text-xs">
-                        {stat.change}
-                      </Badge>
-                    </div>
+                    <p className="text-sm text-muted-foreground">{stat.title}</p>
+                    <p className="text-2xl font-bold">{stat.value}</p>
+                    <Badge variant="secondary" className="text-xs">
+                      {stat.change}
+                    </Badge>
+                  </div>
                     <div className={`p-3 rounded-lg ${stat.bgColor}`}>
                       <Icon className={`h-6 w-6 ${stat.color}`} />
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
-        </div>
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
 
-        {/* Charts Section */}
+      {/* Charts Section */}
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -382,40 +382,40 @@ export default function StatisticsPage() {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Views Over Time</CardTitle>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Views Over Time</CardTitle>
                   <CardDescription>Daily view count for the selected period</CardDescription>
-                </CardHeader>
-                <CardContent>
+          </CardHeader>
+          <CardContent>
                   <SimpleChart data={viewsData} type="bar" />
-                </CardContent>
-              </Card>
+          </CardContent>
+        </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Engagement Breakdown</CardTitle>
-                  <CardDescription>Distribution of engagement types</CardDescription>
-                </CardHeader>
-                <CardContent>
+        <Card>
+          <CardHeader>
+            <CardTitle>Engagement Breakdown</CardTitle>
+            <CardDescription>Distribution of engagement types</CardDescription>
+          </CardHeader>
+          <CardContent>
                   <SimplePieChart data={engagementData} />
-                </CardContent>
-              </Card>
-            </div>
+          </CardContent>
+        </Card>
+      </div>
           </TabsContent>
 
           <TabsContent value="content" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Top Performing Content</CardTitle>
+      <Card>
+        <CardHeader>
+          <CardTitle>Top Performing Content</CardTitle>
                 <CardDescription>Your most engaging posts for the selected period</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
+        </CardHeader>
+        <CardContent className="space-y-4">
                 {topContent.map((content, index) => (
                   <div key={content.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-lg flex items-center justify-center">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-lg flex items-center justify-center">
                         <span className="text-white font-bold">{index + 1}</span>
                       </div>
                       <div className="space-y-1">
@@ -598,7 +598,7 @@ export default function StatisticsPage() {
                 <div className="flex justify-between items-center">
                   <span className="text-sm">Wednesday 7-9 PM</span>
                   <Badge variant="outline">High</Badge>
-                </div>
+            </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm">Friday 5-7 PM</span>
                   <Badge variant="outline">High</Badge>
@@ -621,11 +621,11 @@ export default function StatisticsPage() {
                 <div className="flex items-center space-x-2">
                   <Star className="h-4 w-4 text-yellow-500" />
                   <span className="text-sm">Videos perform 3x better than posts</span>
-                </div>
+              </div>
                 <div className="flex items-center space-x-2">
                   <TrendingUp className="h-4 w-4 text-green-500" />
                   <span className="text-sm">Fitness content has highest engagement</span>
-                </div>
+            </div>
                 <div className="flex items-center space-x-2">
                   <Clock className="h-4 w-4 text-blue-500" />
                   <span className="text-sm">Average watch time increased 15%</span>
@@ -633,10 +633,10 @@ export default function StatisticsPage() {
                 <div className="flex items-center space-x-2">
                   <Users className="h-4 w-4 text-purple-500" />
                   <span className="text-sm">New followers up 25% this month</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
         </div>
       </div>
     </AuthGuard>

@@ -26,9 +26,7 @@ export default function LandingPage() {
     )
   }
 
-  if (user) {
-    return null // Will redirect to feed
-  }
+  // Show landing page for all users, with different CTAs based on auth status
 
   const features = [
     {
@@ -150,12 +148,25 @@ export default function LandingPage() {
             your community is waiting for you.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-4">
-            <Button size="lg" variant="secondary" onClick={() => router.push('/auth')} className="text-lg px-8 w-full sm:w-auto">
-              Sign Up Now
-            </Button>
-            <Button size="lg" variant="outline" onClick={() => router.push('/auth')} className="text-lg px-8 bg-transparent border-white text-white hover:bg-white hover:text-purple-600 w-full sm:w-auto">
-              Explore Creators
-            </Button>
+            {user ? (
+              <>
+                <Button size="lg" variant="secondary" onClick={() => router.push('/feed')} className="text-lg px-8 w-full sm:w-auto">
+                  Go to Feed
+                </Button>
+                <Button size="lg" variant="outline" onClick={() => router.push('/explore')} className="text-lg px-8 bg-transparent border-white text-white hover:bg-white hover:text-purple-600 w-full sm:w-auto">
+                  Explore Creators
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button size="lg" variant="secondary" onClick={() => router.push('/auth')} className="text-lg px-8 w-full sm:w-auto">
+                  Sign Up Now
+                </Button>
+                <Button size="lg" variant="outline" onClick={() => router.push('/auth')} className="text-lg px-8 bg-transparent border-white text-white hover:bg-white hover:text-purple-600 w-full sm:w-auto">
+                  Explore Creators
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </section>

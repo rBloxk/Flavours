@@ -17,7 +17,9 @@ import {
   Users,
   ArrowLeft,
   Clock,
-  Eye
+  Eye,
+  Send,
+  Loader2
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { PostOptionsOverlay } from '@/components/ui/post-options-overlay'
@@ -65,6 +67,23 @@ interface Post {
   trendingScore: number
 }
 
+interface Comment {
+  id: string
+  content: string
+  user_id: string
+  post_id: string
+  created_at: string
+  likes_count: number
+  parent_comment_id?: string | null
+  profiles: {
+    username: string
+    display_name: string
+    avatar_url: string
+    is_verified: boolean
+  }
+  replies?: Comment[]
+}
+
 export default function PostDetailPage() {
   const params = useParams()
   const router = useRouter()
@@ -74,6 +93,18 @@ export default function PostDetailPage() {
   const [isLiked, setIsLiked] = useState(false)
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [likesCount, setLikesCount] = useState(0)
+  
+  // Comment state
+  const [comments, setComments] = useState<Comment[]>([])
+  const [newComment, setNewComment] = useState('')
+  const [isLoadingComments, setIsLoadingComments] = useState(false)
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false)
+  const [commentLikes, setCommentLikes] = useState<Record<string, boolean>>({})
+  
+  // Reply state
+  const [replyingTo, setReplyingTo] = useState<string | null>(null)
+  const [replyText, setReplyText] = useState('')
+  const [isSubmittingReply, setIsSubmittingReply] = useState(false)
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -105,6 +136,158 @@ export default function PostDetailPage() {
 
     fetchPost()
   }, [params.id])
+
+  // Comment functions
+  const fetchComments = async () => {
+    if (!params.id) return
+    
+    setIsLoadingComments(true)
+    try {
+      const response = await fetch(`/api/posts/comments?postId=${params.id}`)
+      if (response.ok) {
+        const data = await response.json()
+        setComments(data.comments || [])
+      }
+    } catch (error) {
+      console.error('Error fetching comments:', error)
+      toast.error('Failed to load comments')
+    } finally {
+      setIsLoadingComments(false)
+    }
+  }
+
+  const handleSubmitComment = async () => {
+    if (!newComment.trim() || !user) return
+    
+    setIsSubmittingComment(true)
+    try {
+      const response = await fetch('/api/posts/comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          postId: params.id,
+          content: newComment.trim()
+        })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setComments(prev => [data.comment, ...prev])
+        setNewComment('')
+        toast.success('Comment posted successfully')
+      } else {
+        throw new Error('Failed to post comment')
+      }
+    } catch (error) {
+      console.error('Error posting comment:', error)
+      toast.error('Failed to post comment')
+    } finally {
+      setIsSubmittingComment(false)
+    }
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSubmitComment()
+    }
+  }
+
+  const handleCommentLike = async (commentId: string) => {
+    try {
+      const response = await fetch(`/api/comments/${commentId}/like`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({})
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        // Update the comment in the local state (including replies)
+        setComments(prev => prev.map(comment => {
+          if (comment.id === commentId) {
+            return { ...comment, likes_count: data.likesCount }
+          }
+          // Check replies
+          if (comment.replies) {
+            const updatedReplies = comment.replies.map(reply => 
+              reply.id === commentId 
+                ? { ...reply, likes_count: data.likesCount }
+                : reply
+            )
+            return { ...comment, replies: updatedReplies }
+          }
+          return comment
+        }))
+        // Update the like state for this comment
+        setCommentLikes(prev => ({
+          ...prev,
+          [commentId]: data.liked
+        }))
+        toast.success(data.liked ? 'Comment liked!' : 'Comment unliked!')
+      }
+    } catch (error) {
+      console.error('Error liking comment:', error)
+      toast.error('Failed to like comment')
+    }
+  }
+
+  const handleReply = async (commentId: string) => {
+    if (!replyText.trim()) return
+    
+    setIsSubmittingReply(true)
+    try {
+      const response = await fetch(`/api/comments/${commentId}/reply`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          content: replyText.trim()
+        })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        // Add the reply to the comment
+        setComments(prev => prev.map(comment => {
+          if (comment.id === commentId) {
+            return {
+              ...comment,
+              replies: [...(comment.replies || []), data.reply]
+            }
+          }
+          return comment
+        }))
+        setReplyText('')
+        setReplyingTo(null)
+        toast.success('Reply posted successfully!')
+      }
+    } catch (error) {
+      console.error('Error posting reply:', error)
+      toast.error('Failed to post reply')
+    } finally {
+      setIsSubmittingReply(false)
+    }
+  }
+
+  const handleReplyKeyPress = (e: React.KeyboardEvent, commentId: string) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleReply(commentId)
+    }
+  }
+
+  // Load comments when post is loaded
+  useEffect(() => {
+    if (post) {
+      fetchComments()
+    }
+  }, [post])
 
   const handleLike = async () => {
     try {
@@ -454,10 +637,183 @@ export default function PostDetailPage() {
       {/* Comments Section */}
       <Card>
         <CardContent className="p-6">
-          <h3 className="font-semibold mb-4">Comments</h3>
+          <h3 className="font-semibold mb-4">Comments ({comments.length})</h3>
+          
+          {/* Comments List */}
+          <div className="space-y-4">
+            {isLoadingComments ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin" />
+                <span className="ml-2 text-muted-foreground">Loading comments...</span>
+              </div>
+            ) : comments.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>Comments feature coming soon!</p>
+                <p>No comments yet. Be the first to comment!</p>
+              </div>
+            ) : (
+              comments
+                .filter(comment => !comment.parent_comment_id) // Only show top-level comments
+                .map((comment) => (
+                  <div key={comment.id} className="space-y-3">
+                    {/* Main Comment */}
+                    <div className="flex items-start space-x-3">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={comment.profiles.avatar_url} alt={comment.profiles.display_name} />
+                        <AvatarFallback>
+                          {comment.profiles.display_name?.charAt(0) || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <div className="bg-muted rounded-lg p-3">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <p className="text-sm font-medium">{comment.profiles.display_name}</p>
+                            {comment.profiles.is_verified && (
+                              <Crown className="h-3 w-3 text-yellow-500" />
+                            )}
+                            <span className="text-xs text-muted-foreground">
+                              @{comment.profiles.username}
+                            </span>
+                          </div>
+                          <p className="text-sm whitespace-pre-wrap">{comment.content}</p>
+                        </div>
+                        <div className="flex items-center space-x-4 mt-2 text-xs text-muted-foreground">
+                          <span>{new Date(comment.created_at).toLocaleString()}</span>
+                          <button 
+                            className={`hover:underline ${commentLikes[comment.id] ? 'text-red-600 font-medium' : ''}`}
+                            onClick={() => handleCommentLike(comment.id)}
+                          >
+                            {commentLikes[comment.id] ? 'Unlike' : 'Like'} ({comment.likes_count || 0})
+                          </button>
+                          <button 
+                            className="hover:underline"
+                            onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
+                          >
+                            Reply
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Reply Input - Nested under comment */}
+                    {replyingTo === comment.id && (
+                      <div className="ml-11">
+                        <div className="flex items-center space-x-3">
+                          <Avatar className="h-6 w-6">
+                            <AvatarImage src={user?.avatar_url || "https://ui-avatars.com/api/?name=You&background=random"} />
+                            <AvatarFallback>Y</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <textarea
+                              value={replyText}
+                              onChange={(e) => setReplyText(e.target.value)}
+                              onKeyPress={(e) => handleReplyKeyPress(e, comment.id)}
+                              placeholder="Write a reply..."
+                              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none text-sm"
+                              rows={2}
+                              disabled={isSubmittingReply}
+                            />
+                          </div>
+                          <div className="flex space-x-2">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => {
+                                setReplyingTo(null)
+                                setReplyText('')
+                              }}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => handleReply(comment.id)}
+                              disabled={!replyText.trim() || isSubmittingReply}
+                            >
+                              {isSubmittingReply ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Send className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Replies - Nested under comment */}
+                    {comment.replies && comment.replies.length > 0 && (
+                      <div className="ml-11 space-y-3">
+                        {comment.replies.map((reply) => (
+                          <div key={reply.id} className="flex items-start space-x-3">
+                            <Avatar className="h-6 w-6">
+                              <AvatarImage src={reply.profiles.avatar_url} alt={reply.profiles.display_name} />
+                              <AvatarFallback>
+                                {reply.profiles.display_name?.charAt(0) || 'U'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1">
+                              <div className="bg-muted rounded-lg p-3">
+                                <div className="flex items-center space-x-2 mb-1">
+                                  <p className="text-sm font-medium">{reply.profiles.display_name}</p>
+                                  {reply.profiles.is_verified && (
+                                    <Crown className="h-3 w-3 text-yellow-500" />
+                                  )}
+                                  <span className="text-xs text-muted-foreground">
+                                    @{reply.profiles.username}
+                                  </span>
+                                </div>
+                                <p className="text-sm whitespace-pre-wrap">{reply.content}</p>
+                              </div>
+                              <div className="flex items-center space-x-4 mt-1 text-xs text-muted-foreground">
+                                <span>{new Date(reply.created_at).toLocaleString()}</span>
+                                <button 
+                                  className={`hover:underline ${commentLikes[reply.id] ? 'text-red-600 font-medium' : ''}`}
+                                  onClick={() => handleCommentLike(reply.id)}
+                                >
+                                  {commentLikes[reply.id] ? 'Unlike' : 'Like'} ({reply.likes_count || 0})
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))
+            )}
+          </div>
+          
+          {/* Comment Input */}
+          <div className="mt-4 pt-4 border-t">
+            <div className="flex items-center space-x-3">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={user?.avatar_url || "https://ui-avatars.com/api/?name=You&background=random"} />
+                <AvatarFallback>Y</AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <textarea
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Write a comment..."
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                  rows={2}
+                  disabled={isSubmittingComment}
+                />
+              </div>
+              <Button 
+                size="sm" 
+                onClick={handleSubmitComment}
+                disabled={!newComment.trim() || isSubmittingComment}
+              >
+                {isSubmittingComment ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

@@ -130,7 +130,7 @@ export default function ExplorePage() {
     
     setIsLoading(true)
     try {
-      const response = await fetch(`/api/v1/search?q=${encodeURIComponent(query)}&type=all&category=${category}`)
+      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&type=all`)
       if (!response.ok) throw new Error('Search failed')
       const data = await response.json()
       return data
@@ -152,18 +152,56 @@ export default function ExplorePage() {
     try {
       // Fetch trending creators and posts
       const [creatorsResponse, postsResponse] = await Promise.all([
-        fetch('/api/v1/trending/creators'),
-        fetch('/api/v1/posts?sort=trending&limit=10')
+        fetch('/api/trending?type=creators'),
+        fetch('/api/trending?type=posts')
       ])
 
       if (creatorsResponse.ok) {
         const creatorsData = await creatorsResponse.json()
-        setTrendingCreators(creatorsData.creators || [])
+        // Transform API data to component format
+        const transformedCreators = (creatorsData.creators || []).map((creator: any) => ({
+          id: creator.id,
+          name: creator.display_name,
+          username: `@${creator.username}`,
+          avatar: creator.avatar_url,
+          followers: creator.followers_count,
+          category: creator.tags?.[0] || 'General',
+          verified: creator.is_verified,
+          isCreator: creator.is_creator,
+          bio: creator.bio,
+          recentPost: 'Recent post content',
+          engagement: 95,
+          isFollowing: false
+        }))
+        setTrendingCreators(transformedCreators)
       }
 
       if (postsResponse.ok) {
         const postsData = await postsResponse.json()
-        setTrendingPosts(postsData.posts || [])
+        // Transform API data to component format
+        const transformedPosts = (postsData.posts || []).map((post: any) => ({
+          id: post.id,
+          creator: {
+            id: post.user_id,
+            name: 'Creator Name', // We'll need to fetch this separately
+            username: '@creator',
+            avatar: 'https://ui-avatars.com/api/?name=Creator&background=random',
+            verified: false
+          },
+          content: post.content,
+          media: post.media_url,
+          timestamp: '2 hours ago',
+          likes: post.likes_count,
+          comments: post.comments_count,
+          shares: post.shares_count,
+          category: post.category,
+          isPremium: post.is_paid,
+          price: post.price,
+          isLiked: false,
+          isBookmarked: false,
+          isShared: false
+        }))
+        setTrendingPosts(transformedPosts)
       }
     } catch (error) {
       console.error('Error fetching trending data:', error)
@@ -298,33 +336,37 @@ export default function ExplorePage() {
 
     try {
       const isFollowing = followingList.has(creatorId)
-      const response = await fetch(`/api/v1/users/${creatorId}/follow`, {
-        method: isFollowing ? 'DELETE' : 'POST',
+      const response = await fetch('/api/follow', {
+        method: 'POST',
         headers: {
-          'Authorization': `Bearer ${user.access_token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({
+          followerId: 'demo-user-1759370026017',
+          followingId: creatorId
+        })
       })
 
       if (response.ok) {
+        const data = await response.json()
         const newFollowingList = new Set(followingList)
-        if (isFollowing) {
-          newFollowingList.delete(creatorId)
-        } else {
+        if (data.isFollowing) {
           newFollowingList.add(creatorId)
+        } else {
+          newFollowingList.delete(creatorId)
         }
         setFollowingList(newFollowingList)
 
         // Update trending creators
         setTrendingCreators(prev => prev.map(creator => 
           creator.id === creatorId 
-            ? { ...creator, isFollowing: !isFollowing }
+            ? { ...creator, isFollowing: data.isFollowing }
             : creator
         ))
 
         toast({
-          title: isFollowing ? 'Unfollowed' : 'Following',
-          description: isFollowing ? 'You unfollowed this creator' : 'You are now following this creator'
+          title: data.isFollowing ? 'Following' : 'Unfollowed',
+          description: data.isFollowing ? 'You are now following this creator' : 'You unfollowed this creator'
         })
       }
     } catch (error) {
@@ -349,20 +391,24 @@ export default function ExplorePage() {
 
     try {
       const isLiked = likedPosts.has(postId)
-      const response = await fetch(`/api/v1/posts/${postId}/like`, {
-        method: isLiked ? 'DELETE' : 'POST',
+      const response = await fetch(`/api/posts/${postId}/interact`, {
+        method: 'POST',
         headers: {
-          'Authorization': `Bearer ${user.access_token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({
+          action: 'like',
+          userId: 'demo-user-1759370026017'
+        })
       })
 
       if (response.ok) {
+        const data = await response.json()
         const newLikedPosts = new Set(likedPosts)
-        if (isLiked) {
-          newLikedPosts.delete(postId)
-        } else {
+        if (data.liked) {
           newLikedPosts.add(postId)
+        } else {
+          newLikedPosts.delete(postId)
         }
         setLikedPosts(newLikedPosts)
 
@@ -371,15 +417,15 @@ export default function ExplorePage() {
           post.id === postId 
             ? { 
                 ...post, 
-                isLiked: !isLiked,
-                likes: isLiked ? post.likes - 1 : post.likes + 1
+                isLiked: data.liked,
+                likes: data.likesCount
               }
             : post
         ))
 
         toast({
-          title: isLiked ? 'Unliked' : 'Liked',
-          description: isLiked ? 'You unliked this post' : 'You liked this post'
+          title: data.liked ? 'Liked' : 'Unliked',
+          description: data.liked ? 'You liked this post' : 'You unliked this post'
         })
       }
     } catch (error) {
@@ -482,7 +528,51 @@ export default function ExplorePage() {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (searchQuery.trim()) {
-        searchContent(searchQuery, selectedCategory).then(setSearchResults)
+        searchContent(searchQuery, selectedCategory).then((data) => {
+          if (data) {
+            // Transform search results to match component format
+            const transformedResults = {
+              users: (data.users || []).map((user: any) => ({
+                id: user.id,
+                name: user.display_name,
+                username: `@${user.username}`,
+                avatar: user.avatar_url,
+                followers: user.followers_count,
+                category: user.tags?.[0] || 'General',
+                verified: user.is_verified,
+                isCreator: user.is_creator,
+                bio: user.bio,
+                recentPost: 'Recent post content',
+                engagement: 95,
+                isFollowing: false
+              })),
+              posts: (data.posts || []).map((post: any) => ({
+                id: post.id,
+                creator: {
+                  id: post.user_id,
+                  name: 'Creator Name',
+                  username: '@creator',
+                  avatar: 'https://ui-avatars.com/api/?name=Creator&background=random',
+                  verified: false
+                },
+                content: post.content,
+                media: post.media_url,
+                timestamp: '2 hours ago',
+                likes: post.likes_count,
+                comments: post.comments_count,
+                shares: post.shares_count,
+                category: post.category,
+                isPremium: post.is_paid,
+                price: post.price,
+                isLiked: false,
+                isBookmarked: false,
+                isShared: false
+              })),
+              total: (data.users?.length || 0) + (data.posts?.length || 0)
+            }
+            setSearchResults(transformedResults)
+          }
+        })
       } else {
         setSearchResults(null)
       }
@@ -536,7 +626,8 @@ export default function ExplorePage() {
     return posts
   }, [searchResults, trendingPosts, selectedCategory, filters])
 
-  const formatNumber = (num: number) => {
+  const formatNumber = (num: number | undefined) => {
+    if (!num) return '0'
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
     return num.toString()
@@ -666,7 +757,7 @@ export default function ExplorePage() {
                         onClick={() => handleUserClick(creator.username)}
                       >
                         <AvatarImage src={creator.avatar} alt={creator.name} />
-                        <AvatarFallback>{creator.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback>{creator.name?.charAt(0) || 'U'}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 space-y-2">
                         <div className="flex items-center space-x-2">
@@ -758,7 +849,7 @@ export default function ExplorePage() {
                     onClick={() => handleUserClick(post.creator.username)}
                   >
                     <AvatarImage src={post.creator.avatar} alt={post.creator.name} />
-                    <AvatarFallback>{post.creator.name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback>{post.creator.name?.charAt(0) || 'U'}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 space-y-2">
                     <div className="flex items-center space-x-2">

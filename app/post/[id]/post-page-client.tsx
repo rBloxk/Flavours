@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -17,10 +17,13 @@ import {
   Crown,
   Lock,
   Users,
-  Globe
+  Globe,
+  Send,
+  Loader2
 } from 'lucide-react'
 import { PostOptionsOverlay } from '@/components/ui/post-options-overlay'
 import { useAuth } from '@/components/providers/auth-provider'
+import { useToast } from '@/hooks/use-toast'
 
 // Mock data - in a real app, this would come from an API
 const mockPosts = [
@@ -89,11 +92,33 @@ const mockPosts = [
   }
 ]
 
+// Comment type
+interface Comment {
+  id: string
+  content: string
+  user_id: string
+  post_id: string
+  created_at: string
+  profiles: {
+    username: string
+    display_name: string
+    avatar_url: string
+    is_verified: boolean
+  }
+}
+
 export function PostPageClient() {
   const params = useParams()
   const router = useRouter()
   const { user } = useAuth()
+  const { toast } = useToast()
   const postId = params.id as string
+  
+  // State for comments
+  const [comments, setComments] = useState<Comment[]>([])
+  const [newComment, setNewComment] = useState('')
+  const [isLoadingComments, setIsLoadingComments] = useState(false)
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false)
   
   // Find the post by ID
   const post = mockPosts.find(p => p.id === postId)
@@ -231,6 +256,80 @@ export function PostPageClient() {
       throw error
     }
   }
+
+  // Comment functions
+  const fetchComments = async () => {
+    if (!postId) return
+    
+    setIsLoadingComments(true)
+    try {
+      const response = await fetch(`/api/posts/comments?postId=${postId}`)
+      if (response.ok) {
+        const data = await response.json()
+        setComments(data.comments || [])
+      }
+    } catch (error) {
+      console.error('Error fetching comments:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to load comments',
+        variant: 'destructive'
+      })
+    } finally {
+      setIsLoadingComments(false)
+    }
+  }
+
+  const handleSubmitComment = async () => {
+    if (!newComment.trim() || !user) return
+    
+    setIsSubmittingComment(true)
+    try {
+      const response = await fetch('/api/posts/comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          postId,
+          content: newComment.trim()
+        })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setComments(prev => [data.comment, ...prev])
+        setNewComment('')
+        toast({
+          title: 'Success',
+          description: 'Comment posted successfully'
+        })
+      } else {
+        throw new Error('Failed to post comment')
+      }
+    } catch (error) {
+      console.error('Error posting comment:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to post comment',
+        variant: 'destructive'
+      })
+    } finally {
+      setIsSubmittingComment(false)
+    }
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSubmitComment()
+    }
+  }
+
+  // Load comments on mount
+  useEffect(() => {
+    fetchComments()
+  }, [postId])
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-4 lg:py-6 space-y-4 lg:space-y-6">
@@ -387,59 +486,82 @@ export function PostPageClient() {
       {/* Comments Section */}
       <Card className="mt-6">
         <CardContent className="p-8">
-          <h3 className="font-semibold mb-4">Comments</h3>
+          <h3 className="font-semibold mb-4">Comments ({comments.length})</h3>
+          
+          {/* Comments List */}
           <div className="space-y-4">
-            <div className="flex items-start space-x-3">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="https://ui-avatars.com/api/?name=John+Doe&background=random" />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <div className="bg-muted rounded-lg p-3">
-                  <p className="text-sm font-medium mb-1">John Doe</p>
-                  <p className="text-sm">Amazing work! The lighting is perfect 🔥</p>
-                </div>
-                <div className="flex items-center space-x-4 mt-2 text-xs text-muted-foreground">
-                  <span>2 hours ago</span>
-                  <button className="hover:underline">Like</button>
-                  <button className="hover:underline">Reply</button>
-                </div>
+            {isLoadingComments ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin" />
+                <span className="ml-2 text-muted-foreground">Loading comments...</span>
               </div>
-            </div>
-            
-            <div className="flex items-start space-x-3">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="https://ui-avatars.com/api/?name=Jane+Smith&background=random" />
-                <AvatarFallback>JS</AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <div className="bg-muted rounded-lg p-3">
-                  <p className="text-sm font-medium mb-1">Jane Smith</p>
-                  <p className="text-sm">Love the behind-the-scenes content! Keep it up! 👏</p>
-                </div>
-                <div className="flex items-center space-x-4 mt-2 text-xs text-muted-foreground">
-                  <span>1 hour ago</span>
-                  <button className="hover:underline">Like</button>
-                  <button className="hover:underline">Reply</button>
-                </div>
+            ) : comments.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>No comments yet. Be the first to comment!</p>
               </div>
-            </div>
+            ) : (
+              comments.map((comment) => (
+                <div key={comment.id} className="flex items-start space-x-3">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={comment.profiles.avatar_url} alt={comment.profiles.display_name} />
+                    <AvatarFallback>
+                      {comment.profiles.display_name?.charAt(0) || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="bg-muted rounded-lg p-3">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <p className="text-sm font-medium">{comment.profiles.display_name}</p>
+                        {comment.profiles.is_verified && (
+                          <Crown className="h-3 w-3 text-yellow-500" />
+                        )}
+                        <span className="text-xs text-muted-foreground">
+                          @{comment.profiles.username}
+                        </span>
+                      </div>
+                      <p className="text-sm whitespace-pre-wrap">{comment.content}</p>
+                    </div>
+                    <div className="flex items-center space-x-4 mt-2 text-xs text-muted-foreground">
+                      <span>{new Date(comment.created_at).toLocaleString()}</span>
+                      <button className="hover:underline">Like</button>
+                      <button className="hover:underline">Reply</button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
           
+          {/* Comment Input */}
           <div className="mt-4 pt-4 border-t">
             <div className="flex items-center space-x-3">
               <Avatar className="h-8 w-8">
-                <AvatarImage src="https://ui-avatars.com/api/?name=You&background=random" />
+                <AvatarImage src={user?.avatar_url || "https://ui-avatars.com/api/?name=You&background=random"} />
                 <AvatarFallback>Y</AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <input
-                  type="text"
+                <textarea
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  onKeyPress={handleKeyPress}
                   placeholder="Write a comment..."
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-2 py-2 border rounded-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                  rows={2}
+                  disabled={isSubmittingComment}
                 />
               </div>
-              <Button size="sm">Post</Button>
+              <Button 
+                size="sm" 
+                onClick={handleSubmitComment}
+                disabled={!newComment.trim() || isSubmittingComment}
+              >
+                {isSubmittingComment ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </Button>
             </div>
           </div>
         </CardContent>
