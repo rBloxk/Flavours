@@ -1,889 +1,589 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+// Consolidated Supabase Database Types
+// This file contains all database types used across the application
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "13.0.4"
-  }
   public: {
     Tables: {
-      audit_logs: {
+      profiles: {
         Row: {
-          action: string
-          created_at: string | null
           id: string
-          ip_address: unknown | null
-          new_values: Json | null
-          old_values: Json | null
-          resource_id: string | null
-          resource_type: string
-          user_agent: string | null
-          user_id: string | null
+          user_id: string
+          username: string
+          display_name: string
+          email: string
+          avatar_url: string | null
+          bio: string | null
+          website: string | null
+          location: string | null
+          birth_date: string | null
+          is_verified: boolean
+          is_creator: boolean
+          role: 'user' | 'creator' | 'admin' | 'moderator'
+          status: string
+          followers_count: number
+          following_count: number
+          posts_count: number
+          total_earnings: number
+          subscription_count: number
+          last_active: string | null
+          last_login: string | null
+          admin_notes: string | null
+          tags: string[] | null
+          created_at: string
+          updated_at: string
         }
         Insert: {
-          action: string
-          created_at?: string | null
           id?: string
-          ip_address?: unknown | null
-          new_values?: Json | null
-          old_values?: Json | null
-          resource_id?: string | null
-          resource_type: string
-          user_agent?: string | null
-          user_id?: string | null
+          user_id: string
+          username: string
+          display_name: string
+          email: string
+          avatar_url?: string | null
+          bio?: string | null
+          website?: string | null
+          location?: string | null
+          birth_date?: string | null
+          is_verified?: boolean
+          is_creator?: boolean
+          role?: 'user' | 'creator' | 'admin' | 'moderator'
+          status?: string
+          followers_count?: number
+          following_count?: number
+          posts_count?: number
+          total_earnings?: number
+          subscription_count?: number
+          last_active?: string | null
+          last_login?: string | null
+          admin_notes?: string | null
+          tags?: string[] | null
+          created_at?: string
+          updated_at?: string
         }
         Update: {
-          action?: string
-          created_at?: string | null
           id?: string
-          ip_address?: unknown | null
-          new_values?: Json | null
-          old_values?: Json | null
-          resource_id?: string | null
-          resource_type?: string
-          user_agent?: string | null
-          user_id?: string | null
+          user_id?: string
+          username?: string
+          display_name?: string
+          email?: string
+          avatar_url?: string | null
+          bio?: string | null
+          website?: string | null
+          location?: string | null
+          birth_date?: string | null
+          is_verified?: boolean
+          is_creator?: boolean
+          role?: 'user' | 'creator' | 'admin' | 'moderator'
+          status?: string
+          followers_count?: number
+          following_count?: number
+          posts_count?: number
+          total_earnings?: number
+          subscription_count?: number
+          last_active?: string | null
+          last_login?: string | null
+          admin_notes?: string | null
+          tags?: string[] | null
+          created_at?: string
+          updated_at?: string
         }
-        Relationships: []
-      }
-      consent_records: {
-        Row: {
-          consent_type: string
-          created_at: string | null
-          granted: boolean
-          id: string
-          ip_address: unknown | null
-          user_agent: string | null
-          user_id: string | null
-          version: string
-        }
-        Insert: {
-          consent_type: string
-          created_at?: string | null
-          granted: boolean
-          id?: string
-          ip_address?: unknown | null
-          user_agent?: string | null
-          user_id?: string | null
-          version: string
-        }
-        Update: {
-          consent_type?: string
-          created_at?: string | null
-          granted?: boolean
-          id?: string
-          ip_address?: unknown | null
-          user_agent?: string | null
-          user_id?: string | null
-          version?: string
-        }
-        Relationships: []
-      }
-      creators: {
-        Row: {
-          created_at: string | null
-          id: string
-          payout_method: string | null
-          payout_schedule: string | null
-          profile_id: string | null
-          subscription_price: number | null
-          tax_info: Json | null
-          total_earnings: number | null
-          total_subscribers: number | null
-          updated_at: string | null
-          user_id: string | null
-          verification_status: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          payout_method?: string | null
-          payout_schedule?: string | null
-          profile_id?: string | null
-          subscription_price?: number | null
-          tax_info?: Json | null
-          total_earnings?: number | null
-          total_subscribers?: number | null
-          updated_at?: string | null
-          user_id?: string | null
-          verification_status?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          payout_method?: string | null
-          payout_schedule?: string | null
-          profile_id?: string | null
-          subscription_price?: number | null
-          tax_info?: Json | null
-          total_earnings?: number | null
-          total_subscribers?: number | null
-          updated_at?: string | null
-          user_id?: string | null
-          verification_status?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "creators_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      feature_flags: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          id: string
-          is_enabled: boolean | null
-          name: string
-          rollout_percentage: number | null
-          target_users: Json | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          is_enabled?: boolean | null
-          name: string
-          rollout_percentage?: number | null
-          target_users?: Json | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          is_enabled?: boolean | null
-          name?: string
-          rollout_percentage?: number | null
-          target_users?: Json | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      kyc_verifications: {
-        Row: {
-          created_at: string | null
-          expires_at: string | null
-          id: string
-          provider: string
-          provider_session_id: string | null
-          rejection_reason: string | null
-          status: string | null
-          updated_at: string | null
-          user_id: string | null
-          verification_type: string
-          verified_data: Json | null
-        }
-        Insert: {
-          created_at?: string | null
-          expires_at?: string | null
-          id?: string
-          provider: string
-          provider_session_id?: string | null
-          rejection_reason?: string | null
-          status?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-          verification_type: string
-          verified_data?: Json | null
-        }
-        Update: {
-          created_at?: string | null
-          expires_at?: string | null
-          id?: string
-          provider?: string
-          provider_session_id?: string | null
-          rejection_reason?: string | null
-          status?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-          verification_type?: string
-          verified_data?: Json | null
-        }
-        Relationships: []
-      }
-      media_assets: {
-        Row: {
-          content_hash: string | null
-          created_at: string | null
-          dimensions: Json | null
-          duration_seconds: number | null
-          file_size: number | null
-          id: string
-          is_processed: boolean | null
-          post_id: string | null
-          processing_status: string | null
-          thumbnail_url: string | null
-          type: string
-          url: string
-        }
-        Insert: {
-          content_hash?: string | null
-          created_at?: string | null
-          dimensions?: Json | null
-          duration_seconds?: number | null
-          file_size?: number | null
-          id?: string
-          is_processed?: boolean | null
-          post_id?: string | null
-          processing_status?: string | null
-          thumbnail_url?: string | null
-          type: string
-          url: string
-        }
-        Update: {
-          content_hash?: string | null
-          created_at?: string | null
-          dimensions?: Json | null
-          duration_seconds?: number | null
-          file_size?: number | null
-          id?: string
-          is_processed?: boolean | null
-          post_id?: string | null
-          processing_status?: string | null
-          thumbnail_url?: string | null
-          type?: string
-          url?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "media_assets_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      messages: {
-        Row: {
-          content: string
-          created_at: string | null
-          id: string
-          is_deleted_by_recipient: boolean | null
-          is_deleted_by_sender: boolean | null
-          is_paid: boolean | null
-          is_read: boolean | null
-          media_url: string | null
-          price: number | null
-          recipient_id: string | null
-          sender_id: string | null
-          thread_id: string | null
-        }
-        Insert: {
-          content: string
-          created_at?: string | null
-          id?: string
-          is_deleted_by_recipient?: boolean | null
-          is_deleted_by_sender?: boolean | null
-          is_paid?: boolean | null
-          is_read?: boolean | null
-          media_url?: string | null
-          price?: number | null
-          recipient_id?: string | null
-          sender_id?: string | null
-          thread_id?: string | null
-        }
-        Update: {
-          content?: string
-          created_at?: string | null
-          id?: string
-          is_deleted_by_recipient?: boolean | null
-          is_deleted_by_sender?: boolean | null
-          is_paid?: boolean | null
-          is_read?: boolean | null
-          media_url?: string | null
-          price?: number | null
-          recipient_id?: string | null
-          sender_id?: string | null
-          thread_id?: string | null
-        }
-        Relationships: []
-      }
-      moderation_items: {
-        Row: {
-          content_id: string
-          content_type: string
-          created_at: string | null
-          description: string | null
-          id: string
-          priority: string | null
-          reason: string
-          reported_by: string | null
-          review_notes: string | null
-          reviewed_at: string | null
-          reviewer_id: string | null
-          status: string | null
-        }
-        Insert: {
-          content_id: string
-          content_type: string
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          priority?: string | null
-          reason: string
-          reported_by?: string | null
-          review_notes?: string | null
-          reviewed_at?: string | null
-          reviewer_id?: string | null
-          status?: string | null
-        }
-        Update: {
-          content_id?: string
-          content_type?: string
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          priority?: string | null
-          reason?: string
-          reported_by?: string | null
-          review_notes?: string | null
-          reviewed_at?: string | null
-          reviewer_id?: string | null
-          status?: string | null
-        }
-        Relationships: []
       }
       posts: {
         Row: {
-          comments_count: number | null
-          content: string
-          created_at: string | null
-          creator_id: string | null
           id: string
-          is_paid: boolean | null
-          is_preview: boolean | null
-          likes_count: number | null
-          price: number | null
-          scheduled_at: string | null
-          status: string | null
-          updated_at: string | null
-          views_count: number | null
-        }
-        Insert: {
-          comments_count?: number | null
-          content: string
-          created_at?: string | null
-          creator_id?: string | null
-          id?: string
-          is_paid?: boolean | null
-          is_preview?: boolean | null
-          likes_count?: number | null
-          price?: number | null
-          scheduled_at?: string | null
-          status?: string | null
-          updated_at?: string | null
-          views_count?: number | null
-        }
-        Update: {
-          comments_count?: number | null
-          content?: string
-          created_at?: string | null
-          creator_id?: string | null
-          id?: string
-          is_paid?: boolean | null
-          is_preview?: boolean | null
-          likes_count?: number | null
-          price?: number | null
-          scheduled_at?: string | null
-          status?: string | null
-          updated_at?: string | null
-          views_count?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "posts_creator_id_fkey"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "creators"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      profiles: {
-        Row: {
-          age_verified: boolean | null
-          avatar_url: string | null
-          bio: string | null
-          created_at: string | null
-          display_name: string
-          id: string
-          is_creator: boolean | null
-          is_verified: boolean | null
-          updated_at: string | null
-          user_id: string | null
-          username: string
-        }
-        Insert: {
-          age_verified?: boolean | null
-          avatar_url?: string | null
-          bio?: string | null
-          created_at?: string | null
-          display_name: string
-          id?: string
-          is_creator?: boolean | null
-          is_verified?: boolean | null
-          updated_at?: string | null
-          user_id?: string | null
-          username: string
-        }
-        Update: {
-          age_verified?: boolean | null
-          avatar_url?: string | null
-          bio?: string | null
-          created_at?: string | null
-          display_name?: string
-          id?: string
-          is_creator?: boolean | null
-          is_verified?: boolean | null
-          updated_at?: string | null
-          user_id?: string | null
-          username?: string
-        }
-        Relationships: []
-      }
-      reports: {
-        Row: {
-          content_id: string | null
-          content_type: string | null
-          created_at: string | null
-          description: string | null
-          id: string
-          reason: string
-          reported_user_id: string | null
-          reporter_id: string | null
-          resolution_notes: string | null
-          resolved_at: string | null
-          resolved_by: string | null
-          status: string | null
-        }
-        Insert: {
-          content_id?: string | null
-          content_type?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          reason: string
-          reported_user_id?: string | null
-          reporter_id?: string | null
-          resolution_notes?: string | null
-          resolved_at?: string | null
-          resolved_by?: string | null
-          status?: string | null
-        }
-        Update: {
-          content_id?: string | null
-          content_type?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          reason?: string
-          reported_user_id?: string | null
-          reporter_id?: string | null
-          resolution_notes?: string | null
-          resolved_at?: string | null
-          resolved_by?: string | null
-          status?: string | null
-        }
-        Relationships: []
-      }
-      subscription_plans: {
-        Row: {
-          created_at: string | null
-          creator_id: string | null
-          description: string | null
-          duration_days: number | null
-          features: Json | null
-          id: string
-          is_active: boolean | null
-          name: string
+          user_id: string
+          content: string | null
+          media_url: string | null
+          media_type: string | null
+          media_files: any | null
+          is_paid: boolean
           price: number
-          updated_at: string | null
+          privacy: 'public' | 'followers' | 'paid' | 'private'
+          tags: string[] | null
+          mentions: string[] | null
+          location: string | null
+          category: string | null
+          likes_count: number
+          comments_count: number
+          shares_count: number
+          views_count: number
+          engagement_rate: number
+          virality_score: number
+          freshness_score: number
+          relevance_score: number
+          quality_score: number
+          trending_score: number
+          is_featured: boolean
+          created_at: string
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
-          creator_id?: string | null
-          description?: string | null
-          duration_days?: number | null
-          features?: Json | null
           id?: string
-          is_active?: boolean | null
-          name: string
-          price: number
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          creator_id?: string | null
-          description?: string | null
-          duration_days?: number | null
-          features?: Json | null
-          id?: string
-          is_active?: boolean | null
-          name?: string
+          user_id: string
+          content?: string | null
+          media_url?: string | null
+          media_type?: string | null
+          media_files?: any | null
+          is_paid?: boolean
           price?: number
-          updated_at?: string | null
+          privacy?: 'public' | 'followers' | 'paid' | 'private'
+          tags?: string[] | null
+          mentions?: string[] | null
+          location?: string | null
+          category?: string | null
+          likes_count?: number
+          comments_count?: number
+          shares_count?: number
+          views_count?: number
+          engagement_rate?: number
+          virality_score?: number
+          freshness_score?: number
+          relevance_score?: number
+          quality_score?: number
+          trending_score?: number
+          is_featured?: boolean
+          created_at?: string
+          updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "subscription_plans_creator_id_fkey"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "creators"
-            referencedColumns: ["id"]
-          },
-        ]
+        Update: {
+          id?: string
+          user_id?: string
+          content?: string | null
+          media_url?: string | null
+          media_type?: string | null
+          media_files?: any | null
+          is_paid?: boolean
+          price?: number
+          privacy?: 'public' | 'followers' | 'paid' | 'private'
+          tags?: string[] | null
+          mentions?: string[] | null
+          location?: string | null
+          category?: string | null
+          likes_count?: number
+          comments_count?: number
+          shares_count?: number
+          views_count?: number
+          engagement_rate?: number
+          virality_score?: number
+          freshness_score?: number
+          relevance_score?: number
+          quality_score?: number
+          trending_score?: number
+          is_featured?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      comments: {
+        Row: {
+          id: string
+          post_id: string
+          user_id: string
+          parent_comment_id: string | null
+          content: string
+          likes_count: number
+          replies_count: number
+          is_edited: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          post_id: string
+          user_id: string
+          parent_comment_id?: string | null
+          content: string
+          likes_count?: number
+          replies_count?: number
+          is_edited?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          post_id?: string
+          user_id?: string
+          parent_comment_id?: string | null
+          content?: string
+          likes_count?: number
+          replies_count?: number
+          is_edited?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      follows: {
+        Row: {
+          id: string
+          follower_id: string
+          following_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          follower_id: string
+          following_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          follower_id?: string
+          following_id?: string
+          created_at?: string
+        }
+      }
+      likes: {
+        Row: {
+          id: string
+          user_id: string
+          post_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          post_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          post_id?: string
+          created_at?: string
+        }
+      }
+      bookmarks: {
+        Row: {
+          id: string
+          user_id: string
+          post_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          post_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          post_id?: string
+          created_at?: string
+        }
+      }
+      views: {
+        Row: {
+          id: string
+          user_id: string
+          post_id: string
+          ip_address: string | null
+          user_agent: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          post_id: string
+          ip_address?: string | null
+          user_agent?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          post_id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          created_at?: string
+        }
       }
       subscriptions: {
         Row: {
-          amount: number
-          auto_renew: boolean | null
-          created_at: string | null
-          creator_id: string | null
-          expires_at: string
           id: string
-          plan_id: string | null
-          status: string | null
-          updated_at: string | null
-          user_id: string | null
+          subscriber_id: string
+          creator_id: string
+          tier: string | null
+          price: number | null
+          status: string
+          started_at: string
+          expires_at: string | null
+          created_at: string
         }
         Insert: {
-          amount: number
-          auto_renew?: boolean | null
-          created_at?: string | null
-          creator_id?: string | null
-          expires_at: string
           id?: string
-          plan_id?: string | null
-          status?: string | null
-          updated_at?: string | null
-          user_id?: string | null
+          subscriber_id: string
+          creator_id: string
+          tier?: string | null
+          price?: number | null
+          status?: string
+          started_at?: string
+          expires_at?: string | null
+          created_at?: string
         }
         Update: {
-          amount?: number
-          auto_renew?: boolean | null
-          created_at?: string | null
-          creator_id?: string | null
-          expires_at?: string
           id?: string
-          plan_id?: string | null
-          status?: string | null
-          updated_at?: string | null
-          user_id?: string | null
+          subscriber_id?: string
+          creator_id?: string
+          tier?: string | null
+          price?: number | null
+          status?: string
+          started_at?: string
+          expires_at?: string | null
+          created_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "subscriptions_creator_id_fkey"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "creators"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "subscriptions_plan_id_fkey"
-            columns: ["plan_id"]
-            isOneToOne: false
-            referencedRelation: "subscription_plans"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tips: {
-        Row: {
-          amount: number
-          created_at: string | null
-          creator_id: string | null
-          id: string
-          message: string | null
-          post_id: string | null
-          transaction_id: string | null
-          user_id: string | null
-        }
-        Insert: {
-          amount: number
-          created_at?: string | null
-          creator_id?: string | null
-          id?: string
-          message?: string | null
-          post_id?: string | null
-          transaction_id?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          amount?: number
-          created_at?: string | null
-          creator_id?: string | null
-          id?: string
-          message?: string | null
-          post_id?: string | null
-          transaction_id?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tips_creator_id_fkey"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "creators"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tips_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tips_transaction_id_fkey"
-            columns: ["transaction_id"]
-            isOneToOne: false
-            referencedRelation: "transactions"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       transactions: {
         Row: {
-          amount: number
-          created_at: string | null
-          creator_id: string | null
-          currency: string | null
-          fees: number | null
           id: string
-          metadata: Json | null
-          net_amount: number | null
+          user_id: string
+          post_id: string | null
+          subscription_id: string | null
+          amount: number
+          currency: string
+          status: 'pending' | 'completed' | 'failed' | 'refunded'
           payment_method: string | null
-          payment_provider: string | null
-          payment_provider_id: string | null
-          status: string | null
-          type: string
-          updated_at: string | null
-          user_id: string | null
+          stripe_payment_intent_id: string | null
+          description: string | null
+          metadata: any | null
+          created_at: string
+          updated_at: string
         }
         Insert: {
-          amount: number
-          created_at?: string | null
-          creator_id?: string | null
-          currency?: string | null
-          fees?: number | null
           id?: string
-          metadata?: Json | null
-          net_amount?: number | null
+          user_id: string
+          post_id?: string | null
+          subscription_id?: string | null
+          amount: number
+          currency?: string
+          status?: 'pending' | 'completed' | 'failed' | 'refunded'
           payment_method?: string | null
-          payment_provider?: string | null
-          payment_provider_id?: string | null
-          status?: string | null
-          type: string
-          updated_at?: string | null
-          user_id?: string | null
+          stripe_payment_intent_id?: string | null
+          description?: string | null
+          metadata?: any | null
+          created_at?: string
+          updated_at?: string
         }
         Update: {
-          amount?: number
-          created_at?: string | null
-          creator_id?: string | null
-          currency?: string | null
-          fees?: number | null
           id?: string
-          metadata?: Json | null
-          net_amount?: number | null
+          user_id?: string
+          post_id?: string | null
+          subscription_id?: string | null
+          amount?: number
+          currency?: string
+          status?: 'pending' | 'completed' | 'failed' | 'refunded'
           payment_method?: string | null
-          payment_provider?: string | null
-          payment_provider_id?: string | null
-          status?: string | null
-          type?: string
-          updated_at?: string | null
-          user_id?: string | null
+          stripe_payment_intent_id?: string | null
+          description?: string | null
+          metadata?: any | null
+          created_at?: string
+          updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "transactions_creator_id_fkey"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "creators"
-            referencedColumns: ["id"]
-          },
-        ]
+      }
+      moderation_queue: {
+        Row: {
+          id: string
+          type: 'post' | 'user' | 'report' | 'comment'
+          status: 'pending' | 'approved' | 'rejected' | 'escalated'
+          post_id: string | null
+          user_id: string | null
+          report_id: string | null
+          reason: string | null
+          description: string | null
+          reported_by: string | null
+          reviewed_by: string | null
+          reviewed_at: string | null
+          review_notes: string | null
+          escalated_by: string | null
+          escalated_at: string | null
+          escalation_reason: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          type: 'post' | 'user' | 'report' | 'comment'
+          status?: 'pending' | 'approved' | 'rejected' | 'escalated'
+          post_id?: string | null
+          user_id?: string | null
+          report_id?: string | null
+          reason?: string | null
+          description?: string | null
+          reported_by?: string | null
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          review_notes?: string | null
+          escalated_by?: string | null
+          escalated_at?: string | null
+          escalation_reason?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          type?: 'post' | 'user' | 'report' | 'comment'
+          status?: 'pending' | 'approved' | 'rejected' | 'escalated'
+          post_id?: string | null
+          user_id?: string | null
+          report_id?: string | null
+          reason?: string | null
+          description?: string | null
+          reported_by?: string | null
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          review_notes?: string | null
+          escalated_by?: string | null
+          escalated_at?: string | null
+          escalation_reason?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      reports: {
+        Row: {
+          id: string
+          reporter_id: string
+          reported_user_id: string | null
+          reported_post_id: string | null
+          reason: string
+          description: string | null
+          status: string
+          reviewed_by: string | null
+          reviewed_at: string | null
+          resolution: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          reporter_id: string
+          reported_user_id?: string | null
+          reported_post_id?: string | null
+          reason: string
+          description?: string | null
+          status?: string
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          resolution?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          reporter_id?: string
+          reported_user_id?: string | null
+          reported_post_id?: string | null
+          reason?: string
+          description?: string | null
+          status?: string
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          resolution?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      notifications: {
+        Row: {
+          id: string
+          user_id: string
+          type: 'like' | 'comment' | 'follow' | 'mention' | 'system'
+          title: string
+          message: string
+          data: any | null
+          is_read: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          type: 'like' | 'comment' | 'follow' | 'mention' | 'system'
+          title: string
+          message: string
+          data?: any | null
+          is_read?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          type?: 'like' | 'comment' | 'follow' | 'mention' | 'system'
+          title?: string
+          message?: string
+          data?: any | null
+          is_read?: boolean
+          created_at?: string
+        }
+      }
+      messages: {
+        Row: {
+          id: string
+          sender_id: string
+          recipient_id: string
+          content: string
+          media_url: string | null
+          media_type: string | null
+          is_read: boolean
+          read_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          sender_id: string
+          recipient_id: string
+          content: string
+          media_url?: string | null
+          media_type?: string | null
+          is_read?: boolean
+          read_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          sender_id?: string
+          recipient_id?: string
+          content?: string
+          media_url?: string | null
+          media_type?: string | null
+          is_read?: boolean
+          read_at?: string | null
+          created_at?: string
+        }
+      }
+      storage_activity: {
+        Row: {
+          id: string
+          username: string
+          type: string
+          details: any | null
+          metadata: any | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          username: string
+          type: string
+          details?: any | null
+          metadata?: any | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          username?: string
+          type?: string
+          details?: any | null
+          metadata?: any | null
+          created_at?: string
+        }
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      gtrgm_compress: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_decompress: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_in: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_options: {
-        Args: { "": unknown }
-        Returns: undefined
-      }
-      gtrgm_out: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      set_limit: {
-        Args: { "": number }
-        Returns: number
-      }
-      show_limit: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      show_trgm: {
-        Args: { "": string }
-        Returns: string[]
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
     }
-    CompositeTypes: {
-      [_ in never]: never
-    }
   }
 }
-
-type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
-
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
-
-export type Tables<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R
-    }
-    ? R
-    : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R
-      }
-      ? R
-      : never
-    : never
-
-export type TablesInsert<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I
-    }
-    ? I
-    : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I
-      }
-      ? I
-      : never
-    : never
-
-export type TablesUpdate<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U
-    }
-    ? U
-    : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U
-      }
-      ? U
-      : never
-    : never
-
-export type Enums<
-  DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
-> = DefaultSchemaEnumNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never
-
-export type CompositeTypes<
-  PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
-> = PublicCompositeTypeNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never
-
-export const Constants = {
-  public: {
-    Enums: {},
-  },
-} as const

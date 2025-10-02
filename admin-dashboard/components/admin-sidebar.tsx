@@ -20,13 +20,14 @@ import {
   Menu,
   X,
   TestTube,
-  BookOpen
+  BookOpen,
+  ShieldAlert
 } from 'lucide-react'
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Users', href: '/users', icon: Users },
-  { name: 'Age Verification', href: '/age-verification', icon: CreditCard },
+  { name: 'Age Verification', href: '/age-verification', icon: ShieldAlert },
   { name: 'Blog Management', href: '/blog', icon: BookOpen },
   { name: 'Creators', href: '/creators', icon: Shield },
   { name: 'Moderation', href: '/moderation', icon: AlertTriangle },

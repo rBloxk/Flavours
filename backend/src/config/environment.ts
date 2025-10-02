@@ -11,17 +11,10 @@ export interface EnvironmentConfig {
   API_BASE_URL: string
   FRONTEND_URL: string
 
-  // Database
+  // Supabase (Primary Database)
   SUPABASE_URL: string
   SUPABASE_ANON_KEY: string
   SUPABASE_SERVICE_ROLE_KEY: string
-
-  // Firebase
-  FIREBASE_PROJECT_ID: string
-  FIREBASE_PRIVATE_KEY: string
-  FIREBASE_CLIENT_EMAIL: string
-  FIREBASE_STORAGE_BUCKET: string
-  FIREBASE_DATABASE_URL?: string
 
   // Redis
   REDIS_URL: string
@@ -149,17 +142,10 @@ class EnvironmentManager {
       API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:3001/api/v1',
       FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:3000',
 
-      // Database
-      SUPABASE_URL: process.env.SUPABASE_URL || '',
+      // Supabase (Primary Database)
+      SUPABASE_URL: process.env.SUPABASE_URL || 'https://yrdwgiyfybnshhkznbaj.supabase.co',
       SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || '',
       SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-
-      // Firebase
-      FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID || '',
-      FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY || '',
-      FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL || '',
-      FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET || '',
-      FIREBASE_DATABASE_URL: process.env.FIREBASE_DATABASE_URL,
 
       // Redis
       REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
@@ -288,20 +274,17 @@ class EnvironmentManager {
       throw new Error(error)
     }
 
-    // Validate Firebase configuration if provided
-    if (this.config.FIREBASE_PROJECT_ID) {
-      const firebaseRequiredFields = [
-        'FIREBASE_PROJECT_ID',
-        'FIREBASE_PRIVATE_KEY',
-        'FIREBASE_CLIENT_EMAIL',
-        'FIREBASE_STORAGE_BUCKET'
-      ]
+    // Validate Supabase configuration
+    const supabaseRequiredFields = [
+      'SUPABASE_URL',
+      'SUPABASE_ANON_KEY',
+      'SUPABASE_SERVICE_ROLE_KEY'
+    ]
+    
+    const missingSupabaseFields = supabaseRequiredFields.filter(field => !this.config[field as keyof EnvironmentConfig])
 
-      const missingFirebaseFields = firebaseRequiredFields.filter(field => !this.config[field as keyof EnvironmentConfig])
-
-      if (missingFirebaseFields.length > 0) {
-        logger.warn(`Incomplete Firebase configuration. Missing: ${missingFirebaseFields.join(', ')}`)
-      }
+    if (missingSupabaseFields.length > 0) {
+      logger.warn(`Incomplete Supabase configuration. Missing: ${missingSupabaseFields.join(', ')}`)
     }
 
     logger.info('Environment configuration validated successfully', {

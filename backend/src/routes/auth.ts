@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express'
-import { supabase } from '../config/supabase'
+import { supabase } from '../config/database'
 import { authMiddleware } from '../middleware/auth'
 import { validateRequest } from '../middleware/validation'
 import { signUpSchema, signInSchema } from '../schemas/auth'

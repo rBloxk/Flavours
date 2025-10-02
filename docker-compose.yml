@@ -1,19 +1,4 @@
 services:
-  # PostgreSQL Database
-  postgres:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_DB: flavours
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./supabase/migrations:/docker-entrypoint-initdb.d
-    ports:
-      - "5432:5432"
-    networks:
-      - flavours-network
-
   # Redis Cache
   redis:
     image: redis:7-alpine
@@ -34,17 +19,15 @@ services:
     environment:
       NODE_ENV: development
       PORT: 3001
-      DATABASE_URL: postgresql://postgres:password@postgres:5432/flavours
       REDIS_URL: redis://redis:6379
       JWT_SECRET: your-jwt-secret-here-change-in-production
       SUPABASE_URL: https://yrdwgiyfybnshhkznbaj.supabase.co
       SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyZHdnaXlmeWJuc2hoa3puYmFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5MDIyNjUsImV4cCI6MjA3MzQ3ODI2NX0.Ohc3X9Ti_dUDhqLG1sdYMiyhLWOiDnpQDucelPO5eVs
-      SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndjbGRndXhmdnpwbW1ndG52YXJyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzM0OTM2OSwiZXhwIjoyMDcyOTI1MzY5fQ.A1m1LsYo5TCwtT7wihhBoiU6TSCbYDcpbyFT45zOANg
+      SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyZHdnaXlmeWJuc2hoa3puYmFqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzkwMjI2NSwiZXhwIjoyMDczNDc4MjY1fQ.fc8QJ_t-7rXP71P3acLs8JpeHYOt7z3JarZKX477fqI
       FRONTEND_URL: http://localhost:3000
     ports:
       - "3001:3001"
     depends_on:
-      - postgres
       - redis
     networks:
       - flavours-network
@@ -73,48 +56,10 @@ services:
       - .:/app
       - /app/node_modules
 
-  # MinIO (S3-compatible storage)
-  minio:
-    image: minio/minio:latest
-    environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin123
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - minio_data:/data
-    networks:
-      - flavours-network
-    command: server /data --console-address ":9001"
-
-  # Media Processing Worker
-  media-worker:
-    build:
-      context: ./workers
-      dockerfile: Dockerfile
-    environment:
-      NODE_ENV: production
-      REDIS_URL: redis://redis:6379
-      MINIO_ENDPOINT: minio:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin123
-    depends_on:
-      - redis
-      - minio
-    networks:
-      - flavours-network
-    volumes:
-      - media_temp:/tmp/media
 
 networks:
   flavours-network:
     driver: bridge
 
 volumes:
-  postgres_data:
   redis_data:
-  backend_logs:
-  media_uploads:
-  minio_data:
-  media_temp:

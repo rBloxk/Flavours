@@ -135,7 +135,6 @@ export async function GET(request: NextRequest) {
     )
   }
 }
-
 function calculateGrowthRate(data: any[]): number {
   if (data.length < 2) return 0
   
@@ -153,3 +152,4 @@ function calculateGrowthRate(data: any[]): number {
   
   return ((secondHalfCount - firstHalfCount) / firstHalfCount) * 100
 }
+

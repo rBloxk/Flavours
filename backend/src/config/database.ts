@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { logger } from '../utils/logger'
+import type { Database } from '../../lib/supabase-types'
 
 export interface DatabaseConfig {
   url: string
@@ -12,7 +13,7 @@ export interface DatabaseConfig {
 }
 
 class DatabaseManager {
-  private supabase: any
+  private supabase: ReturnType<typeof createClient<Database>>
   private config: DatabaseConfig
   private connectionPool: Map<string, any> = new Map()
   private isHealthy: boolean = true
@@ -39,7 +40,7 @@ class DatabaseManager {
 
   private initializeConnection() {
     try {
-      this.supabase = createClient(this.config.url, this.config.serviceKey, {
+      this.supabase = createClient<Database>(this.config.url, this.config.serviceKey, {
         auth: {
           autoRefreshToken: false,
           persistSession: false

@@ -1,4 +1,4 @@
-import { supabase } from '../config/supabase'
+import { supabase } from '../config/database'
 import { logger } from '../utils/logger'
 import { v4 as uuidv4 } from 'uuid'
 

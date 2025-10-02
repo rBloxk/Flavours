@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { supabase } from '../config/supabase'
+import { supabase } from '../config/database'
 import { logger } from '../utils/logger'
 import { config } from '../config/environment'
 

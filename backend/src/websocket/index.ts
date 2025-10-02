@@ -1,6 +1,6 @@
 import { Server } from 'socket.io'
 import { logger } from '../utils/logger'
-import { supabase } from '../config/supabase'
+import { supabase } from '../config/database'
 import { redisManager } from '../config/redis'
 
 // Enhanced WebSocket types
