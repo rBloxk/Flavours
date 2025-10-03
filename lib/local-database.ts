@@ -9,8 +9,49 @@ import { v4 as uuidv4 } from 'uuid'
 type Profile = Database['public']['Tables']['profiles']['Row']
 type Post = Database['public']['Tables']['posts']['Row']
 type Like = Database['public']['Tables']['likes']['Row']
-type Comment = Database['public']['Tables']['comments']['Row']
+type Comment = Database['public']['Tables']['comments']['Row'] & {
+  is_deleted?: boolean
+}
 type Follow = Database['public']['Tables']['follows']['Row']
+
+interface Notification {
+  id: string
+  user_id: string
+  type: 'like' | 'comment' | 'follow' | 'mention' | 'system'
+  title: string
+  message: string
+  is_read: boolean
+  read_at: string | null
+  related_id?: string
+  related_type?: 'post' | 'comment' | 'user'
+  metadata?: Record<string, any>
+  created_at: string
+  updated_at: string
+}
+
+interface Conversation {
+  id: string
+  user1_id: string
+  user2_id: string
+  last_message_id?: string
+  last_message_at?: string
+  created_at: string
+  updated_at: string
+}
+
+interface Message {
+  id: string
+  conversation_id: string
+  sender_id: string
+  recipient_id: string
+  content: string
+  type: 'text' | 'image' | 'video'
+  media_url?: string
+  is_read: boolean
+  read_at?: string
+  created_at: string
+  updated_at: string
+}
 
 // Mock data for development
 const mockProfiles = [
@@ -153,6 +194,91 @@ const mockLikes = [
   }
 ]
 
+// Mock notifications data
+const mockNotifications: Notification[] = [
+  {
+    id: 'notif-1',
+    user_id: 'demo-user-1759370026017',
+    type: 'like',
+    title: 'New Like',
+    message: 'Jane Smith liked your post',
+    is_read: false,
+    read_at: null,
+    related_id: '1',
+    related_type: 'post',
+    metadata: { actor_username: 'jane_fitness' },
+    created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 minutes ago
+    updated_at: new Date(Date.now() - 1000 * 60 * 30).toISOString()
+  },
+  {
+    id: 'notif-2',
+    user_id: 'demo-user-1759370026017',
+    type: 'comment',
+    title: 'New Comment',
+    message: 'John Doe commented on your post',
+    is_read: false,
+    read_at: null,
+    related_id: '1',
+    related_type: 'post',
+    metadata: { actor_username: 'john_doe' },
+    created_at: new Date(Date.now() - 1000 * 60 * 60).toISOString(), // 1 hour ago
+    updated_at: new Date(Date.now() - 1000 * 60 * 60).toISOString()
+  },
+  {
+    id: 'notif-3',
+    user_id: 'demo-user-1759370026017',
+    type: 'follow',
+    title: 'New Follower',
+    message: 'Sarah Wilson started following you',
+    is_read: true,
+    read_at: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+    related_id: 'creator-2',
+    related_type: 'user',
+    metadata: { actor_username: 'sarah_wilson' },
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
+    updated_at: new Date(Date.now() - 1000 * 60 * 15).toISOString()
+  }
+]
+
+// Mock conversations and messages data
+const mockConversations: Conversation[] = [
+  {
+    id: 'conv-1',
+    user1_id: 'demo-user-1759370026017',
+    user2_id: 'creator-1',
+    last_message_id: 'msg-1',
+    last_message_at: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+    updated_at: new Date(Date.now() - 1000 * 60 * 15).toISOString()
+  }
+]
+
+const mockMessages: Message[] = [
+  {
+    id: 'msg-1',
+    conversation_id: 'conv-1',
+    sender_id: 'creator-1',
+    recipient_id: 'demo-user-1759370026017',
+    content: 'Hey! Thanks for following me. How are you doing?',
+    type: 'text',
+    is_read: false,
+    created_at: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+    updated_at: new Date(Date.now() - 1000 * 60 * 15).toISOString()
+  },
+  {
+    id: 'msg-2',
+    conversation_id: 'conv-1',
+    sender_id: 'demo-user-1759370026017',
+    recipient_id: 'creator-1',
+    content: 'Hi! I\'m doing great, thanks for asking. Love your fitness content!',
+    type: 'text',
+    is_read: true,
+    read_at: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
+    created_at: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
+    updated_at: new Date(Date.now() - 1000 * 60 * 10).toISOString()
+  }
+]
+
 // Local database service
 export class LocalDatabase {
   private profiles: Database['public']['Tables']['profiles']['Row'][] = [...mockProfiles]
@@ -160,6 +286,9 @@ export class LocalDatabase {
   private comments: Database['public']['Tables']['comments']['Row'][] = [...mockComments]
   private likes: Database['public']['Tables']['likes']['Row'][] = [...mockLikes]
   private follows: Database['public']['Tables']['follows']['Row'][] = []
+  private notifications: Notification[] = [...mockNotifications]
+  private conversations: Conversation[] = [...mockConversations]
+  private messages: Message[] = [...mockMessages]
 
   // Profiles
   async getProfiles(limit = 20, offset = 0) {
@@ -269,7 +398,7 @@ export class LocalDatabase {
 
   async getComments(postId: string, limit = 20, offset = 0) {
     const postComments = this.comments
-      .filter(c => c.post_id === postId && !c.parent_comment_id && !c.is_deleted)
+      .filter(c => c.post_id === postId && !c.parent_comment_id && !(c as any).is_deleted)
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
       .slice(offset, offset + limit)
 
@@ -279,7 +408,7 @@ export class LocalDatabase {
       
       // Get replies for this comment
       const replies = this.comments
-        .filter(c => c.parent_comment_id === comment.id && !c.is_deleted)
+        .filter(c => c.parent_comment_id === comment.id && !(c as any).is_deleted)
         .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
         .map(reply => {
           const replyProfile = this.profiles.find(p => p.user_id === reply.user_id)
@@ -310,7 +439,7 @@ export class LocalDatabase {
   }
 
   async getCommentCount(postId: string) {
-    return this.comments.filter(c => c.post_id === postId && !c.parent_comment_id && !c.is_deleted).length
+    return this.comments.filter(c => c.post_id === postId && !c.parent_comment_id && !(c as any).is_deleted).length
   }
 
   async getCommentById(commentId: string) {
@@ -509,17 +638,6 @@ export class LocalDatabase {
     }
   }
 
-  // Search
-  async searchPosts(query: string, limit = 20, offset = 0) {
-    const searchTerm = query.toLowerCase()
-    const filteredPosts = this.posts.filter(p => 
-      p.content?.toLowerCase().includes(searchTerm) ||
-      p.category?.toLowerCase().includes(searchTerm) ||
-      p.tags?.some(tag => tag.toLowerCase().includes(searchTerm))
-    )
-    
-    return filteredPosts.slice(offset, offset + limit)
-  }
 
   async searchProfiles(query: string, limit = 20, offset = 0) {
     const searchTerm = query.toLowerCase()
@@ -544,12 +662,300 @@ export class LocalDatabase {
     }
   }
 
+  // Notifications
+  async getNotifications(userId: string, options: { unreadOnly?: boolean; limit?: number; offset?: number } = {}) {
+    let filteredNotifications = this.notifications.filter(n => n.user_id === userId)
+    
+    if (options.unreadOnly) {
+      filteredNotifications = filteredNotifications.filter(n => !n.is_read)
+    }
+    
+    // Sort by created_at descending (newest first)
+    filteredNotifications.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    
+    const limit = options.limit || 20
+    const offset = options.offset || 0
+    
+    return filteredNotifications.slice(offset, offset + limit)
+  }
+
+  async getNotificationById(id: string) {
+    return this.notifications.find(n => n.id === id)
+  }
+
+  async createNotification(notification: Omit<Notification, 'id' | 'created_at' | 'updated_at'>) {
+    const newNotification: Notification = {
+      id: uuidv4(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      ...notification
+    }
+    
+    this.notifications.unshift(newNotification)
+    return newNotification
+  }
+
+  async updateNotification(id: string, updates: Partial<Notification>) {
+    const index = this.notifications.findIndex(n => n.id === id)
+    if (index === -1) return null
+
+    this.notifications[index] = {
+      ...this.notifications[index],
+      ...updates,
+      updated_at: new Date().toISOString()
+    }
+    return this.notifications[index]
+  }
+
+  async deleteNotification(id: string) {
+    const index = this.notifications.findIndex(n => n.id === id)
+    if (index === -1) return false
+
+    this.notifications.splice(index, 1)
+    return true
+  }
+
+  async getUnreadNotificationCount(userId: string) {
+    return this.notifications.filter(n => n.user_id === userId && !n.is_read).length
+  }
+
+  async markNotificationsAsRead(notificationIds: string[]) {
+    notificationIds.forEach(id => {
+      const index = this.notifications.findIndex(n => n.id === id)
+      if (index !== -1) {
+        this.notifications[index] = {
+          ...this.notifications[index],
+          is_read: true,
+          read_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+      }
+    })
+  }
+
+  async markAllNotificationsAsRead(userId: string) {
+    this.notifications.forEach((notification, index) => {
+      if (notification.user_id === userId && !notification.is_read) {
+        this.notifications[index] = {
+          ...notification,
+          is_read: true,
+          read_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+      }
+    })
+  }
+
+  // Statistics
+  async getUserStatistics(userId: string, options: { timeRange?: string; metric?: string; type?: string } = {}) {
+    const profile = await this.getProfileById(userId)
+    if (!profile) return null
+
+    const timeRange = options.timeRange || '30d'
+    const daysBack = this.getDaysFromTimeRange(timeRange)
+    const startDate = new Date(Date.now() - daysBack * 24 * 60 * 60 * 1000)
+
+    // Get user's posts
+    const userPosts = this.posts.filter(p => p.user_id === userId)
+    const recentPosts = userPosts.filter(p => new Date(p.created_at) >= startDate)
+
+    // Calculate basic metrics
+    const totalViews = userPosts.reduce((sum, post) => sum + (post.views_count || 0), 0)
+    const totalLikes = userPosts.reduce((sum, post) => sum + (post.likes_count || 0), 0)
+    const totalComments = userPosts.reduce((sum, post) => sum + (post.comments_count || 0), 0)
+    const totalShares = userPosts.reduce((sum, post) => sum + (post.shares_count || 0), 0)
+
+    // Calculate engagement rate
+    const totalEngagement = totalLikes + totalComments + totalShares
+    const engagementRate = totalViews > 0 ? (totalEngagement / totalViews) * 100 : 0
+
+    // Get followers count
+    const followersCount = this.follows.filter(f => f.following_id === userId).length
+
+    // Calculate trends (mock data for now)
+    const trends = {
+      views: this.calculateTrend(totalViews, 0.12), // +12%
+      likes: this.calculateTrend(totalLikes, 0.15), // +15%
+      comments: this.calculateTrend(totalComments, 0.08), // +8%
+      followers: this.calculateTrend(followersCount, 0.05), // +5%
+      engagement: this.calculateTrend(engagementRate, 0.03) // +3%
+    }
+
+    // Content breakdown
+    const contentBreakdown = {
+      totalPosts: userPosts.length,
+      recentPosts: recentPosts.length,
+      images: userPosts.filter(p => p.media_type === 'image').length,
+      videos: userPosts.filter(p => p.media_type === 'video').length,
+      textPosts: userPosts.filter(p => !p.media_type).length
+    }
+
+    // Audience insights (mock data)
+    const audienceInsights = {
+      topCountries: [
+        { country: 'United States', percentage: 45 },
+        { country: 'Canada', percentage: 20 },
+        { country: 'United Kingdom', percentage: 15 },
+        { country: 'Australia', percentage: 12 },
+        { country: 'Germany', percentage: 8 }
+      ],
+      ageGroups: [
+        { range: '18-24', percentage: 25 },
+        { range: '25-34', percentage: 35 },
+        { range: '35-44', percentage: 22 },
+        { range: '45-54', percentage: 12 },
+        { range: '55+', percentage: 6 }
+      ],
+      genderDistribution: {
+        male: 52,
+        female: 45,
+        other: 3
+      }
+    }
+
+    return {
+      overview: {
+        totalViews,
+        totalLikes,
+        totalComments,
+        totalShares,
+        followersCount,
+        followingCount: profile.following_count || 0,
+        engagementRate: Math.round(engagementRate * 100) / 100,
+        totalPosts: userPosts.length,
+        avgWatchTime: 2.5, // Mock data
+        clickThroughRate: 3.8 // Mock data
+      },
+      trends,
+      contentBreakdown,
+      audienceInsights,
+      timeRange,
+      period: `${daysBack} days`
+    }
+  }
+
+  private getDaysFromTimeRange(timeRange: string): number {
+    switch (timeRange) {
+      case '7d': return 7
+      case '30d': return 30
+      case '90d': return 90
+      case '1y': return 365
+      default: return 30
+    }
+  }
+
+  private calculateTrend(current: number, percentage: number): string {
+    if (current === 0) {
+      return '+0.0%'
+    }
+    const change = current * percentage
+    const sign = change >= 0 ? '+' : ''
+    return `${sign}${(percentage * 100).toFixed(1)}%`
+  }
+
+  // Messaging
+  async getUserConversations(userId: string, options: { limit?: number; offset?: number } = {}) {
+    const userConversations = this.conversations.filter(
+      c => c.user1_id === userId || c.user2_id === userId
+    )
+
+    // Sort by last_message_at descending
+    userConversations.sort((a, b) => {
+      const timeA = a.last_message_at ? new Date(a.last_message_at).getTime() : 0
+      const timeB = b.last_message_at ? new Date(b.last_message_at).getTime() : 0
+      return timeB - timeA
+    })
+
+    const limit = options.limit || 20
+    const offset = options.offset || 0
+
+    return userConversations.slice(offset, offset + limit)
+  }
+
+  async getConversationById(id: string) {
+    return this.conversations.find(c => c.id === id)
+  }
+
+  async getConversationByUsers(user1Id: string, user2Id: string) {
+    return this.conversations.find(
+      c => (c.user1_id === user1Id && c.user2_id === user2Id) ||
+           (c.user1_id === user2Id && c.user2_id === user1Id)
+    )
+  }
+
+  async createConversation(conversation: Omit<Conversation, 'id' | 'created_at' | 'updated_at'>) {
+    const newConversation: Conversation = {
+      id: uuidv4(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      ...conversation
+    }
+
+    this.conversations.unshift(newConversation)
+    return newConversation
+  }
+
+  async getConversationMessages(conversationId: string, options: { limit?: number; offset?: number } = {}) {
+    const conversationMessages = this.messages.filter(m => m.conversation_id === conversationId)
+
+    // Sort by created_at ascending (oldest first)
+    conversationMessages.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+
+    const limit = options.limit || 50
+    const offset = options.offset || 0
+
+    return conversationMessages.slice(offset, offset + limit)
+  }
+
+  async createMessage(message: Omit<Message, 'id' | 'created_at' | 'updated_at'>) {
+    const newMessage: Message = {
+      id: uuidv4(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      ...message
+    }
+
+    this.messages.push(newMessage)
+
+    // Update conversation's last message
+    const conversationIndex = this.conversations.findIndex(c => c.id === message.conversation_id)
+    if (conversationIndex !== -1) {
+      this.conversations[conversationIndex] = {
+        ...this.conversations[conversationIndex],
+        last_message_id: newMessage.id,
+        last_message_at: newMessage.created_at,
+        updated_at: new Date().toISOString()
+      }
+    }
+
+    return newMessage
+  }
+
+  async markMessageAsRead(messageId: string) {
+    const messageIndex = this.messages.findIndex(m => m.id === messageId)
+    if (messageIndex !== -1) {
+      this.messages[messageIndex] = {
+        ...this.messages[messageIndex],
+        is_read: true,
+        read_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+    }
+  }
+
+  async getUnreadMessageCount(userId: string) {
+    return this.messages.filter(m => m.recipient_id === userId && !m.is_read).length
+  }
+
   // Reset database (for testing)
   reset() {
     this.profiles = [...mockProfiles]
     this.posts = [...mockPosts]
     this.comments = [...mockComments]
     this.likes = [...mockLikes]
+    this.notifications = [...mockNotifications]
+    this.conversations = [...mockConversations]
+    this.messages = [...mockMessages]
   }
 }
 

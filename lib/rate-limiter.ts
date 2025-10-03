@@ -1,158 +1,215 @@
 /**
- * Production-ready rate limiting utilities
+ * Rate Limiter for API Endpoints
+ * Provides protection against abuse and ensures fair usage
  */
 
 interface RateLimitConfig {
-  windowMs: number
-  maxRequests: number
-  skipSuccessfulRequests?: boolean
-  skipFailedRequests?: boolean
-  keyGenerator?: (req: any) => string
+  windowMs: number // Time window in milliseconds
+  maxRequests: number // Maximum requests per window
+  skipSuccessfulRequests?: boolean // Don't count successful requests
+  skipFailedRequests?: boolean // Don't count failed requests
 }
 
-interface RateLimitStore {
-  [key: string]: {
-    count: number
-    resetTime: number
-  }
+interface RateLimitEntry {
+  count: number
+  resetTime: number
 }
 
 class RateLimiter {
-  private store: RateLimitStore = {}
-  private config: RateLimitConfig
+  private store = new Map<string, RateLimitEntry>()
+  private cleanupInterval: NodeJS.Timeout
 
-  constructor(config: RateLimitConfig) {
-    this.config = {
-      windowMs: 15 * 60 * 1000, // 15 minutes
-      maxRequests: 100,
-      skipSuccessfulRequests: false,
-      skipFailedRequests: false,
-      keyGenerator: (req) => req.ip || 'unknown',
-      ...config
+  constructor() {
+    // Clean up expired entries every 5 minutes
+    this.cleanupInterval = setInterval(() => {
+      this.cleanup()
+    }, 5 * 60 * 1000)
+  }
+
+  /**
+   * Check if request should be allowed
+   */
+  check(key: string, config: RateLimitConfig): { allowed: boolean; remaining: number; resetTime: number } {
+    const now = Date.now()
+    const windowStart = now - config.windowMs
+    const entry = this.store.get(key)
+
+    if (!entry || entry.resetTime <= now) {
+      // Create new entry or reset expired entry
+      const newEntry: RateLimitEntry = {
+        count: 1,
+        resetTime: now + config.windowMs
+      }
+      this.store.set(key, newEntry)
+      
+      return {
+        allowed: true,
+        remaining: config.maxRequests - 1,
+        resetTime: newEntry.resetTime
+      }
+    }
+
+    if (entry.count >= config.maxRequests) {
+      return {
+        allowed: false,
+        remaining: 0,
+        resetTime: entry.resetTime
+      }
+    }
+
+    // Increment count
+    entry.count++
+    this.store.set(key, entry)
+
+    return {
+      allowed: true,
+      remaining: config.maxRequests - entry.count,
+      resetTime: entry.resetTime
     }
   }
 
-  private generateKey(req: any): string {
-    return this.config.keyGenerator!(req)
+  /**
+   * Record a request (for tracking purposes)
+   */
+  record(key: string, success: boolean, config: RateLimitConfig): void {
+    const now = Date.now()
+    const entry = this.store.get(key)
+
+    if (entry && entry.resetTime > now) {
+      // Only count if within window and based on config
+      if ((success && !config.skipSuccessfulRequests) || 
+          (!success && !config.skipFailedRequests)) {
+        entry.count++
+        this.store.set(key, entry)
+      }
+    }
   }
 
+  /**
+   * Get current status for a key
+   */
+  getStatus(key: string): { count: number; resetTime: number } | null {
+    const entry = this.store.get(key)
+    if (!entry || entry.resetTime <= Date.now()) {
+      return null
+    }
+    return { count: entry.count, resetTime: entry.resetTime }
+  }
+
+  /**
+   * Reset rate limit for a key
+   */
+  reset(key: string): void {
+    this.store.delete(key)
+  }
+
+  /**
+   * Clean up expired entries
+   */
   private cleanup(): void {
     const now = Date.now()
-    Object.keys(this.store).forEach(key => {
-      if (this.store[key].resetTime < now) {
-        delete this.store[key]
+    const entries = Array.from(this.store.entries())
+    for (const [key, entry] of entries) {
+      if (entry.resetTime <= now) {
+        this.store.delete(key)
       }
-    })
+    }
   }
 
-  check(req: any): { allowed: boolean; remaining: number; resetTime: number } {
-    this.cleanup()
+  /**
+   * Destroy the rate limiter
+   */
+  destroy(): void {
+    clearInterval(this.cleanupInterval)
+    this.store.clear()
+  }
+}
+
+// Predefined rate limit configurations
+export const RATE_LIMITS = {
+  // General API endpoints
+  GENERAL: {
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    maxRequests: 100,
+    skipSuccessfulRequests: false,
+    skipFailedRequests: false
+  } as RateLimitConfig,
+
+  // Authentication endpoints
+  AUTH: {
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    maxRequests: 5,
+    skipSuccessfulRequests: false,
+    skipFailedRequests: true
+  } as RateLimitConfig,
+
+  // Post creation
+  POST_CREATE: {
+    windowMs: 60 * 60 * 1000, // 1 hour
+    maxRequests: 10,
+    skipSuccessfulRequests: false,
+    skipFailedRequests: true
+  } as RateLimitConfig,
+
+  // Comment creation
+  COMMENT_CREATE: {
+    windowMs: 60 * 1000, // 1 minute
+    maxRequests: 20,
+    skipSuccessfulRequests: false,
+    skipFailedRequests: true
+  } as RateLimitConfig,
+
+  // Like/unlike actions
+  LIKE_ACTION: {
+    windowMs: 60 * 1000, // 1 minute
+    maxRequests: 50,
+    skipSuccessfulRequests: false,
+    skipFailedRequests: true
+  } as RateLimitConfig,
+
+  // Search endpoints
+  SEARCH: {
+    windowMs: 60 * 1000, // 1 minute
+    maxRequests: 30,
+    skipSuccessfulRequests: false,
+    skipFailedRequests: false
+  } as RateLimitConfig,
+
+  // File upload
+  UPLOAD: {
+    windowMs: 60 * 60 * 1000, // 1 hour
+    maxRequests: 20,
+    skipSuccessfulRequests: false,
+    skipFailedRequests: true
+  } as RateLimitConfig
+}
+
+// Singleton instance
+export const rateLimiter = new RateLimiter()
+
+/**
+ * Middleware function for rate limiting
+ */
+export function createRateLimitMiddleware(config: RateLimitConfig) {
+  return (request: Request, userId?: string): { allowed: boolean; remaining: number; resetTime: number } => {
+    // Create rate limit key based on IP and user ID
+    const ip = request.headers.get('x-forwarded-for') || 
+               request.headers.get('x-real-ip') || 
+               'unknown'
+    const key = userId ? `${userId}:${ip}` : ip
     
-    const key = this.generateKey(req)
-    const now = Date.now()
-    const windowStart = now - this.config.windowMs
-
-    if (!this.store[key]) {
-      this.store[key] = {
-        count: 1,
-        resetTime: now + this.config.windowMs
-      }
-    } else {
-      // Reset if window has passed
-      if (this.store[key].resetTime < now) {
-        this.store[key] = {
-          count: 1,
-          resetTime: now + this.config.windowMs
-        }
-      } else {
-        this.store[key].count++
-      }
-    }
-
-    const remaining = Math.max(0, this.config.maxRequests - this.store[key].count)
-    const allowed = this.store[key].count <= this.config.maxRequests
-
-    return {
-      allowed,
-      remaining,
-      resetTime: this.store[key].resetTime
-    }
-  }
-
-  reset(key: string): void {
-    delete this.store[key]
-  }
-
-  getStats(): { totalKeys: number; store: RateLimitStore } {
-    this.cleanup()
-    return {
-      totalKeys: Object.keys(this.store).length,
-      store: { ...this.store }
-    }
+    return rateLimiter.check(key, config)
   }
 }
 
-// Predefined rate limiters
-export const authLimiter = new RateLimiter({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  maxRequests: 5, // 5 login attempts per 15 minutes
-  keyGenerator: (req) => `auth:${req.ip || 'unknown'}`
-})
-
-export const apiLimiter = new RateLimiter({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  maxRequests: 100, // 100 requests per 15 minutes
-  keyGenerator: (req) => `api:${req.ip || 'unknown'}`
-})
-
-export const uploadLimiter = new RateLimiter({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  maxRequests: 10, // 10 uploads per hour
-  keyGenerator: (req) => `upload:${req.ip || 'unknown'}`
-})
-
-export const commentLimiter = new RateLimiter({
-  windowMs: 60 * 1000, // 1 minute
-  maxRequests: 5, // 5 comments per minute
-  keyGenerator: (req) => `comment:${req.ip || 'unknown'}`
-})
-
-// Rate limit middleware for Next.js API routes
-export function createRateLimitMiddleware(limiter: RateLimiter) {
-  return (req: any, res: any, next?: any) => {
-    const result = limiter.check(req)
-
-    // Set rate limit headers
-    res.setHeader('X-RateLimit-Limit', limiter['config'].maxRequests)
-    res.setHeader('X-RateLimit-Remaining', result.remaining)
-    res.setHeader('X-RateLimit-Reset', new Date(result.resetTime).toISOString())
-
-    if (!result.allowed) {
-      res.status(429).json({
-        error: 'Too many requests',
-        message: 'Rate limit exceeded. Please try again later.',
-        retryAfter: Math.ceil((result.resetTime - Date.now()) / 1000)
-      })
-      return
-    }
-
-    if (next) {
-      next()
-    }
-  }
-}
-
-// Utility functions
-export function getRateLimitHeaders(result: { remaining: number; resetTime: number }, maxRequests: number) {
+/**
+ * Get rate limit headers for response
+ */
+export function getRateLimitHeaders(remaining: number, resetTime: number) {
   return {
-    'X-RateLimit-Limit': maxRequests.toString(),
-    'X-RateLimit-Remaining': result.remaining.toString(),
-    'X-RateLimit-Reset': new Date(result.resetTime).toISOString()
+    'X-RateLimit-Limit': '100',
+    'X-RateLimit-Remaining': remaining.toString(),
+    'X-RateLimit-Reset': new Date(resetTime).toISOString(),
+    'Retry-After': Math.ceil((resetTime - Date.now()) / 1000).toString()
   }
 }
-
-export function isRateLimited(result: { allowed: boolean }): boolean {
-  return !result.allowed
-}
-
-export { RateLimiter }

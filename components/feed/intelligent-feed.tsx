@@ -11,6 +11,7 @@ import { FlavourTube } from './flavour-tube'
 import { FlavourLicks } from './flavour-licks'
 import { PostOptionsOverlay } from '@/components/ui/post-options-overlay'
 import { useAuth } from '@/components/providers/auth-provider'
+import { formatPostDate } from '@/lib/date-utils'
 import { 
   Heart, 
   MessageCircle, 
@@ -637,7 +638,12 @@ export function IntelligentFeed() {
   }
 
   const handleUserClick = (username: string) => {
-    router.push(`/profile/${username}`)
+    // If clicking on own profile, go to /profile, otherwise go to /profile/username
+    if (user?.username === username) {
+      router.push('/profile')
+    } else {
+      router.push(`/profile/${username}`)
+    }
   }
 
   const handleLike = async (postId: string) => {
@@ -657,10 +663,10 @@ export function IntelligentFeed() {
           post.id === postId 
             ? { 
                 ...post, 
-                isLiked: data.userInteractions.isLiked,
+                isLiked: data.liked,
                 metrics: {
                   ...post.metrics,
-                  likesCount: data.counts.likes
+                  likesCount: data.likesCount
                 }
               }
             : post
@@ -671,14 +677,17 @@ export function IntelligentFeed() {
           ...prev,
           engagementHistory: {
             ...prev.engagementHistory,
-            likedPosts: data.userInteractions.isLiked
+            likedPosts: data.liked
               ? [...prev.engagementHistory.likedPosts, postId]
               : prev.engagementHistory.likedPosts.filter(id => id !== postId)
           }
         }))
+        
+        toast.success(data.liked ? 'Post liked!' : 'Post unliked!')
       }
     } catch (error) {
       console.error('Error liking post:', error)
+      toast.error('Failed to like post')
     }
   }
 
@@ -697,7 +706,7 @@ export function IntelligentFeed() {
       if (data.success) {
         setPosts(prev => prev.map(post => 
           post.id === postId 
-            ? { ...post, isBookmarked: data.userInteractions.isBookmarked }
+            ? { ...post, isBookmarked: data.bookmarked }
             : post
         ))
         
@@ -705,14 +714,17 @@ export function IntelligentFeed() {
           ...prev,
           engagementHistory: {
             ...prev.engagementHistory,
-            bookmarkedPosts: data.userInteractions.isBookmarked
+            bookmarkedPosts: data.bookmarked
               ? [...prev.engagementHistory.bookmarkedPosts, postId]
               : prev.engagementHistory.bookmarkedPosts.filter(id => id !== postId)
           }
         }))
+        
+        toast.success(data.bookmarked ? 'Post bookmarked!' : 'Post removed from bookmarks!')
       }
     } catch (error) {
       console.error('Error bookmarking post:', error)
+      toast.error('Failed to bookmark post')
     }
   }
 
@@ -754,32 +766,49 @@ export function IntelligentFeed() {
 
   const handleShare = async (postId: string) => {
     try {
-      // Update share count
-      setPosts(prev => prev.map(post => 
-        post.id === postId 
-          ? { 
-              ...post, 
-              metrics: {
-                ...post.metrics,
-                sharesCount: post.metrics.sharesCount + 1
-              }
-            }
-          : post
-      ))
-      
-      // In a real app, this would open a share modal
+      // First, try to use the native share API
       if (navigator.share) {
         await navigator.share({
           title: 'Check out this post on Flavours',
           url: `${window.location.origin}/post/${postId}`
         })
+        
+        // Update share count after successful share
+        setPosts(prev => prev.map(post => 
+          post.id === postId 
+            ? { 
+                ...post, 
+                metrics: {
+                  ...post.metrics,
+                  sharesCount: post.metrics.sharesCount + 1
+                }
+              }
+            : post
+        ))
+        
+        toast.success('Post shared successfully!')
       } else {
         // Fallback: copy to clipboard
         await navigator.clipboard.writeText(`${window.location.origin}/post/${postId}`)
+        
+        // Update share count
+        setPosts(prev => prev.map(post => 
+          post.id === postId 
+            ? { 
+                ...post, 
+                metrics: {
+                  ...post.metrics,
+                  sharesCount: post.metrics.sharesCount + 1
+                }
+              }
+            : post
+        ))
+        
         toast.success('Link copied to clipboard!')
       }
     } catch (error) {
       console.error('Error sharing post:', error)
+      toast.error('Failed to share post')
     }
   }
 
@@ -827,7 +856,7 @@ export function IntelligentFeed() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ action: 'save' })
+        body: JSON.stringify({ action: 'bookmark' })
       })
       
       const data = await response.json()
@@ -835,24 +864,28 @@ export function IntelligentFeed() {
       if (data.success) {
         setPosts(prev => prev.map(post => 
           post.id === postId 
-            ? { ...post, isBookmarked: data.userInteractions.isBookmarked }
+            ? { ...post, isBookmarked: data.bookmarked }
             : post
         ))
+        
+        toast.success(data.bookmarked ? 'Post saved!' : 'Post removed from saved!')
       }
     } catch (error) {
       console.error('Error saving post:', error)
+      toast.error('Failed to save post')
       throw error
     }
   }
 
   const handleAddToFavorites = async (postId: string) => {
     try {
+      // For now, use bookmark action for favorites since we don't have a separate favorites API
       const response = await fetch(`/api/posts/${postId}/interact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ action: 'favorite' })
+        body: JSON.stringify({ action: 'bookmark' })
       })
       
       const data = await response.json()
@@ -860,12 +893,15 @@ export function IntelligentFeed() {
       if (data.success) {
         setPosts(prev => prev.map(post => 
           post.id === postId 
-            ? { ...post, isFavorited: data.userInteractions.isFavorited }
+            ? { ...post, isFavorited: data.bookmarked }
             : post
         ))
+        
+        toast.success(data.bookmarked ? 'Added to favorites!' : 'Removed from favorites!')
       }
     } catch (error) {
       console.error('Error adding to favorites:', error)
+      toast.error('Failed to update favorites')
       throw error
     }
   }
@@ -1116,7 +1152,7 @@ export function IntelligentFeed() {
                     @{post.creator.username}
                   </span>
                   <span className="text-muted-foreground text-sm">·</span>
-                  <span className="text-muted-foreground text-sm">{post.createdAt}</span>
+                  <span className="text-muted-foreground text-sm">{formatPostDate(post.createdAt)}</span>
                   <span className="text-muted-foreground text-sm">·</span>
                   <div className="flex items-center space-x-1">
                     {getPrivacyIcon(post.privacy)}

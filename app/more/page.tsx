@@ -164,7 +164,7 @@ export default function MorePage() {
                 <Smartphone className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
-                <h3 className="font-medium">Flavours Mobile</h3>
+                <h3 className="font-medium">Flavours Platform</h3>
                 <p className="text-sm text-muted-foreground">Version 1.0.0</p>
               </div>
             </div>
@@ -178,7 +178,7 @@ export default function MorePage() {
               tips, and premium content.
             </p>
             <div className="flex space-x-4 text-sm text-muted-foreground">
-              <span>© 2024 Flavours</span>
+              <span>© 2025 Flavours</span>
               <span>•</span>
               <span>All rights reserved</span>
             </div>

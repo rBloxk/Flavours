@@ -27,6 +27,7 @@ interface ProfileData {
     instagram?: string
     youtube?: string
     tiktok?: string
+    onlyfans?: string
   }
   privacy_settings: {
     profile_visibility: 'public' | 'followers' | 'private'

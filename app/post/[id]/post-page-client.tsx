@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { formatPostDate } from '@/lib/date-utils'
+import { VideoPlayer } from '@/components/ui/video-player'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -372,7 +374,7 @@ export function PostPageClient() {
                   </Badge>
                 </div>
                 <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                  <span>{post.createdAt}</span>
+                  <span>{formatPostDate(post.createdAt)}</span>
                   <span>•</span>
                   <div className="flex items-center space-x-1">
                     {getPrivacyIcon(post.privacy)}
@@ -415,11 +417,10 @@ export function PostPageClient() {
                       className="w-full h-full object-contain"
                     />
                   ) : (
-                    <video
+                    <VideoPlayer
                       src={post.media[0].url}
                       poster={'thumbnail' in post.media[0] ? post.media[0].thumbnail : ''}
-                      controls
-                      className="w-full h-full object-contain"
+                      className="w-full h-full"
                     />
                   )}
                 </div>
@@ -434,11 +435,10 @@ export function PostPageClient() {
                           className="w-full h-64 object-contain"
                         />
                       ) : (
-                        <video
+                        <VideoPlayer
                           src={media.url}
                           poster={'thumbnail' in media ? media.thumbnail : ''}
-                          controls
-                          className="w-full h-64 object-contain"
+                          className="w-full h-64"
                         />
                       )}
                     </div>
@@ -546,8 +546,8 @@ export function PostPageClient() {
                   onChange={(e) => setNewComment(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Write a comment..."
-                  className="w-full px-2 py-2 border rounded-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-                  rows={2}
+                  className="w-full px-2 py-2 border bg-background rounded-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                  rows={1}
                   disabled={isSubmittingComment}
                 />
               </div>

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { VideoPlayer } from '@/components/media/video-player'
+import { VideoPlayer } from '@/components/ui/video-player'
 import { 
   ArrowLeft, 
   Play, 

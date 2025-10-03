@@ -27,6 +27,7 @@ interface ProfileData {
     instagram?: string
     youtube?: string
     tiktok?: string
+    onlyfans?: string
   }
   privacy_settings: {
     profile_visibility: 'public' | 'followers' | 'private'
@@ -68,7 +69,8 @@ const mockProfiles: Record<string, ProfileData> = {
     social_links: {
       twitter: '@demouser',
       instagram: '@demo_user',
-      youtube: 'Demo User Channel'
+      youtube: 'Demo User Channel',
+      onlyfans: '@demo_onlyfans'
     },
     privacy_settings: {
       profile_visibility: 'public',
@@ -108,7 +110,49 @@ const mockProfiles: Record<string, ProfileData> = {
       twitter: '@janesmith',
       instagram: '@janesmith_lifestyle',
       youtube: 'Jane Smith Lifestyle',
-      tiktok: '@janesmith'
+      tiktok: '@janesmith',
+      onlyfans: '@janesmith'
+    },
+    privacy_settings: {
+      profile_visibility: 'public',
+      show_email: false,
+      show_location: true,
+      show_website: true
+    },
+    verification_status: 'verified',
+    age_verified: true,
+    email_verified: true,
+    phone_verified: true,
+    two_factor_enabled: true
+  },
+  'jane_fitness': {
+    id: 'user-3',
+    username: 'jane_fitness',
+    email: 'jane.fitness@example.com',
+    display_name: 'Jane Smith',
+    avatar_url: 'https://ui-avatars.com/api/?name=Jane+Smith&background=random',
+    bio: 'Fitness enthusiast and certified trainer 💪 | Sharing workout routines, nutrition tips, and motivation | Let\'s achieve our goals together!',
+    location: 'Miami, FL',
+    website: 'https://janesmithfitness.com',
+    is_creator: true,
+    is_verified: true,
+    created_at: '2024-02-15T08:30:00Z',
+    last_active: '2024-01-20T16:45:00Z',
+    followers_count: 23400,
+    following_count: 892,
+    posts_count: 245,
+    likes_received: 156800,
+    total_views: 245000,
+    subscription_price: 19.99,
+    total_earnings: 41979.00,
+    subscription_count: 2100,
+    interests: ['Fitness', 'Nutrition', 'Wellness', 'HIIT', 'Strength Training', 'Motivation'],
+    social_links: {
+      twitter: '@janesmithfitness',
+      instagram: '@jane_fitness',
+      youtube: 'Jane Smith Fitness',
+      tiktok: '@janesmith_fitness',
+      onlyfans: '@janesmith_fitness'
     },
     privacy_settings: {
       profile_visibility: 'public',

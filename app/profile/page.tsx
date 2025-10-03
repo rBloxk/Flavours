@@ -172,7 +172,12 @@ export default function ProfilePage() {
     bio: '',
     location: '',
     website: '',
-    interests: [] as string[]
+    interests: [] as string[],
+    flavoursUsername: '',
+    twitterUsername: '',
+    instagramUsername: '',
+    youtubeChannel: '',
+    onlyfansUsername: ''
   })
 
   // Load posts when tab changes
@@ -274,7 +279,12 @@ export default function ProfilePage() {
       bio: currentProfile.bio || '',
       location: currentProfile.location || '',
       website: currentProfile.website || '',
-      interests: currentProfile.interests || []
+      interests: currentProfile.interests || [],
+      flavoursUsername: currentProfile.username || '',
+      twitterUsername: currentProfile.social_links?.twitter || '',
+      instagramUsername: currentProfile.social_links?.instagram || '',
+      youtubeChannel: currentProfile.social_links?.youtube || '',
+      onlyfansUsername: currentProfile.social_links?.onlyfans || ''
     })
     setIsEditModalOpen(true)
   }
@@ -288,7 +298,14 @@ export default function ProfilePage() {
         bio: editForm.bio,
         location: editForm.location,
         website: editForm.website,
-        interests: editForm.interests
+        interests: editForm.interests,
+        username: editForm.flavoursUsername,
+        social_links: {
+          twitter: editForm.twitterUsername,
+          instagram: editForm.instagramUsername,
+          youtube: editForm.youtubeChannel,
+          onlyfans: editForm.onlyfansUsername
+        }
       }
       
       await updateProfile(updates)
@@ -328,10 +345,19 @@ export default function ProfilePage() {
     username: 'demo_user',
     display_name: 'Demo User',
     avatar_url: 'https://ui-avatars.com/api/?name=Demo+User&background=random',
-    bio: 'Demo user bio',
+    bio: 'Passionate about fitness, creativity, and connecting with amazing people. Always learning and growing! 🌟',
+    location: 'San Francisco, CA',
+    website: 'https://example.com',
+    interests: ['Fitness', 'Art', 'Photography', 'Travel', 'Music', 'Cooking'],
     is_creator: true,
     is_verified: false,
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
+    social_links: {
+      twitter: '@demouser',
+      instagram: '@demo_user',
+      youtube: 'Demo User Channel',
+      onlyfans: '@demo_onlyfans'
+    }
   }
 
   const demoUser = {
@@ -803,6 +829,12 @@ export default function ProfilePage() {
                         <span>{currentProfile.social_links.youtube}</span>
                       </div>
                     )}
+                    {currentProfile.social_links.onlyfans && (
+                      <div className="flex items-center space-x-2 text-sm">
+                        <span className="text-muted-foreground">OnlyFans:</span>
+                        <span>{currentProfile.social_links.onlyfans}</span>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -946,6 +978,70 @@ export default function ProfilePage() {
               <p className="text-sm text-muted-foreground">
                 {editForm.bio.length}/500 characters
               </p>
+            </div>
+
+            {/* Social Media Usernames */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                <Label className="text-base font-medium">Social Media Usernames</Label>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="flavoursUsername">Flavours Username</Label>
+                  <Input
+                    id="flavoursUsername"
+                    value={editForm.flavoursUsername}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, flavoursUsername: e.target.value }))}
+                    placeholder="@your_username"
+                    prefix="@"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="twitterUsername">Twitter Username</Label>
+                  <Input
+                    id="twitterUsername"
+                    value={editForm.twitterUsername}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, twitterUsername: e.target.value }))}
+                    placeholder="@your_twitter"
+                    prefix="@"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="instagramUsername">Instagram Username</Label>
+                  <Input
+                    id="instagramUsername"
+                    value={editForm.instagramUsername}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, instagramUsername: e.target.value }))}
+                    placeholder="@your_instagram"
+                    prefix="@"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="youtubeChannel">YouTube Channel</Label>
+                  <Input
+                    id="youtubeChannel"
+                    value={editForm.youtubeChannel}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, youtubeChannel: e.target.value }))}
+                    placeholder="Your YouTube Channel Name"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="onlyfansUsername">OnlyFans Username</Label>
+                  <Input
+                    id="onlyfansUsername"
+                    value={editForm.onlyfansUsername}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, onlyfansUsername: e.target.value }))}
+                    placeholder="@your_onlyfans"
+                    prefix="@"
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Interests */}

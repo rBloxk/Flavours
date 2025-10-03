@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
 import { QRCodeModal } from '@/components/ui/qr-code-modal'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { useToast } from '@/hooks/use-toast'
 import { 
   ArrowLeft,
   Crown,
@@ -30,7 +32,8 @@ import {
   Image,
   Video,
   Play,
-  Clock
+  Clock,
+  Mail
 } from 'lucide-react'
 
 // Mock data - in a real app, this would come from an API
@@ -159,42 +162,67 @@ const mockProfiles = [
   },
   {
     id: 'creator2',
-    username: 'chef_mike',
-    display_name: 'Mike Chen',
-    avatar_url: 'https://ui-avatars.com/api/?name=Mike+Chen&background=random',
-    cover_url: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1200&h=400&fit=crop',
-    bio: 'Professional chef sharing culinary secrets and delicious recipes 🍳 | Cooking classes available | Food photography enthusiast',
-    location: 'New York, NY',
-    website: 'chefmike.com',
-    joinDate: 'January 2023',
+    username: 'jane_fitness',
+    display_name: 'Jane Smith',
+    avatar_url: 'https://ui-avatars.com/api/?name=Jane+Smith&background=random',
+    cover_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1200&h=400&fit=crop',
+    bio: 'Fitness enthusiast and certified trainer 💪 | Sharing workout routines, nutrition tips, and motivation | Let\'s achieve our goals together!',
+    location: 'Miami, FL',
+    website: 'janesmithfitness.com',
+    joinDate: 'February 2023',
     is_verified: true,
     is_creator: true,
     stats: {
-      followers: 8900,
-      following: 156,
-      posts: 89,
-      likes: 45600
+      followers: 23400,
+      following: 892,
+      posts: 245,
+      likes: 156800
     },
     subscription: {
-      price: 14.99,
+      price: 19.99,
       currency: 'USD',
-      subscribers: 800
+      subscribers: 2100
     },
     posts: [
       {
-        id: '3',
-        content: 'Behind the scenes of my latest cooking video! The secret ingredient that makes everything taste amazing...',
+        id: 'fitness1',
+        content: 'New workout video is live! 💪 Who\'s ready to sweat with me? This 30-minute HIIT session will challenge every muscle group. Perfect for beginners and advanced athletes alike! #FitnessMotivation #HIIT #Workout',
         media: [
           {
             type: 'video',
             url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-            thumbnail: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop',
-            alt: ''
+            thumbnail: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop',
+            alt: 'HIIT workout session',
+            duration: 1800 // 30 minutes
+          }
+        ],
+        stats: { likes: 2340, comments: 156 },
+        createdAt: '2 hours ago',
+        privacy: 'public'
+      },
+      {
+        id: 'fitness2',
+        content: 'Nutrition tip of the day: Hydration is key! 💧 Make sure you\'re drinking enough water throughout your workout. Your body will thank you! #Hydration #FitnessTips',
+        media: [
+          {
+            type: 'image',
+            url: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop',
+            alt: 'Water bottle during workout',
+            thumbnail: '',
+            duration: null
           }
         ],
         stats: { likes: 892, comments: 45 },
-        createdAt: '4 hours ago',
-        privacy: 'followers'
+        createdAt: '1 day ago',
+        privacy: 'public'
+      },
+      {
+        id: 'fitness3',
+        content: 'Morning motivation: Every expert was once a beginner. Every pro was once an amateur. Every icon was once an unknown. Don\'t be afraid to start! 🌟 #MotivationMonday',
+        media: [],
+        stats: { likes: 1456, comments: 78 },
+        createdAt: '2 days ago',
+        privacy: 'public'
       }
     ]
   }
@@ -204,6 +232,7 @@ export function ProfilePageClient() {
   const params = useParams()
   const router = useRouter()
   const username = params.username as string
+  const { toast } = useToast()
   const [isFollowing, setIsFollowing] = useState(false)
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [activeContentTab, setActiveContentTab] = useState('all')
@@ -289,63 +318,89 @@ export function ProfilePageClient() {
         Back
       </Button>
 
-      {/* Cover Photo */}
-      <div className="relative h-64 w-full rounded-lg overflow-hidden mb-6">
-        <img
-          src={profile.cover_url}
-          alt="Cover photo"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-      </div>
-
       {/* Profile Header */}
       <Card className="mb-6">
-        <CardContent className="p-8">
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between space-y-4 md:space-y-0">
-            <div className="flex items-start space-x-4">
-              <Avatar className="h-24 w-24 -mt-12 border-4 border-background">
+        <CardContent className="p-0">
+          {/* Cover Photo Section */}
+          <div className="relative h-48 w-full rounded-t-lg overflow-hidden">
+            <img
+              src={profile.cover_url}
+              alt="Cover photo"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+          </div>
+          
+          {/* Profile Info Section */}
+          <div className="p-6 -mt-16 relative">
+            {/* Avatar positioned properly */}
+            <div className="flex flex-col items-center mb-6">
+              <Avatar className="h-32 w-32 border-4 border-background shadow-lg">
                 <AvatarImage src={profile.avatar_url} alt={profile.display_name} />
-                <AvatarFallback className="text-2xl">
+                <AvatarFallback className="text-3xl">
                   {profile.display_name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <h1 className="text-2xl font-bold">{profile.display_name}</h1>
-                  {profile.is_verified && (
-                    <Crown className="h-5 w-5 text-yellow-500" />
-                  )}
-                  <Badge variant="secondary">@{profile.username}</Badge>
-                </div>
-                <p className="text-muted-foreground">{profile.bio}</p>
-                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                  {profile.location && (
-                    <div className="flex items-center space-x-1">
-                      <MapPin className="h-4 w-4" />
-                      <span>{profile.location}</span>
-                    </div>
-                  )}
-                  {profile.website && (
-                    <div className="flex items-center space-x-1">
-                      <Link className="h-4 w-4" />
-                      <a href={`https://${profile.website}`} className="hover:underline">
-                        {profile.website}
-                      </a>
-                    </div>
-                  )}
-                  <div className="flex items-center space-x-1">
-                    <Calendar className="h-4 w-4" />
-                    <span>Joined {profile.joinDate}</span>
-                  </div>
-                </div>
-              </div>
             </div>
             
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm">
+            {/* Profile Details */}
+            <div className="text-center mb-6">
+              <div className="flex items-center justify-center space-x-2 mb-2">
+                <h1 className="text-3xl font-bold">{profile.display_name}</h1>
+                {profile.is_verified && (
+                  <Crown className="h-6 w-6 text-yellow-500" />
+                )}
+              </div>
+              <Badge variant="secondary" className="mb-3">@{profile.username}</Badge>
+              
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-4">
+                {profile.bio}
+              </p>
+              
+              {/* Profile Details Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-muted-foreground mb-4">
+                {profile.location && (
+                  <div className="flex items-center justify-center space-x-2">
+                    <MapPin className="h-4 w-4 flex-shrink-0" />
+                    <span>{profile.location}</span>
+                  </div>
+                )}
+                <div className="flex items-center justify-center space-x-2">
+                  <Mail className="h-4 w-4 flex-shrink-0" />
+                  <span>jane.fitness@example.com</span>
+                </div>
+                <div className="flex items-center justify-center space-x-2">
+                  <Calendar className="h-4 w-4 flex-shrink-0" />
+                  <span>Joined {profile.joinDate}</span>
+                </div>
+              </div>
+              
+              {/* Website Link */}
+              {profile.website && (
+                <div className="flex items-center justify-center space-x-2 text-sm text-muted-foreground">
+                  <Link className="h-4 w-4 flex-shrink-0" />
+                  <a href={`https://${profile.website}`} className="hover:underline text-blue-600">
+                    {profile.website}
+                  </a>
+                </div>
+              )}
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  // Toggle notification settings for this user
+                  toast({
+                    title: "Notification Settings",
+                    description: `Notifications for @${profile.username} ${isFollowing ? 'enabled' : 'disabled'}`,
+                  });
+                }}
+              >
                 <Bell className="mr-2 h-4 w-4" />
-                Notifications
+                {isFollowing ? 'Notifications' : 'Turn On'}
               </Button>
               <QRCodeModal
                 profileUrl={`${typeof window !== 'undefined' ? window.location.origin : ''}/profile/${profile.username}`}
@@ -363,20 +418,68 @@ export function ProfilePageClient() {
                   Share Profile
                 </Button>
               </QRCodeModal>
-              <Button variant="outline" size="sm">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/profile/${profile.username}`);
+                    toast({
+                      title: "Copied!",
+                      description: "Profile link copied to clipboard",
+                    });
+                  }}>
+                    <Share className="mr-2 h-4 w-4" />
+                    Copy Link
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => {
+                    toast({
+                      title: "Report Profile",
+                      description: "Profile reported successfully",
+                    });
+                  }}>
+                    <Shield className="mr-2 h-4 w-4" />
+                    Report Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => {
+                    toast({
+                      title: "Block User",
+                      description: `@${profile.username} has been blocked`,
+                    });
+                  }}>
+                    <Lock className="mr-2 h-4 w-4" />
+                    Block User
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               {profile.is_creator && (
                 <>
                   <Button 
                     variant={isFollowing ? "secondary" : "default"}
-                    onClick={() => setIsFollowing(!isFollowing)}
+                    onClick={() => {
+                      setIsFollowing(!isFollowing)
+                      toast({
+                        title: isFollowing ? "Unfollowed" : "Following",
+                        description: `You ${isFollowing ? 'unfollowed' : 'are now following'} @${profile.username}`,
+                      });
+                    }}
+                    size="sm"
                   >
                     {isFollowing ? 'Following' : 'Follow'}
                   </Button>
                   <Button 
                     variant={isSubscribed ? "secondary" : "default"}
-                    onClick={() => setIsSubscribed(!isSubscribed)}
+                    onClick={() => {
+                      setIsSubscribed(!isSubscribed)
+                      toast({
+                        title: isSubscribed ? "Unsubscribed" : "Subscribed",
+                        description: `You ${isSubscribed ? 'unsubscribed from' : 'subscribed to'} @${profile.username} for $${profile.subscription.price}/month`,
+                      });
+                    }}
+                    size="sm"
                   >
                     <DollarSign className="mr-2 h-4 w-4" />
                     {isSubscribed ? 'Subscribed' : `Subscribe $${profile.subscription.price}`}
@@ -390,27 +493,47 @@ export function ProfilePageClient() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <Card>
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => {
+          toast({
+            title: "Followers",
+            description: `@${profile.username} has ${profile.stats.followers.toLocaleString()} followers`,
+          });
+        }}>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold">{profile.stats.followers.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-blue-600">{profile.stats.followers.toLocaleString()}</div>
             <div className="text-sm text-muted-foreground">Followers</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => {
+          toast({
+            title: "Following",
+            description: `@${profile.username} is following ${profile.stats.following.toLocaleString()} users`,
+          });
+        }}>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold">{profile.stats.following.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-green-600">{profile.stats.following.toLocaleString()}</div>
             <div className="text-sm text-muted-foreground">Following</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => {
+          toast({
+            title: "Posts",
+            description: `@${profile.username} has ${profile.stats.posts.toLocaleString()} posts`,
+          });
+        }}>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold">{profile.stats.posts.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-purple-600">{profile.stats.posts.toLocaleString()}</div>
             <div className="text-sm text-muted-foreground">Posts</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => {
+          toast({
+            title: "Total Likes",
+            description: `@${profile.username} has received ${profile.stats.likes.toLocaleString()} likes`,
+          });
+        }}>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold">{profile.stats.likes.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-red-600">{profile.stats.likes.toLocaleString()}</div>
             <div className="text-sm text-muted-foreground">Likes</div>
           </CardContent>
         </Card>
@@ -469,9 +592,43 @@ export function ProfilePageClient() {
                       </div>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => {
+                        navigator.clipboard.writeText(`${window.location.origin}/post/${post.id}`);
+                        toast({
+                          title: "Copied!",
+                          description: "Post link copied to clipboard",
+                        });
+                      }}>
+                        <Share className="mr-2 h-4 w-4" />
+                        Copy Link
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => {
+                        toast({
+                          title: "Saved",
+                          description: "Post saved to your collection",
+                        });
+                      }}>
+                        <Bookmark className="mr-2 h-4 w-4" />
+                        Save Post
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => {
+                        toast({
+                          title: "Reported",
+                          description: "Post reported successfully",
+                        });
+                      }}>
+                        <Shield className="mr-2 h-4 w-4" />
+                        Report Post
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
 
                 <p className="mb-4 text-base leading-relaxed">{post.content}</p>
@@ -499,19 +656,64 @@ export function ProfilePageClient() {
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-6">
-                    <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="flex items-center space-x-2 hover:text-red-500 transition-colors"
+                      onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation();
+                        toast({
+                          title: "Liked",
+                          description: "Post liked successfully",
+                        });
+                      }}
+                    >
                       <Heart className="h-4 w-4" />
                       <span>{post.stats.likes}</span>
                     </Button>
-                    <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="flex items-center space-x-2 hover:text-blue-500 transition-colors"
+                      onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation();
+                        toast({
+                          title: "Comments",
+                          description: "Opening comments section",
+                        });
+                      }}
+                    >
                       <MessageCircle className="h-4 w-4" />
                       <span>{post.stats.comments}</span>
                     </Button>
-                    <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="flex items-center space-x-2 hover:text-green-500 transition-colors"
+                      onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation();
+                        navigator.clipboard.writeText(`${window.location.origin}/post/${post.id}`);
+                        toast({
+                          title: "Shared",
+                          description: "Post link copied to clipboard",
+                        });
+                      }}
+                    >
                       <Share className="h-4 w-4" />
                     </Button>
                   </div>
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="hover:text-yellow-500 transition-colors"
+                    onClick={(e: React.MouseEvent) => {
+                      e.stopPropagation();
+                      toast({
+                        title: "Bookmarked",
+                        description: "Post saved to your bookmarks",
+                      });
+                    }}
+                  >
                     <Bookmark className="h-4 w-4" />
                   </Button>
                 </div>

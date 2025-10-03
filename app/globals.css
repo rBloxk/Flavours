@@ -5,86 +5,37 @@
 /* Import mobile-specific styles */
 @import './mobile.css';
 
-/* Import Video.js CSS */
-@import 'video.js/dist/video-js.css';
-
-/* Video.js custom styles */
-.video-js {
-  font-family: inherit;
+/* Custom video player styles */
+.custom-video-player {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
 }
 
-.video-js .vjs-big-play-button {
-  background-color: rgba(0, 0, 0, 0.7);
-  border-radius: 50%;
-  border: none;
-  width: 80px;
-  height: 80px;
-  line-height: 80px;
-  font-size: 24px;
+/* Custom video player enhancements */
+.custom-video-player video::-webkit-media-controls {
+  display: none;
 }
 
-.video-js .vjs-big-play-button:hover {
-  background-color: rgba(0, 0, 0, 0.8);
+.custom-video-player video::-webkit-media-controls-enclosure {
+  display: none;
 }
 
-.video-js .vjs-control-bar {
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-  height: 60px;
+.custom-video-player video::-moz-media-controls {
+  display: none;
 }
 
-.video-js .vjs-progress-control {
-  height: 6px;
+/* Remove download button from native video controls */
+video::-webkit-media-controls-panel {
+  display: none;
 }
 
-.video-js .vjs-progress-holder {
-  height: 6px;
-  border-radius: 3px;
+video::-webkit-media-controls-fullscreen-button {
+  display: none;
 }
 
-.video-js .vjs-load-progress {
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 3px;
-}
-
-.video-js .vjs-play-progress {
-  background-color: #ef4444; /* red-500 */
-  border-radius: 3px;
-}
-
-.video-js .vjs-volume-panel {
-  width: auto;
-}
-
-.video-js .vjs-volume-bar {
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 2px;
-}
-
-.video-js .vjs-volume-level {
-  background-color: #ef4444; /* red-500 */
-  border-radius: 2px;
-}
-
-/* Dark mode video player styles */
-.dark .video-js .vjs-big-play-button {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-}
-
-.dark .video-js .vjs-big-play-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
-.dark .video-js .vjs-control-bar {
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-}
-
-.dark .video-js .vjs-load-progress {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
-.dark .video-js .vjs-volume-bar {
-  background-color: rgba(255, 255, 255, 0.2);
+video::-webkit-media-controls-download-button {
+  display: none !important;
 }
 
 :root {

@@ -24,6 +24,8 @@ import {
 import { toast } from 'sonner'
 import { PostOptionsOverlay } from '@/components/ui/post-options-overlay'
 import { useAuth } from '@/components/providers/auth-provider'
+import { formatPostDate } from '@/lib/date-utils'
+import { VideoPlayer } from '@/components/ui/video-player'
 
 interface Post {
   id: string
@@ -512,7 +514,7 @@ export default function PostDetailPage() {
               <div className="flex items-center space-x-4 text-sm text-muted-foreground mt-1">
                 <div className="flex items-center space-x-1">
                   <Clock className="h-3 w-3" />
-                  <span>{post.createdAt}</span>
+                  <span>{formatPostDate(post.createdAt)}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <Eye className="h-3 w-3" />
@@ -555,10 +557,9 @@ export default function PostDetailPage() {
           {post.mediaUrl && (
             <div className="mb-6">
               {post.mediaType === 'video' ? (
-                <video
+                <VideoPlayer
                   src={post.mediaUrl}
-                  className="w-full h-[500px] object-contain rounded-lg"
-                  controls
+                  className="w-full h-[500px] rounded-lg"
                   poster=""
                 />
               ) : (
@@ -665,7 +666,7 @@ export default function PostDetailPage() {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <div className="bg-muted rounded-lg p-3">
+                        <div className="bg-muted bg-background rounded-lg p-3">
                           <div className="flex items-center space-x-2 mb-1">
                             <p className="text-sm font-medium">{comment.profiles.display_name}</p>
                             {comment.profiles.is_verified && (
@@ -678,7 +679,7 @@ export default function PostDetailPage() {
                           <p className="text-sm whitespace-pre-wrap">{comment.content}</p>
                         </div>
                         <div className="flex items-center space-x-4 mt-2 text-xs text-muted-foreground">
-                          <span>{new Date(comment.created_at).toLocaleString()}</span>
+                          <span>{formatPostDate(comment.created_at)}</span>
                           <button 
                             className={`hover:underline ${commentLikes[comment.id] ? 'text-red-600 font-medium' : ''}`}
                             onClick={() => handleCommentLike(comment.id)}
@@ -709,8 +710,8 @@ export default function PostDetailPage() {
                               onChange={(e) => setReplyText(e.target.value)}
                               onKeyPress={(e) => handleReplyKeyPress(e, comment.id)}
                               placeholder="Write a reply..."
-                              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none text-sm"
-                              rows={2}
+                              className="w-full px-3 py-2 border bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none text-sm"
+                              rows={1}
                               disabled={isSubmittingReply}
                             />
                           </div>
@@ -766,7 +767,7 @@ export default function PostDetailPage() {
                                 <p className="text-sm whitespace-pre-wrap">{reply.content}</p>
                               </div>
                               <div className="flex items-center space-x-4 mt-1 text-xs text-muted-foreground">
-                                <span>{new Date(reply.created_at).toLocaleString()}</span>
+                                <span>{formatPostDate(reply.created_at)}</span>
                                 <button 
                                   className={`hover:underline ${commentLikes[reply.id] ? 'text-red-600 font-medium' : ''}`}
                                   onClick={() => handleCommentLike(reply.id)}
@@ -797,8 +798,8 @@ export default function PostDetailPage() {
                   onChange={(e) => setNewComment(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Write a comment..."
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-                  rows={2}
+                  className="w-full px-3 py-2 border bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                  rows={1}
                   disabled={isSubmittingComment}
                 />
               </div>
