@@ -1,8 +1,9 @@
 {
   "/resources/support/help/page": "app/resources/support/help/page.js",
   "/feed/page": "app/feed/page.js",
-  "/auth/page": "app/auth/page.js",
-  "/resources/support/store/page": "app/resources/support/store/page.js",
-  "/resources/business/contract/page": "app/resources/business/contract/page.js",
-  "/resources/legal/about/page": "app/resources/legal/about/page.js"
+  "/tube/page": "app/tube/page.js",
+  "/video/[id]/page": "app/video/[id]/page.js",
+  "/licks/page": "app/licks/page.js",
+  "/talk/page": "app/talk/page.js",
+  "/api/posts/route": "app/api/posts/route.js"
 }
