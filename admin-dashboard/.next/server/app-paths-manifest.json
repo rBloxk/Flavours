@@ -1,8 +1,3 @@
 {
-  "/not-found": "app/not-found.js",
-  "/page": "app/page.js",
-  "/api/dashboard/route": "app/api/dashboard/route.js",
-  "/login/page": "app/login/page.js",
-  "/age-verification/page": "app/age-verification/page.js",
-  "/api/age-verification/route": "app/api/age-verification/route.js"
+  "/page": "app/page.js"
 }

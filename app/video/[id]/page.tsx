@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { VideoPlayer } from '@/components/ui/video-player'
+import VideoPlayer from '@/components/media/video-player'
 import { 
   ArrowLeft, 
   Play, 
@@ -31,6 +31,7 @@ interface VideoData {
   views: string
   timestamp: string
   videoUrl: string
+  requiresSubscription?: boolean
   creator: {
     id: string
     name: string
@@ -85,6 +86,7 @@ export default function VideoDetailPage() {
       views: "1.2M",
       timestamp: "2 days ago",
       videoUrl: videoUrl,
+      requiresSubscription: videoIdNum % 3 === 0, // Every 3rd video requires subscription
       creator: {
         id: "creator1",
         name: "Creative Creator",
@@ -203,15 +205,15 @@ export default function VideoDetailPage() {
               <VideoPlayer
                 src={video.videoUrl}
                 poster=""
+                title={video.title}
                 autoplay={false}
-                controls={true}
                 muted={isMuted}
-                loop={false}
-                width="100%"
-                height="100%"
                 className="w-full h-full"
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
+                isProtected={true}
+                creatorUsername={video.creator.username}
+                requiresSubscription={video.requiresSubscription || false}
+                userHasSubscription={!video.requiresSubscription} // Demo: show subscription required for some videos
+                markers={[]}
               />
             </div>
 

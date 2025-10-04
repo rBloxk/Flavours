@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { VideoPlayer } from '@/components/media/video-player'
+import VideoPlayer from '@/components/media/video-player'
 import { Play, Heart, MessageCircle, Crown, Share2, MoreHorizontal, Volume2, VolumeX } from 'lucide-react'
 
 // Mock data for Flavour Licks (shorts)

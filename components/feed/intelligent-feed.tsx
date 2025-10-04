@@ -11,7 +11,7 @@ import { FlavourTube } from './flavour-tube'
 import { FlavourLicks } from './flavour-licks'
 import { PostOptionsOverlay } from '@/components/ui/post-options-overlay'
 import { useAuth } from '@/components/providers/auth-provider'
-import { formatPostDate } from '@/lib/date-utils'
+import { formatPostDate, formatRelativeTime } from '@/lib/date-utils'
 import { 
   Heart, 
   MessageCircle, 
@@ -999,7 +999,7 @@ export function IntelligentFeed() {
               
               {lastRefreshed && (
                 <span className="text-xs text-muted-foreground">
-                  Last refreshed: {lastRefreshed.toLocaleTimeString()}
+                  Last refreshed: {formatRelativeTime(lastRefreshed)}
                 </span>
               )}
 

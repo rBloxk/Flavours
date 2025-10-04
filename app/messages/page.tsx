@@ -144,8 +144,44 @@ export default function MessagesPage() {
   const [replyTo, setReplyTo] = useState<any>(null)
   const [editingMessage, setEditingMessage] = useState<any>(null)
 
-  // Enhanced conversations data
+  // AI Chatbot configuration - Default GPT-3.5-turbo model
+  const selectedAIModel = 'gpt-3.5-turbo'
+  
+  const aiModel = { 
+    id: 'gpt-3.5-turbo', 
+    name: 'GPT-3.5 Turbo', 
+    description: 'Fast and efficient for most conversational tasks',
+    avatar: 'https://ui-avatars.com/api/?name=GPT35&background=10b981&color=fff&size=150',
+    expertise: '⚡ Fast AI'
+  }
+
+  // Enhanced conversations data with AI chatbot pinned at top
   const [conversations, setConversations] = useState([
+    {
+      id: 'ai-chatbot-dd-denials',
+      user: {
+        id: 'ai-chatbot-dd-denials',
+        name: 'D Daniels',
+        username: 'chatgpt_ai',
+        avatar: aiModel.avatar,
+        verified: true,
+        isCreator: false,
+        online: true,
+        lastSeen: 'Always online',
+        isAI: true,
+        expertise: aiModel.expertise
+      },
+      lastMessage: `Hello! I'm D Daniels, powered by ${aiModel.name}. I can help with relationship advice, sexual wellness, intimacy guidance, and intimate communication. What would you like to discuss? 💬`,
+      lastMessageTime: new Date(),
+      timestamp: 'online',
+      unread: 0,
+      isTyping: false,
+      isPinned: true,
+      isArchived: false,
+      isBlocked: false,
+      messageCount: 0,
+      isAIChatbot: true
+    },
     {
       id: 1,
       user: {
@@ -258,7 +294,31 @@ export default function MessagesPage() {
     }
   ])
 
-  // Enhanced messages data
+  // Initialize AI chatbot messages 
+  const initializeAIMessages = () => {
+    const welcomeMessage = {
+      id: 1,
+      senderId: 'ai-chatbot-dd-denials',
+      sender: 'd_denials_ai',
+      senderName: aiModel.name,
+      content: `Hello! I'm D Daniels, powered by ${aiModel.name}. I can help with relationship advice, sexual wellness, intimacy guidance, and intimate communication. What would you like to discuss? 💬`,
+      timestamp: new Date(),
+      timeString: 'now',
+      isRead: true,
+      isDelivered: true,
+      isEdited: false,
+      editedAt: null,
+      reactions: [],
+      replyTo: null,
+      attachments: [],
+      messageType: 'text',
+      isAI: true
+    }
+    
+    return [welcomeMessage]
+  }
+
+  // Enhanced messages data - separate for each conversation
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -357,6 +417,110 @@ export default function MessagesPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  // Initialize messages based on selected conversation
+  useEffect(() => {
+    if (selectedChat === 'ai-chatbot-dd-denials') {
+      setMessages(initializeAIMessages())
+    } else if (selectedChat === 1) {
+      // Sarah Johnson conversation
+      setMessages([
+        {
+          id: 1,
+          senderId: 'user-1',
+          sender: 'sarah_fitness',
+          senderName: 'Sarah Johnson',
+          content: 'Hey! I saw your latest workout video. Amazing form!',
+          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+          timeString: '10:30 AM',
+          isRead: true,
+          isDelivered: true,
+          isEdited: false,
+          editedAt: null,
+          reactions: [
+            { emoji: '👍', count: 2, users: ['user-1', 'me'] },
+            { emoji: '❤️', count: 1, users: ['me'] }
+          ],
+          replyTo: null,
+          attachments: [],
+          messageType: 'text'
+        },
+        {
+          id: 2,
+          senderId: 'me',
+          sender: 'me',
+          senderName: 'You',
+          content: 'Thank you! I\'ve been working on my technique. Do you have any tips for improving my deadlift?',
+          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000 + 2 * 60 * 1000),
+          timeString: '10:32 AM',
+          isRead: true,
+          isDelivered: true,
+          isEdited: false,
+          editedAt: null,
+          reactions: [],
+          replyTo: null,
+          attachments: [],
+          messageType: 'text'
+        },
+        {
+          id: 3,
+          senderId: 'user-1',
+          sender: 'sarah_fitness',
+          senderName: 'Sarah Johnson',
+          content: 'Absolutely! The key is to keep your core tight and drive through your heels. I can send you a detailed breakdown if you\'d like.',
+          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000 + 5 * 60 * 1000),
+          timeString: '10:35 AM',
+          isRead: true,
+          isDelivered: true,
+          isEdited: false,
+          editedAt: null,
+          reactions: [
+            { emoji: '🔥', count: 1, users: ['me'] }
+          ],
+          replyTo: null,
+          attachments: [],
+          messageType: 'text'
+        },
+        {
+          id: 4,
+          senderId: 'me',
+          sender: 'me',
+          senderName: 'You',
+          content: 'That would be amazing! I\'d really appreciate it.',
+          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000 + 6 * 60 * 1000),
+          timeString: '10:36 AM',
+          isRead: true,
+          isDelivered: true,
+          isEdited: false,
+          editedAt: null,
+          reactions: [],
+          replyTo: null,
+          attachments: [],
+          messageType: 'text'
+        },
+        {
+          id: 5,
+          senderId: 'user-1',
+          sender: 'sarah_fitness',
+          senderName: 'Sarah Johnson',
+          content: 'Thanks for the workout tips! They really helped me push through my plateau.',
+          timestamp: new Date(Date.now() - 2 * 60 * 1000),
+          timeString: '2 min ago',
+          isRead: false,
+          isDelivered: true,
+          isEdited: false,
+          editedAt: null,
+          reactions: [],
+          replyTo: null,
+          attachments: [],
+          messageType: 'text'
+        }
+      ])
+    } else {
+      // Default empty messages for other conversations
+      setMessages([])
+    }
+  }, [selectedChat])
+
   // Simulate typing indicator
   useEffect(() => {
     if (isTyping) {
@@ -429,6 +593,67 @@ export default function MessagesPage() {
   const selectedConversation = conversations.find(chat => chat.id === selectedChat)
 
   // Interactive functions
+  // Relay chat messages to ChatGPT with fallback responses
+  const relayToOpenAI = async (chatHistory: Array<{ role: string; content: string }>, openAiModel: string): Promise<string> => {
+    try {
+      const sysMsg = `You are D Daniels, a kind, supportive AI therapist and counselor specializing in:
+- Romantic relationships and emotional intimacy
+- Sexual health, wellness, and consent education  
+- Relationship communication techniques
+- Intimacy enhancement and desire management
+- Sexuality topics with medical/psychological accuracy
+- Couples therapy and conflict resolution
+
+Always prioritize:
+1. Consent, safety, and harm reduction
+2. Evidence-based information and therapy practices
+3. Inclusive, nondiscriminatory guidance
+4. Professional boundaries; suggest real help when appropriate
+5. Compassionate, nonjudgmental tone
+6. Clear disclaimers for medical/psychological advice
+
+Remember: I am D Daniels, powered by ${openAiModel}. Your responses should feel personal, empathetic, and proactive. Keep replies concise unless detail is truly needed. Avoid overly clinical language. When appropriate, encourage seeking professional help for deeper issues.`
+
+      const { choices } = await fetch('/api/openai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          messages: [{ role: 'system', content: sysMsg }, ...chatHistory], 
+          model: openAiModel 
+        }),
+      }).then((r: Response) => r.json())
+
+      if (!choices?.[0]?.message?.content) {
+        throw new Error('No completion text')
+      }
+
+      return choices[0].message.content
+    } catch (err: any) {
+      console.error('OpenAI relay failed:', err)
+      
+      // Provide helpful fallback responses based on user input
+      const lastMessage = chatHistory[chatHistory.length - 1]?.content?.toLowerCase() || ''
+      
+      if (lastMessage.includes('hey') || lastMessage.includes('hello') || lastMessage.includes('hi')) {
+        return "Hello! I'm D Daniels, your AI relationship and sexual wellness counselor. I'm here to help with relationship advice, intimacy guidance, and sexual health questions. What would you like to discuss? 💕"
+      }
+      
+      if (lastMessage.includes('relationship') || lastMessage.includes('partner') || lastMessage.includes('love')) {
+        return "I'd love to help with your relationship questions! Healthy relationships are built on trust, communication, and mutual respect. Could you tell me more about what specific aspect you'd like guidance on? 💕"
+      }
+      
+      if (lastMessage.includes('sex') || lastMessage.includes('intimacy') || lastMessage.includes('consent')) {
+        return "I'm here to provide supportive guidance on sexual wellness and intimacy. Remember that consent, communication, and safety are always the top priorities. What specific area would you like to explore? 🔬"
+      }
+      
+      if (lastMessage.includes('help') || lastMessage.includes('advice')) {
+        return "I'm here to help! As your AI counselor, I can provide guidance on relationships, sexual wellness, communication, and intimacy. I always recommend seeking professional help for serious concerns. What's on your mind? 💬"
+      }
+      
+      return "I'm D Daniels, your AI relationship counselor. While I'm experiencing some technical difficulties, I'm still here to help with relationship advice, sexual wellness, and intimacy guidance. Feel free to ask me anything! 💕"
+    }
+  }
+
   const sendMessage = () => {
     if (!newMessage.trim() || !selectedChat) return
 
@@ -451,6 +676,7 @@ export default function MessagesPage() {
     }
 
     setMessages(prev => [...prev, newMsg])
+    const userMessage = newMessage.trim()
     setNewMessage('')
     setReplyTo(null)
     
@@ -460,7 +686,7 @@ export default function MessagesPage() {
         conv.id === selectedChat 
           ? { 
               ...conv, 
-              lastMessage: newMessage.trim(),
+              lastMessage: userMessage,
               lastMessageTime: new Date(),
               timestamp: 'now',
               unread: 0
@@ -474,51 +700,106 @@ export default function MessagesPage() {
       description: "Your message has been sent successfully.",
     })
 
-    // Simulate typing indicator from other user
-    setTimeout(() => {
-      setIsTyping(true)
-      setTypingUsers(['Sarah Johnson'])
-    }, 1000)
+    // Handle AI chatbot response
+    if (selectedChat === 'ai-chatbot-dd-denials') {
+      setTimeout(() => {
+        setIsTyping(true)
+        setTypingUsers(['D Daniels'])
+      }, 800)
 
-    // Simulate reply after typing
-    setTimeout(() => {
-      const replyMsg = {
-        id: messages.length + 2,
-        senderId: 'user-1',
-        sender: 'sarah_fitness',
-        senderName: 'Sarah Johnson',
-        content: 'Thanks for your message! I\'ll get back to you soon.',
-        timestamp: new Date(),
-        timeString: 'now',
-        isRead: false,
-        isDelivered: true,
-        isEdited: false,
-        editedAt: null,
-        reactions: [],
-        replyTo: null,
-        attachments: [],
-        messageType: 'text'
-      }
-      
-      setMessages(prev => [...prev, replyMsg])
-      setIsTyping(false)
-      setTypingUsers([])
-      
-      // Update conversation
-      setConversations(prev => 
-        prev.map(conv => 
-          conv.id === selectedChat 
-            ? { 
-                ...conv, 
-                lastMessage: 'Thanks for your message! I\'ll get back to you soon.',
-                lastMessageTime: new Date(),
-                timestamp: 'now',
-                unread: conv.id === selectedChat ? 0 : conv.unread + 1
-              }
-            : conv
+      setTimeout(async () => {
+        const chatHistory = messages.map(msg => ({
+          role: msg.senderId === 'me' ? 'user' : 'assistant',
+          content: msg.content
+        }))
+        
+        const aiResponse = await relayToOpenAI(chatHistory, selectedAIModel)
+        const currentModel = aiModel
+        
+        const replyMsg = {
+          id: messages.length + 2,
+          senderId: 'ai-chatbot-dd-denials',
+          sender: 'd_denials_ai',
+          senderName: currentModel?.name || 'D Daniels',
+          content: aiResponse,
+          timestamp: new Date(),
+          timeString: 'now',
+          isRead: false,
+          isDelivered: true,
+          isEdited: false,
+          editedAt: null,
+          reactions: [],
+          replyTo: null,
+          attachments: [],
+          messageType: 'text',
+          isAI: true
+        }
+        
+        setMessages(prev => [...prev, replyMsg])
+        setIsTyping(false)
+        setTypingUsers([])
+        
+        // Update conversation
+        setConversations(prev => 
+          prev.map(conv => 
+            conv.id === selectedChat 
+              ? { 
+                  ...conv, 
+                  lastMessage: aiResponse,
+                  lastMessageTime: new Date(),
+                  timestamp: 'online',
+                  unread: 0
+                }
+              : conv
+          )
         )
-      )
-    }, 4000)
+      }, 2500)
+    } else {
+      // Regular user conversation handling
+      setTimeout(() => {
+        setIsTyping(true)
+        setTypingUsers(['Sarah Johnson'])
+      }, 1000)
+
+      setTimeout(() => {
+        const replyMsg = {
+          id: messages.length + 2,
+          senderId: 'user-1',
+          sender: 'sarah_fitness',
+          senderName: 'Sarah Johnson',
+          content: 'Thanks for your message! I\'ll get back to you soon.',
+          timestamp: new Date(),
+          timeString: 'now',
+          isRead: false,
+          isDelivered: true,
+          isEdited: false,
+          editedAt: null,
+          reactions: [],
+          replyTo: null,
+          attachments: [],
+          messageType: 'text'
+        }
+        
+        setMessages(prev => [...prev, replyMsg])
+        setIsTyping(false)
+        setTypingUsers([])
+        
+        // Update conversation
+        setConversations(prev => 
+          prev.map(conv => 
+            conv.id === selectedChat 
+              ? { 
+                  ...conv, 
+                  lastMessage: 'Thanks for your message! I\'ll get back to you soon.',
+                  lastMessageTime: new Date(),
+                  timestamp: 'now',
+                  unread: conv.id === selectedChat ? 0 : conv.unread + 1
+                }
+              : conv
+          )
+        )
+      }, 4000)
+    }
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -918,6 +1199,9 @@ export default function MessagesPage() {
                       {selectedConversation.user.online && (
                         <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 rounded-full border-2 border-background" />
                       )}
+                      {selectedConversation.user.isAI && (
+                        <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-purple-500 rounded-full border-2 border-background animate-pulse" />
+                      )}
                     </div>
                     <div>
                       <div className="flex items-center space-x-2">
@@ -928,9 +1212,17 @@ export default function MessagesPage() {
                         {selectedConversation.user.isCreator && (
                           <Crown className="h-3 w-3 text-purple-600" />
                         )}
+                        {selectedConversation.user.isAI && (
+                          <Zap className="h-3 w-3 text-purple-600" />
+                        )}
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        {selectedConversation.user.online ? 'Online' : `Last seen ${selectedConversation.user.lastSeen}`}
+                        {selectedConversation.user.isAI 
+                          ? `${selectedConversation.user.expertise} • Always online`
+                          : selectedConversation.user.online 
+                          ? 'Online' 
+                          : `Last seen ${selectedConversation.user.lastSeen}`
+                        }
                       </p>
                     </div>
                   </div>
@@ -941,7 +1233,7 @@ export default function MessagesPage() {
                       onClick={() => {
                         toast({
                           title: "Voice call",
-                          description: "Starting voice call...",
+                          description: selectedConversation.user.isAI ? "AI voice calls coming soon!" : "Starting voice call...",
                         })
                       }}
                     >
@@ -953,7 +1245,7 @@ export default function MessagesPage() {
                       onClick={() => {
                         toast({
                           title: "Video call",
-                          description: "Starting video call...",
+                          description: selectedConversation.user.isAI ? "AI video calls coming soon!" : "Starting video call...",
                         })
                       }}
                     >
@@ -1020,10 +1312,18 @@ export default function MessagesPage() {
                               className={`rounded-lg px-3 py-2 ${
                                 message.sender === 'me'
                                   ? 'bg-primary text-primary-foreground'
+                                  : message.isAI 
+                                  ? 'bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/50 dark:to-pink-950/50 border border-purple-200 dark:border-purple-800'
                                   : 'bg-muted'
                               }`}
                             >
                               <p className="text-sm">{message.content}</p>
+                              {message.isAI && (
+                                <div className="flex items-center mt-1">
+                                  <Zap className="h-2 w-2 text-purple-500 mr-1" />
+                                  <p className="text-xs text-purple-600 dark:text-purple-400">D Daniels AI</p>
+                                </div>
+                              )}
                               {message.isEdited && (
                                 <p className="text-xs opacity-70 mt-1">(edited)</p>
                               )}

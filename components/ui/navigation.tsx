@@ -49,8 +49,8 @@ export function Navigation() {
         return 'Messages'
       case '/cams':
         return 'Cams'
-      case '/flavourstalk':
-        return 'FlavoursTalk'
+      case '/talk':
+        return 'Talk'
       case '/notifications':
         return 'Notifications'
       case '/profile':

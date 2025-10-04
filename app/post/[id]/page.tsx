@@ -25,7 +25,7 @@ import { toast } from 'sonner'
 import { PostOptionsOverlay } from '@/components/ui/post-options-overlay'
 import { useAuth } from '@/components/providers/auth-provider'
 import { formatPostDate } from '@/lib/date-utils'
-import { VideoPlayer } from '@/components/ui/video-player'
+import VideoPlayer from '@/components/media/video-player'
 
 interface Post {
   id: string

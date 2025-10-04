@@ -30,8 +30,10 @@ import {
   MessageSquare,
   Zap,
   Play,
-  Heart
+  Heart,
+  MessageCircleHeart,
 } from 'lucide-react'
+
 
 export function Sidebar() {
   const pathname = usePathname()
@@ -65,10 +67,10 @@ export function Sidebar() {
       badge: null
     },
     {
-      id: 'flavourstalk',
-      label: 'FlavoursTalk',
-      icon: MessageSquare,
-      href: '/flavourstalk',
+      id: 'talk',
+      label: 'Talk',
+      icon: MessageCircleHeart,
+      href: '/talk',
       badge: null
     },
     {

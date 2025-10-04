@@ -5,37 +5,332 @@
 /* Import mobile-specific styles */
 @import './mobile.css';
 
-/* Custom video player styles */
-.custom-video-player {
+/* Import Video.js CSS */
+@import 'video.js/dist/video-js.css';
+
+/* Enhanced Video.js customizations */
+.video-js {
   width: 100%;
   height: auto;
-  border-radius: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-/* Custom video player enhancements */
-.custom-video-player video::-webkit-media-controls {
-  display: none;
-}
-
-.custom-video-player video::-webkit-media-controls-enclosure {
-  display: none;
-}
-
-.custom-video-player video::-moz-media-controls {
-  display: none;
-}
-
-/* Remove download button from native video controls */
-video::-webkit-media-controls-panel {
-  display: none;
-}
-
-video::-webkit-media-controls-fullscreen-button {
-  display: none;
-}
-
-video::-webkit-media-controls-download-button {
+/* Remove download button if it appears */
+.video-js .vjs-control-bar .vjs-download {
   display: none !important;
+}
+
+/* Enhanced control bar styling */
+.video-js .vjs-control-bar {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2));
+  backdrop-filter: blur(10px);
+  border-radius: 0 0 12px 12px;
+  height: 60px !important;
+}
+
+/* Custom progress bar */
+.video-js .vjs-progress-control .vjs-progress-holder {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.video-js .vjs-progress-control .vjs-progress-holder .vjs-play-progress {
+  background: #ff6b6b;
+  border-radius: 3px;
+}
+
+.video-js .vjs-progress-control .vjs-progress-holder .vjs-load-progress {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+/* Custom buttons styling */
+.video-js .vjs-big-play-button {
+  background: rgba(255, 107, 107, 0.9);
+  backdrop-filter: blur(10px);
+  border: none;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  font-size: 2rem;
+  transition: all 0.3s ease;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.video-js .vjs-big-play-button:hover {
+  background: rgba(255, 107, 107, 1);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Loading spinner */
+.video-js .vjs-loading-spinner {
+  border-color: #ff6b6b transparent transparent transparent;
+}
+
+/* Menu styling */
+.video-js .vjs-menu {
+  background: rgba(0, 0, 0, 0.9);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.video-js .vjs-menu-item {
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  margin: 0.25rem;
+}
+
+.video-js .vjs-menu-item:hover {
+  background: rgba(255, 107, 107, 0.2);
+}
+
+/* Marker styling */
+.video-js .vjs-marker {
+  background: #ff6b6b;
+  border-radius: 2px;
+  height: 100%;
+  width: 3px;
+}
+
+.video-js .vjs-marker-tooltip {
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 0.8rem;
+}
+
+/* Custom loading spinner */
+.video-js .vjs-loading-spinner .vjs-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.video-js .vjs-loading-spinner .vjs-spinner-circle {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #ff6b6b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.video-js .vjs-loading-spinner .vjs-spinner-text {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Dynamic watermark */
+.dynamic-watermark {
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.dynamic-watermark:hover {
+  opacity: 1;
+}
+
+/* Video protection styles */
+.video-player-container {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  pointer-events: auto;
+}
+
+.video-player-container video {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide context menu */
+.video-js video::-webkit-media-controls-context-menu {
+  display: none !important;
+}
+
+/* Disable right-click */
+.video-player-container {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Watermark overlay */
+.video-player-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><text x="50" y="50" font-family="Arial" font-size="12" fill="rgba(255,255,255,0.1)" text-anchor="middle" dominant-baseline="middle">PROTECTED</text></svg>') repeat;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Fake broken video for unauthorized access */
+.video-player-container.unauthorized video {
+  filter: blur(10px) grayscale(100%);
+  opacity: 0.3;
+}
+
+/* Disable printing */
+@media print {
+  .video-player-container {
+    display: none !important;
+  }
+}
+
+.video-js .vjs-big-play-button:before {
+  line-height: 60px;
+  font-size: 24px;
+}
+
+/* Enhanced quality selector */
+.video-js .vjs-menu-button-popup .vjs-menu {
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(15px);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.video-js .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
+  background: transparent;
+}
+
+.video-js .vjs-menu-button-popup .vjs-menu .vjs-menu-content .vjs-menu-item {
+  color: #fff;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.video-js .vjs-menu-button-popup .vjs-menu .vjs-menu-content .vjs-menu-item:last-child {
+  border-bottom: none;
+}
+
+.video-js .vjs-menu-button-popup .vjs-menu .vjs-menu-content .vjs-menu-item:hover,
+.video-js .vjs-menu-button-popup .vjs-menu .vjs-menu-content .vjs-menu-item.vjs-selected {
+  background: rgba(255, 71, 87, 0.2);
+  color: #ff4757;
+}
+
+/* Hotkeys overlay */
+.video-js .vjs-overlay-small {
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+/* Volume control enhancements */
+.video-js .vjs-volume-panel .vjs-volume-control {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.video-js .vjs-volume-panel .vjs-volume-control .vjs-volume-level {
+  background: #ff4757;
+  border-radius: 20px;
+}
+
+/* Marker overlays */
+.video-js .vjs-marker {
+  background: #ff4757;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  opacity: 0.8;
+}
+
+.video-js .vjs-marker:hover {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* Video Protection Styles */
+.video-js player video {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  pointer-events: none !important;
+}
+
+/* Disable video download buttons */
+.video-js .vjs-control-bar .vjs-button::after {
+  display: none !important;
+}
+
+.video-js .vjs-menu-button-popup .vjs-menu .vjs-menu-content .vjs-menu-item:contains("Download") {
+  display: none !important;
+}
+
+/* Hide video context menu */
+.video-js video::-webkit-media-controls-start-playback-button,
+.video-js video::-webkit-media-controls-fullscreen-button,
+.video-js video::-webkit-media-controls-remote-playback-button {
+  display: none !important;
+}
+
+/* Protect against right-click */
+.video-js video {
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+
+/* Watermark overlay */
+.video-js .vjs-overlay-custom {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  opacity: 0.7;
+  animation: watermark-fade 3s ease-in-out infinite;
+}
+
+@keyframes watermark-fade {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 0.9; }
+}
+
+/* Fake broken video for unauthorized access attempts */
+.video-js.unauthorized {
+  pointer-events: none;
+}
+
+.video-js.unauthorized .vjs-tech {
+  visibility: hidden;
+}
+
+/* Disable printing */
+@media print {
+  .video-js {
+    display: none !important;
+  }
 }
 
 :root {

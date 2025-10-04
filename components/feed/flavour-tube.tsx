@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { VideoPlayer } from '@/components/media/video-player'
+import VideoPlayer from '@/components/media/video-player'
 import { Play, Crown } from 'lucide-react'
 
 // Mock data for FlavourTube videos

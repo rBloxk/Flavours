@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { FlavoursLogo } from '@/components/ui/flavours-logo'
 import { useAuth } from '@/components/providers/auth-provider'
@@ -10,11 +10,17 @@ import { User, LogOut } from 'lucide-react'
 
 export function ResourceHeader() {
   const router = useRouter()
+  const pathname = usePathname()
   const { user, signOut } = useAuth()
 
   const handleSignOut = async () => {
     await signOut()
     router.push('/')
+  }
+
+  // Only show header on landing page (/) and when user is not logged in
+  if (user || pathname !== '/') {
+    return null
   }
 
   return (
@@ -27,7 +33,7 @@ export function ResourceHeader() {
           </Link>
 
           {/* Navigation Links */}
-          {/* <nav className="hidden md:flex items-center space-x-6">
+           <nav className="hidden md:flex items-center space-x-6">
             <Link 
               href="/feed" 
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
@@ -46,7 +52,7 @@ export function ResourceHeader() {
             >
               Creator Tools
             </Link>
-          </nav> */}
+          </nav>
 
           {/* Auth Buttons */}
           <div className="flex items-center space-x-4">

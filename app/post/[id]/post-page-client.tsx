@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { formatPostDate } from '@/lib/date-utils'
-import { VideoPlayer } from '@/components/ui/video-player'
+import VideoPlayer from '@/components/media/video-player'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'

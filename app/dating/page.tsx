@@ -399,7 +399,7 @@ export default function DatingPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-black dark:text-white mb-4">
-            Find Your Perfect Match
+            FlavoursDating
           </h1>
           <p className="text-lg text-muted-foreground mb-6">
             Discover amazing people and meaningful connections

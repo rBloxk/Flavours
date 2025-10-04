@@ -30,69 +30,82 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [loading, setLoading] = useState(true) // Start with true to show loading
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check if we're on the client side
+    console.log('AuthProvider: Starting initialization...')
+    
+    // Add a timeout to ensure loading state is cleared
+    const timeout = setTimeout(() => {
+      console.log('AuthProvider: Timeout reached, forcing loading to false')
+      setLoading(false)
+    }, 1000)
+    
+    // Check authentication state from localStorage
     if (typeof window !== 'undefined') {
-      // Check for authentication in localStorage (fallback to demo mode)
       const isAuthenticated = localStorage.getItem('isAuthenticated')
       const demoUserStr = localStorage.getItem('demoUser')
-      
-      console.log('AuthProvider: Checking authentication...', { isAuthenticated, demoUserStr })
       
       if (isAuthenticated === 'true' && demoUserStr) {
         try {
           const demoUser = JSON.parse(demoUserStr)
-          console.log('AuthProvider: Setting authenticated user:', demoUser)
           
-          // Create a mock user object for demo mode
-          const mockUser: User = {
-            id: demoUser.id,
-            email: demoUser.email,
-            username: demoUser.username,
-            display_name: demoUser.display_name,
-            is_creator: demoUser.is_creator,
-            is_verified: false,
-            avatar_url: demoUser.avatar_url,
-            bio: 'Demo user bio',
-            followers_count: 0,
-            following_count: 0,
-            posts_count: 0,
-            created_at: demoUser.created_at,
-            updated_at: demoUser.created_at
+          const demoUserProfile: UserProfile = {
+            id: demoUser.id || 'demo-user-id',
+            user_id: demoUser.id || 'demo-user-id',
+            username: demoUser.username || 'demo-user',
+            display_name: demoUser.display_name || 'Demo User',
+            avatar_url: demoUser.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400',
+            bio: demoUser.bio || 'Welcome to Flavours! This is a demo creator profile.',
+            is_creator: demoUser.is_creator || true,
+            is_verified: demoUser.is_verified || false,
+            created_at: demoUser.created_at || new Date().toISOString()
           }
           
-          setUser(mockUser)
-          setProfile({
-            id: demoUser.id,
-            user_id: demoUser.id,
-            username: demoUser.username,
-            display_name: demoUser.display_name,
-            avatar_url: demoUser.avatar_url,
-            bio: 'Demo user bio',
-            is_creator: demoUser.is_creator,
-            is_verified: false,
-            created_at: demoUser.created_at
-          })
+          const authUser: User = {
+            id: demoUser.id || 'demo-user-id',
+            email: demoUser.email || 'demo@flavours.com',
+            username: demoUser.username || 'demo-user',
+            display_name: demoUser.display_name || 'Demo User',
+            is_creator: demoUser.is_creator || true,
+            is_verified: demoUser.is_verified || false,
+            avatar_url: demoUserProfile.avatar_url,
+            bio: demoUserProfile.bio,
+            followers_count: demoUser.followers_count || 0,
+            following_count: demoUser.following_count || 0,
+            posts_count: demoUser.posts_count || 0,
+            created_at: demoUser.created_at || new Date().toISOString(),
+            updated_at: demoUser.updated_at || new Date().toISOString()
+          }
+          
+          setUser(authUser)
+          setProfile(demoUserProfile)
+          console.log('AuthProvider: User authenticated from localStorage')
         } catch (error) {
-          console.error('Demo user parsing error:', error)
+          console.error('AuthProvider: Error parsing stored user:', error)
+          setUser(null)
+          setProfile(null)
         }
+      } else {
+        setUser(null)
+        setProfile(null)
+        console.log('AuthProvider: No authenticated user found')
       }
     }
     
-    // Always set loading to false after checking
     setLoading(false)
+    clearTimeout(timeout)
+    console.log('AuthProvider: Initialization complete')
   }, [])
 
   const handleSignOut = async () => {
     try {
-      // Try to logout from API
       await apiClient.logout()
     } catch (error) {
       console.error('Logout error:', error)
     }
     
+    // Clear authentication state
     if (typeof window !== 'undefined') {
       localStorage.removeItem('isAuthenticated')
       localStorage.removeItem('demoUser')
@@ -101,128 +114,61 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null)
     setProfile(null)
     
-    // Redirect to home page
-    if (typeof window !== 'undefined') {
-      window.location.href = '/'
-    }
+    console.log('AuthProvider: User signed out successfully')
   }
 
   const refreshAuth = async () => {
     try {
-      // Skip API call in demo mode - just check localStorage
-      if (typeof window !== 'undefined') {
-        const isAuthenticated = localStorage.getItem('isAuthenticated')
-        const demoUserStr = localStorage.getItem('demoUser')
-        
-        if (isAuthenticated === 'true' && demoUserStr) {
-          try {
-            const demoUser = JSON.parse(demoUserStr)
-            const mockUser: User = {
-              id: demoUser.id,
-              email: demoUser.email,
-              username: demoUser.username,
-              display_name: demoUser.display_name,
-              is_creator: demoUser.is_creator,
-              is_verified: false,
-              avatar_url: demoUser.avatar_url,
-              bio: 'Demo user bio',
-              followers_count: 0,
-              following_count: 0,
-              posts_count: 0,
-              created_at: demoUser.created_at,
-              updated_at: demoUser.created_at
-            }
-            
-            setUser(mockUser)
-            setProfile({
-              id: demoUser.id,
-              user_id: demoUser.id,
-              username: demoUser.username,
-              display_name: demoUser.display_name,
-              avatar_url: demoUser.avatar_url,
-              bio: 'Demo user bio',
-              is_creator: demoUser.is_creator,
-              is_verified: false,
-              created_at: demoUser.created_at
-            })
-            return
-          } catch (error) {
-            console.error('Demo user parsing error:', error)
-          }
-        }
-      }
-      
-      // If not in demo mode or no demo user, try API call
       const response = await apiClient.getCurrentUser()
-      
-      if (response.data) {
-        setUser(response.data)
-        setProfile({
-          id: response.data.id,
-          user_id: response.data.id,
-          username: response.data.username,
-          display_name: response.data.display_name,
-          avatar_url: response.data.avatar_url,
-          bio: response.data.bio || '',
-          is_creator: response.data.is_creator,
-          is_verified: response.data.is_verified,
-          created_at: response.data.created_at
-        })
-      } else {
-        setUser(null)
-        setProfile(null)
+      if (response.success && response.data) {
+        setUser(response.data.user)
+        setProfile(response.data.profile)
       }
     } catch (error) {
       console.error('Refresh auth error:', error)
-      // In demo mode, don't clear user state on API errors
-      if (typeof window !== 'undefined') {
-        const isAuthenticated = localStorage.getItem('isAuthenticated')
-        if (isAuthenticated !== 'true') {
-          setUser(null)
-          setProfile(null)
-        }
-      } else {
-        setUser(null)
-        setProfile(null)
-      }
     }
   }
 
-  const login = async (email: string, password: string) => {
+  const handleLogin = async (email: string, password: string) => {
     try {
-      // For demo purposes, accept any email/password combination
-      // In production, this would call the actual API
-      const demoUser = {
-        id: 'demo-user-' + Date.now(),
-        email: email,
-        username: email.split('@')[0],
-        display_name: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1),
-        is_creator: false,
-        avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(email.split('@')[0])}&background=random`,
+      // Demo login - always succeed
+      const demoUserProfile: UserProfile = {
+        id: 'demo-user-id',
+        user_id: 'demo-user-id',
+        username: 'demo-user',
+        display_name: 'Demo User',
+        avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400',
+        bio: 'Welcome to Flavours! This is a demo creator profile.',
+        is_creator: true,
+        is_verified: false,
         created_at: new Date().toISOString()
       }
       
-      const profileData = {
-        id: demoUser.id,
-        user_id: demoUser.id,
-        username: demoUser.username,
-        display_name: demoUser.display_name,
-        avatar_url: demoUser.avatar_url,
-        bio: '',
-        is_creator: demoUser.is_creator,
+      const demoUser: User = {
+        id: 'demo-user-id',
+        email: email,
+        username: 'demo-user',
+        display_name: 'Demo User',
+        is_creator: true,
         is_verified: false,
-        created_at: demoUser.created_at
+        avatar_url: demoUserProfile.avatar_url,
+        bio: demoUserProfile.bio,
+        followers_count: 0,
+        following_count: 0,
+        posts_count: 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       }
       
       setUser(demoUser)
-      setProfile(profileData)
+      setProfile(demoUserProfile)
       
-      // Store authentication state
       if (typeof window !== 'undefined') {
         localStorage.setItem('isAuthenticated', 'true')
-        localStorage.setItem('demoUser', JSON.stringify(demoUser))
+        localStorage.setItem('demoUser', JSON.stringify(demoUserProfile))
       }
       
+      console.log('AuthProvider: User logged in successfully')
       return { success: true }
     } catch (error) {
       console.error('Login error:', error)
@@ -230,92 +176,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const register = async (userData: any) => {
+  const handleRegister = async (userData: any) => {
     try {
-      // For demo purposes, create a demo user
-      // In production, this would call the actual API
-      const demoUser = {
-        id: 'demo-user-' + Date.now(),
-        email: userData.email,
-        username: userData.username,
-        display_name: userData.display_name,
-        is_creator: userData.is_creator || false,
-        avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.display_name)}&background=random`,
-        created_at: new Date().toISOString()
-      }
-      
-      const profileData = {
-        id: demoUser.id,
-        user_id: demoUser.id,
-        username: demoUser.username,
-        display_name: demoUser.display_name,
-        avatar_url: demoUser.avatar_url,
-        bio: '',
-        is_creator: demoUser.is_creator,
-        is_verified: false,
-        created_at: demoUser.created_at
-      }
-      
-      setUser(demoUser)
-      setProfile(profileData)
-      
-      // Create user storage folders via API
-      try {
-        const response = await fetch('/api/storage/user', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: demoUser.username })
-        })
-        if (response.ok) {
-          console.log(`Storage folders created for user: ${demoUser.username}`)
-        }
-      } catch (error) {
-        console.error('Failed to create storage folders:', error)
-        // Don't fail registration if storage creation fails
-      }
-      
-      // Log registration activity via API
-      try {
-        await fetch('/api/storage/activity', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            username: demoUser.username,
-            type: 'login',
-            details: {
-              registration: true,
-              email: userData.email,
-              timestamp: new Date().toISOString()
-            }
-          })
-        })
-      } catch (error) {
-        console.error('Failed to log registration activity:', error)
-      }
-      
-      // Store authentication state
+      const response = await apiClient.register(userData)
+      if (response.success) {
+        const newUser = response.data
+        setUser(newUser.user)
+        setProfile(newUser.profile)
+        
       if (typeof window !== 'undefined') {
         localStorage.setItem('isAuthenticated', 'true')
-        localStorage.setItem('demoUser', JSON.stringify(demoUser))
+          localStorage.setItem('demoUser', JSON.stringify(newUser.profile))
       }
       
       return { success: true }
+      } else {
+        return { success: false, error: response.error || 'Registration failed' }
+      }
     } catch (error) {
-      console.error('Registration error:', error)
+      console.error('Register error:', error)
       return { success: false, error: 'Network error' }
     }
   }
 
-  return (
-    <AuthContext.Provider value={{
+  const contextValue: AuthContextType = {
       user,
       profile,
       loading,
       signOut: handleSignOut,
       refreshAuth,
-      login,
-      register
-    }}>
+    login: handleLogin,
+    register: handleRegister
+  }
+
+  return (
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   )

@@ -1,298 +1,658 @@
-'use client'
+'use client';
 
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react';
+import videojs from 'video.js';
+import 'video.js/dist/video-js.css';
+
+// Import Video.js plugins
+import 'videojs-contrib-quality-levels';
+import 'videojs-hotkeys';
+import 'videojs-markers';
 
 interface VideoPlayerProps {
-  src: string
-  poster?: string
-  autoplay?: boolean
-  controls?: boolean
-  muted?: boolean
-  loop?: boolean
-  preload?: 'auto' | 'metadata' | 'none'
-  width?: number | string
-  height?: number | string
-  className?: string
-  onReady?: (player: any) => void
-  onPlay?: () => void
-  onPause?: () => void
-  onEnded?: () => void
-  onError?: (error: any) => void
+  src: string;
+  poster?: string;
+  title?: string;
+  autoplay?: boolean;
+  muted?: boolean;
+  markers?: Array<{ time: number; text: string; category?: string; }>;
+  className?: string;
+  isProtected?: boolean;
+  creatorUsername?: string;
+  sessionId?: string;
+  onUnauthorizedAccess?: () => void;
+  requiresSubscription?: boolean;
+  userHasSubscription?: boolean;
 }
 
-export function VideoPlayer({
+const VideoPlayer: React.FC<VideoPlayerProps> = ({
   src,
   poster,
+  title,
   autoplay = false,
-  controls = true,
   muted = false,
-  loop = false,
-  preload = 'metadata',
-  width = '100%',
-  height = 'auto',
+  markers = [],
   className = '',
-  onReady,
-  onPlay,
-  onPause,
-  onEnded,
-  onError
-}: VideoPlayerProps) {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [mounted, setMounted] = useState(false)
+  isProtected = true,
+  creatorUsername = 'creator',
+  sessionId,
+  onUnauthorizedAccess,
+  requiresSubscription = false,
+  userHasSubscription = true
+}) => {
+  const videoRef = useRef<HTMLDivElement>(null);
+  const playerRef = useRef<any>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isAccessGranted, setIsAccessGranted] = useState(
+    !requiresSubscription || userHasSubscription
+  );
+  const [error, setError] = useState<string | null>(null);
+
+  // Protection utilities
+  const generateDeviceFingerprint = (): string => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.textBaseline = 'top';
+      ctx.font = '14px Arial';
+      ctx.fillText('Device fingerprint', 2, 2);
+    }
+    return canvas.toDataURL();
+  };
+
+  const isValidSession = (sessionId?: string): boolean => {
+    if (!isProtected) return true;
+    if (!sessionId) return false;
+    
+    // Check if session is valid (simplified check)
+    const storedSession = localStorage.getItem(`video_session_${sessionId}`);
+    return storedSession === 'valid';
+  };
+
+  const checkContentProtection = (): boolean => {
+    if (!isProtected) return true;
+    
+    // Check for developer tools
+    const devtools = {
+      open: false,
+      orientation: null
+    };
+    
+    setInterval(() => {
+      if (window.outerHeight - window.innerHeight > 200 || window.outerWidth - window.innerWidth > 200) {
+        devtools.open = true;
+        console.warn('Developer tools detected - content protection active');
+      }
+    }, 500);
+    
+    return !devtools.open;
+  };
+
+  const createCanvasWatermark = (username: string, opacity = 0.3): HTMLCanvasElement => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 200;
+    canvas.height = 50;
+    const ctx = canvas.getContext('2d');
+    
+    if (ctx) {
+      ctx.globalAlpha = opacity;
+      ctx.font = '12px Arial';
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(`© ${username}`, 10, 30);
+      ctx.fillText(new Date().toLocaleTimeString(), 10, 45);
+    }
+    
+    return canvas;
+  };
+
+  const startWatermarkProtection = (player: any, username: string) => {
+    const watermarkInterval = setInterval(() => {
+      if (!player || !player.el()) return;
+      
+      const videoEl = player.el().querySelector('video');
+      if (videoEl && isProtected) {
+        const watermark = createCanvasWatermark(username);
+        const watermarkDiv = document.createElement('div');
+        watermarkDiv.style.position = 'absolute';
+        watermarkDiv.style.top = '10px';
+        watermarkDiv.style.right = '10px';
+        watermarkDiv.style.zIndex = '1000';
+        watermarkDiv.style.pointerEvents = 'none';
+        watermarkDiv.appendChild(watermark);
+        
+        const existingWatermark = player.el().querySelector('.dynamic-watermark');
+        if (existingWatermark) {
+          existingWatermark.remove();
+        }
+        
+        watermarkDiv.className = 'dynamic-watermark';
+        player.el().appendChild(watermarkDiv);
+      }
+    }, 1000);
+    
+    return watermarkInterval;
+  };
+
+  const startProtectionMonitoring = (player: any) => {
+    const protectionInterval = setInterval(() => {
+      if (!checkContentProtection()) {
+        console.warn('Content protection violation detected');
+        player.pause();
+        setError('Content protection violation detected');
+      }
+    }, 2000);
+    
+    return protectionInterval;
+  };
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (!mounted || !videoRef.current) return
-
-    const video = videoRef.current
-
-    const handleCanPlay = () => {
-      console.log('Video can play:', src)
-      setIsLoaded(true)
-      onReady?.(video)
+    // Check subscription status instead of session
+    if (requiresSubscription && !userHasSubscription) {
+      setIsAccessGranted(false);
+      onUnauthorizedAccess?.();
+      return;
     }
 
-    const handleLoadStart = () => {
-      console.log('Video load started:', src)
-    }
+    // Disable right-click context menu for download protection
+    const disableRightClick = (e: MouseEvent) => {
+      if (isProtected) {
+        e.preventDefault();
+        return false;
+      }
+    };
 
-    const handleLoadedData = () => {
-      console.log('Video data loaded:', src)
-    }
+    // Disable keyboard shortcuts for download protection
+    const disableKeyboardShortcuts = (e: KeyboardEvent) => {
+      if (isProtected) {
+        const blockedKeys = ['F12', 'Ctrl+Shift+I', 'Ctrl+U', 'Ctrl+S', 'Ctrl+P', 'Ctrl+A'];
+        const keyCombo = e.ctrlKey ? `Ctrl+${e.key}` : e.key;
+        
+        if (blockedKeys.includes(keyCombo) || blockedKeys.includes(e.key)) {
+          e.preventDefault();
+          return false;
+        }
+      }
+    };
 
-    const handleLoadedMetadata = () => {
-      console.log('Video metadata loaded:', src)
-    }
+    // Disable text selection for download protection
+    const disableTextSelection = (e: Event) => {
+      if (isProtected) {
+        e.preventDefault();
+        return false;
+      }
+    };
 
-    const handlePlay = () => {
-      onPlay?.()
-    }
-
-    const handlePause = () => {
-      onPause?.()
-    }
-
-    const handleEnded = () => {
-      onEnded?.()
-    }
-
-    const handleError = (e: any) => {
-      const errorMsg = `Video error: ${video.error?.message || 'Unknown error'}`
-      setError(errorMsg)
-      console.error('Video error:', errorMsg, e, 'Source:', src)
-      console.error('Video element:', video)
-      console.error('Video network state:', video.networkState)
-      console.error('Video ready state:', video.readyState)
-      onError?.(e)
-    }
-
-    // Use canplay event instead of loadeddata for better compatibility
-    video.addEventListener('loadstart', handleLoadStart)
-    video.addEventListener('loadeddata', handleLoadedData)
-    video.addEventListener('loadedmetadata', handleLoadedMetadata)
-    video.addEventListener('canplay', handleCanPlay)
-    video.addEventListener('play', handlePlay)
-    video.addEventListener('pause', handlePause)
-    video.addEventListener('ended', handleEnded)
-    video.addEventListener('error', handleError)
+    document.addEventListener('contextmenu', disableRightClick);
+    document.addEventListener('keydown', disableKeyboardShortcuts);
+    document.addEventListener('selectstart', disableTextSelection);
 
     return () => {
-      video.removeEventListener('loadstart', handleLoadStart)
-      video.removeEventListener('loadeddata', handleLoadedData)
-      video.removeEventListener('loadedmetadata', handleLoadedMetadata)
-      video.removeEventListener('canplay', handleCanPlay)
-      video.removeEventListener('play', handlePlay)
-      video.removeEventListener('pause', handlePause)
-      video.removeEventListener('ended', handleEnded)
-      video.removeEventListener('error', handleError)
-    }
-  }, [mounted, onReady, onPlay, onPause, onEnded, onError, src])
+      document.removeEventListener('contextmenu', disableRightClick);
+      document.removeEventListener('keydown', disableKeyboardShortcuts);
+      document.removeEventListener('selectstart', disableTextSelection);
+    };
+  }, [requiresSubscription, userHasSubscription, isProtected, onUnauthorizedAccess]);
 
-  if (!mounted) {
+  useEffect(() => {
+    if (!isAccessGranted) return;
+
+    if (!videoRef.current) return;
+
+    // Create video element
+    const videoElement = document.createElement('video');
+    videoElement.className = 'video-js vjs-theme-modern';
+    videoElement.setAttribute('data-setup', '{}');
+    videoElement.setAttribute('controlslist', 'nodownload nofullscreen');
+    videoElement.setAttribute('disablepictureinpicture', 'true');
+    
+    // Set source
+    const source = document.createElement('source');
+    source.src = src;
+    source.type = 'video/mp4';
+    videoElement.appendChild(source);
+
+    // Initialize Video.js player
+    const player = videojs(videoElement, {
+      controls: true,
+      responsive: true,
+      fluid: true,
+      playbackRates: [0.5, 1, 1.25, 1.5, 2],
+      autoplay: autoplay,
+      muted: muted,
+      poster: poster,
+      preload: 'metadata',
+      techOrder: ['html5'],
+      html5: {
+        vhs: {
+          overrideNative: true
+        },
+        nativeVideoTracks: false,
+        nativeAudioTracks: false,
+        nativeTextTracks: false
+      },
+      plugins: {
+        hotkeys: {
+          volumeStep: 0.1,
+          seekStep: 5,
+          enableModifiersForNumbers: false
+        }
+      }
+    });
+
+    player.ready(() => {
+      setIsLoaded(true);
+      
+      // Remove src attribute after loading for protection
+      if (!player || !player.el()) return;
+      
+      const videoEl = player.el().querySelector('video');
+      if (videoEl && isProtected) {
+        videoEl.addEventListener('loadstart', () => {
+          setTimeout(() => {
+            if (videoEl.src && isProtected) {
+              videoEl.removeAttribute('src');
+              videoEl.load();
+            }
+          }, 100);
+        });
+
+        // Disable video element inspection
+        Object.defineProperty(videoEl, 'src', {
+          get: function() {
+            if (isProtected) {
+              console.warn('Video source access blocked for content protection');
+              return '';
+            }
+            return this.getAttribute('data-protected-src') || '';
+          },
+          set: function(value) {
+            this.setAttribute('data-protected-src', value);
+          }
+        });
+
+        // Disable canvas extraction
+        Object.defineProperty(videoEl, 'toDataURL', {
+          value: function() {
+            console.warn('Canvas extraction blocked for content protection');
+            return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJgg==';
+          }
+        });
+      }
+
+      // Add markers if provided
+      if (markers && markers.length > 0 && (player as any).markers) {
+        markers.forEach((marker) => {
+          (player as any).markers.addMarker({
+            time: marker.time,
+            text: marker.text,
+            class: marker.category ? `marker-${marker.category}` : 'marker-default'
+          });
+        });
+      }
+
+      // Enhanced error handling
+      player.on('error', (error: any) => {
+        console.error('Video.js error:', error);
+        setError('Error loading video. Please try again.');
+      });
+
+      // Add quality selector for HLS streams
+      if (src.includes('.m3u8') || src.includes('.mpd')) {
+        player.ready(() => {
+          if ((player as any).qualityLevels) {
+            player.addChild('qualityLevels');
+          }
+        });
+      }
+
+      // Add watermark protection
+      if (isProtected && creatorUsername) {
+        startWatermarkProtection(player, creatorUsername);
+      }
+
+      // Protection monitoring removed to prevent errors
+      // Function not implemented yet
+
+      // Custom loading spinner
+      if (player && player.el()) {
+        const loadingSpinner = player.el().querySelector('.vjs-loading-spinner');
+        if (loadingSpinner) {
+          loadingSpinner.innerHTML = `
+            <div class="vjs-spinner">
+              <div class="vjs-spinner-circle"></div>
+              <div class="vjs-spinner-text">Loading...</div>
+            </div>
+          `;
+        }
+      }
+
+      // Custom menu removed to prevent errors
+      // Video.js doesn't have a built-in customMenu component
+    });
+
+    playerRef.current = player;
+
+    return () => {
+      if (playerRef.current) {
+        playerRef.current.dispose();
+        playerRef.current = null;
+      }
+    };
+  }, [src, poster, autoplay, muted, markers, isProtected, creatorUsername, isAccessGranted]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (playerRef.current) {
+        playerRef.current.dispose();
+      }
+    };
+  }, []);
+
+  if (!isAccessGranted && requiresSubscription) {
     return (
-      <div className="video-player-loading" style={{
-        width: typeof width === 'number' ? `${width}px` : width,
-        height: typeof height === 'number' ? `${height}px` : height,
-        backgroundColor: '#000',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: '8px'
-      }}>
-        <div className="text-white">Loading video player...</div>
+      <div className={`video-player-container subscription-required ${className}`}>
+        <div className="subscription-overlay">
+          <div className="subscription-content">
+            <div className="subscription-icon">👑</div>
+            <h3>Subscription Required</h3>
+            <p>This content is available for subscribers only.</p>
+            <p>Subscribe to {creatorUsername} to access exclusive content.</p>
+            <button 
+              onClick={() => {
+                // In a real app, this would redirect to subscription page
+                alert('Redirecting to subscription page...');
+              }}
+              className="subscribe-button"
+            >
+              Subscribe Now
+            </button>
+          </div>
+        </div>
+        <style>{`
+          .subscription-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            border-radius: 12px;
+          }
+          .subscription-content {
+            text-align: center;
+            color: white;
+            padding: 2rem;
+            max-width: 400px;
+          }
+          .subscription-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+          }
+          .subscribe-button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+          }
+          .subscribe-button:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+          }
+        `}</style>
       </div>
-    )
+    );
   }
 
   if (error) {
     return (
-      <div className={`video-player-wrapper ${className}`} style={{
-        width: typeof width === 'number' ? `${width}px` : width,
-        height: typeof height === 'number' ? `${height}px` : height,
-        backgroundColor: '#000',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: '8px',
-        color: 'white',
-        textAlign: 'center',
-        padding: '20px'
-      }}>
-        <div>
-          <p className="text-red-400 mb-2">Video Error</p>
-          <p className="text-sm">{error}</p>
-          <p className="text-xs mt-2 opacity-70">Source: {src}</p>
+      <div className={`video-player-container error ${className}`}>
+        <div className="error-overlay">
+          <div className="error-content">
+            <div className="error-icon">⚠️</div>
+            <h3>Video Error</h3>
+            <p>{error}</p>
+            <button 
+              onClick={() => {
+                setError(null);
+                setIsLoaded(false);
+              }}
+              className="retry-button"
+            >
+              Retry
+            </button>
+          </div>
         </div>
+        <style>{`
+          .error-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            border-radius: 12px;
+          }
+          .error-content {
+            text-align: center;
+            color: white;
+            padding: 2rem;
+          }
+          .error-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+          }
+          .retry-button {
+            background: white;
+            color: #ff6b6b;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 1rem;
+          }
+        `}</style>
       </div>
-    )
+    );
   }
 
   return (
-    <div className={`video-player-wrapper ${className}`} style={{ position: 'relative' }}>
-      <video
-        ref={videoRef}
-        width={typeof width === 'number' ? width : undefined}
-        height={typeof height === 'number' ? height : undefined}
-        style={{
-          width: typeof width === 'number' ? `${width}px` : width,
-          height: typeof height === 'number' ? `${height}px` : height
-        }}
-        controls={controls}
-        autoPlay={autoplay}
-        muted={muted}
-        loop={loop}
-        preload={preload}
-        poster={poster}
-        className="w-full h-full rounded-lg"
-      >
-        <source src={src} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+    <div className={`video-player-container ${className}`}>
+        <style>{`
+        .video-player-container {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          background: #000;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .video-player-container :global(.video-js) {
+          width: 100%;
+          height: 100%;
+          border-radius: 12px;
+        }
+        
+        .video-player-container :global(.vjs-theme-modern) {
+          --vjs-theme-modern-primary: #ff6b6b;
+          --vjs-theme-modern-secondary: #4ecdc4;
+        }
+        
+        .video-player-container :global(.vjs-control-bar) {
+          background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.8) 100%);
+          border-radius: 0 0 12px 12px;
+        }
+        
+        .video-player-container :global(.vjs-big-play-button) {
+          background: rgba(255, 107, 107, 0.9);
+          border: none;
+          border-radius: 50%;
+          width: 80px;
+          height: 80px;
+          font-size: 2rem;
+          transition: all 0.3s ease;
+        }
+        
+        .video-player-container :global(.vjs-big-play-button:hover) {
+          background: rgba(255, 107, 107, 1);
+          transform: scale(1.1);
+        }
+        
+        .video-player-container :global(.vjs-progress-control) {
+          height: 6px;
+        }
+        
+        .video-player-container :global(.vjs-progress-holder) {
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 3px;
+        }
+        
+        .video-player-container :global(.vjs-play-progress) {
+          background: #ff6b6b;
+          border-radius: 3px;
+        }
+        
+        .video-player-container :global(.vjs-loading-spinner) {
+          border-color: #ff6b6b transparent transparent transparent;
+        }
+        
+        .video-player-container :global(.vjs-menu) {
+          background: rgba(0, 0, 0, 0.9);
+          border-radius: 8px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .video-player-container :global(.vjs-menu-item) {
+          color: white;
+          padding: 0.5rem 1rem;
+          border-radius: 4px;
+          margin: 0.25rem;
+        }
+        
+        .video-player-container :global(.vjs-menu-item:hover) {
+          background: rgba(255, 107, 107, 0.2);
+        }
+        
+        .video-player-container :global(.vjs-marker) {
+          background: #ff6b6b;
+          border-radius: 2px;
+          height: 100%;
+          width: 3px;
+        }
+        
+        .video-player-container :global(.vjs-marker-tooltip) {
+          background: rgba(0, 0, 0, 0.9);
+          color: white;
+          border-radius: 4px;
+          padding: 0.5rem;
+          font-size: 0.8rem;
+        }
+        
+        .video-player-container :global(.vjs-spinner) {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          color: white;
+        }
+        
+        .video-player-container :global(.vjs-spinner-circle) {
+          width: 40px;
+          height: 40px;
+          border: 3px solid rgba(255, 255, 255, 0.3);
+          border-top: 3px solid #ff6b6b;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+        
+        .video-player-container :global(.vjs-spinner-text) {
+          margin-top: 1rem;
+          font-size: 0.9rem;
+          color: rgba(255, 255, 255, 0.8);
+        }
+        
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        
+        .video-player-container :global(.dynamic-watermark) {
+          opacity: 0.7;
+          transition: opacity 0.3s ease;
+        }
+        
+        .video-player-container :global(.dynamic-watermark:hover) {
+          opacity: 1;
+        }
+      `}</style>
       
-      {!isLoaded && !error && (
-        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
-          <div className="text-white text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
-            <p className="text-sm">Loading video...</p>
+      <div ref={videoRef} />
+      
+      {!isLoaded && (
+        <div className="loading-overlay">
+          <div className="loading-spinner">
+            <div className="spinner-circle"></div>
+            <div className="spinner-text">Loading video...</div>
           </div>
         </div>
       )}
+      
+        <style>{`
+        .loading-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.8);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 100;
+          border-radius: 12px;
+        }
+        
+        .loading-spinner {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          color: white;
+        }
+        
+        .spinner-circle {
+          width: 50px;
+          height: 50px;
+          border: 4px solid rgba(255, 255, 255, 0.3);
+          border-top: 4px solid #ff6b6b;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+          margin-bottom: 1rem;
+        }
+        
+        .spinner-text {
+          font-size: 1rem;
+          color: rgba(255, 255, 255, 0.8);
+        }
+      `}</style>
     </div>
-  )
-}
+  );
+};
 
-// Enhanced VideoPlayer with additional features
-export function EnhancedVideoPlayer({
-  src,
-  poster,
-  autoplay = false,
-  controls = true,
-  muted = false,
-  loop = false,
-  preload = 'metadata',
-  width = '100%',
-  height = 'auto',
-  className = '',
-  showTitle = false,
-  title,
-  showProgress = true,
-  onReady,
-  onPlay,
-  onPause,
-  onEnded,
-  onError
-}: VideoPlayerProps & {
-  showTitle?: boolean
-  title?: string
-  showProgress?: boolean
-}) {
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
-  const [duration, setDuration] = useState(0)
-  const [volume, setVolume] = useState(1)
-
-  const handlePlay = () => {
-    setIsPlaying(true)
-    onPlay?.()
-  }
-
-  const handlePause = () => {
-    setIsPlaying(false)
-    onPause?.()
-  }
-
-  const handleReady = (player: any) => {
-    onReady?.(player)
-    
-    // Set up additional event listeners for HTML5 video
-    if (player && player.addEventListener) {
-      player.addEventListener('timeupdate', () => {
-        setCurrentTime(player.currentTime || 0)
-      })
-      
-      player.addEventListener('loadedmetadata', () => {
-        setDuration(player.duration || 0)
-      })
-      
-      player.addEventListener('volumechange', () => {
-        setVolume(player.volume || 1)
-      })
-    }
-  }
-
-  return (
-    <div className={`enhanced-video-player ${className}`}>
-      {showTitle && title && (
-        <div className="video-title mb-2">
-          <h3 className="text-lg font-semibold">{title}</h3>
-        </div>
-      )}
-      
-      <VideoPlayer
-        src={src}
-        poster={poster}
-        autoplay={autoplay}
-        controls={controls}
-        muted={muted}
-        loop={loop}
-        preload={preload}
-        width={width}
-        height={height}
-        onReady={handleReady}
-        onPlay={handlePlay}
-        onPause={handlePause}
-        onEnded={onEnded}
-        onError={onError}
-      />
-      
-      {showProgress && (
-        <div className="video-progress mt-2">
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(duration)}</span>
-          </div>
-          <div className="w-full bg-muted rounded-full h-1 mt-1">
-            <div 
-              className="bg-primary h-1 rounded-full transition-all duration-200"
-              style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%' }}
-            />
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-// Utility function to format time
-function formatTime(seconds: number): string {
-  if (!seconds || isNaN(seconds)) return '0:00'
-  
-  const mins = Math.floor(seconds / 60)
-  const secs = Math.floor(seconds % 60)
-  return `${mins}:${secs.toString().padStart(2, '0')}`
-}
+export default VideoPlayer;
