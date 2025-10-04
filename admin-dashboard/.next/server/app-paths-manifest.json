@@ -1,3 +1,19 @@
 {
-  "/page": "app/page.js"
+  "/page": "app/page.js",
+  "/api/dashboard/route": "app/api/dashboard/route.js",
+  "/login/page": "app/login/page.js",
+  "/users/page": "app/users/page.js",
+  "/api/users/route": "app/api/users/route.js",
+  "/age-verification/page": "app/age-verification/page.js",
+  "/api/age-verification/route": "app/api/age-verification/route.js",
+  "/blog/page": "app/blog/page.js",
+  "/api/blog/route": "app/api/blog/route.js",
+  "/creators/page": "app/creators/page.js",
+  "/moderation/page": "app/moderation/page.js",
+  "/reports/page": "app/reports/page.js",
+  "/analytics/page": "app/analytics/page.js",
+  "/content/page": "app/content/page.js",
+  "/payments/page": "app/payments/page.js",
+  "/system/page": "app/system/page.js",
+  "/settings/page": "app/settings/page.js"
 }

@@ -51,7 +51,7 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
   // Check if current page should show the full layout
   const shouldShowFullLayout = authenticatedPages.some(page => 
     pathname.startsWith(page)
-  ) || (user && pathname !== '/auth')
+  ) || (user && pathname !== '/auth' && !pathname.startsWith('/resources'))
 
   // Show full layout for authenticated pages
   if (shouldShowFullLayout) {

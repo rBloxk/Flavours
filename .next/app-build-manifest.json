@@ -1,9 +1,9 @@
 {
   "pages": {
-    "/page": [
+    "/resources/legal/anti-slavery/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
+      "static/chunks/app/resources/legal/anti-slavery/page.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -11,25 +11,30 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
+    "/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/page.js"
+    ],
+    "/resources/support/cookie-notice/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/resources/support/cookie-notice/page.js"
+    ],
+    "/auth/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/auth/page.js"
+    ],
     "/feed/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/feed/page.js"
     ],
-    "/explore/page": [
+    "/resources/support/store/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/explore/page.js"
-    ],
-    "/dating/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/dating/page.js"
-    ],
-    "/talk/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/talk/page.js"
+      "static/chunks/app/resources/support/store/page.js"
     ],
     "/tube/page": [
       "static/chunks/webpack.js",
@@ -37,96 +42,55 @@
       "static/css/app/tube/page.css",
       "static/chunks/app/tube/page.js"
     ],
-    "/licks/page": [
+    "/talk/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/licks/page.css",
-      "static/chunks/app/licks/page.js"
+      "static/chunks/app/talk/page.js"
     ],
-    "/resources/resources/privacy/page": [
+    "/dating/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/resources/resources/privacy/page.js"
+      "static/chunks/app/dating/page.js"
     ],
     "/resources/resources/blog/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/resources/resources/blog/page.js"
     ],
-    "/resources/legal/terms/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/resources/legal/terms/page.js"
-    ],
-    "/more/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/more/page.js"
-    ],
-    "/help/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/help/page.js"
-    ],
-    "/resources/support/store/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/resources/support/store/page.js"
-    ],
-    "/auth/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/auth/page.js"
-    ],
     "/resources/support/help/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/resources/support/help/page.js"
     ],
-    "/resources/support/cookie-notice/page": [
+    "/resources/resources/privacy/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/resources/support/cookie-notice/page.js"
+      "static/chunks/app/resources/resources/privacy/page.js"
     ],
-    "/resources/resources/usc-2257/page": [
+    "/profile/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/resources/resources/usc-2257/page.js"
+      "static/chunks/app/profile/page.js"
     ],
-    "/resources/legal/dmca/page": [
+    "/messages/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/resources/legal/dmca/page.js"
-    ],
-    "/resources/resources/acceptable-use/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/resources/resources/acceptable-use/page.js"
-    ],
-    "/resources/business/branding/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/resources/business/branding/page.js"
-    ],
-    "/privacy/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/privacy/page.js"
+      "static/chunks/app/messages/page.js"
     ],
     "/resources/business/contract/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/resources/business/contract/page.js"
     ],
-    "/resources/legal/anti-slavery/page": [
+    "/explore/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/resources/legal/anti-slavery/page.js"
+      "static/chunks/app/explore/page.js"
     ],
-    "/_not-found/page": [
+    "/resources/legal/about/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/_not-found/page.js"
+      "static/chunks/app/resources/legal/about/page.js"
     ]
   }
 }
